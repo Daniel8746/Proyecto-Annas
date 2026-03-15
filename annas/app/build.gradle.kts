@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.com.google.dagger)
@@ -48,10 +47,10 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
 
-    kotlin {
-        jvmToolchain(21)
-    }
+kotlin {
+    jvmToolchain(21)
 }
 
 dependencies {
@@ -64,9 +63,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(libs.pmdm.ies.balmis.components)
-    implementation(libs.pmdm.ies.balmis.utilities)
-
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.animation)
@@ -78,12 +74,6 @@ dependencies {
 
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
-//    implementation(libs.com.squareup.retrofit2.converter.gson)
-//    implementation(libs.com.squareup.retrofit2.retrofit)
-//    implementation(platform(libs.com.squareup.okhttp3.okhttp.bom))
-//    implementation(libs.com.squareup.okhttp3.okhttp)
-//    implementation(libs.com.squareup.okhttp3.logging.interceptor)
 
     implementation(libs.androidx.webkit)
     implementation(libs.material3)
