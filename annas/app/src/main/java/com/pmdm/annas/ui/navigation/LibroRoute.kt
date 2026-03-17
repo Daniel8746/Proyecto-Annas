@@ -17,7 +17,11 @@ fun NavGraphBuilder.libroDestination(
     libro: Libro
 ) {
     composable<LibroRoute> {
-        vm.onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace))
+        fun onReintentar() {
+            vm.onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace))
+        }
+
+        onReintentar()
 
         Log.d("Libro", libro.enlace)
         LibroScreen(
@@ -25,7 +29,7 @@ fun NavGraphBuilder.libroDestination(
             descripcion = vm.descripcion,
             uiStateEnum = vm.uiStateEnum,
             enlacesServidor = vm.enlacesServidor,
-            onReintentar = { vm.onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace)) }
+            onReintentar = { onReintentar() }
         )
     }
 }

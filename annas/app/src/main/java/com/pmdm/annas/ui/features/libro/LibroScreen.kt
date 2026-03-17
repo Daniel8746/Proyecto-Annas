@@ -16,11 +16,6 @@ fun LibroScreen(
     onReintentar: () -> Unit
 ) {
     when (uiStateEnum) {
-        UIStateEnum.ERROR -> ErrorScreen(
-            mensaje = "Error al abrir el libro",
-            onReintentar = onReintentar
-        )
-
         UIStateEnum.CARGANDO -> PantallaCarga()
 
         UIStateEnum.CARGADO -> MostrarLibro(
@@ -31,6 +26,9 @@ fun LibroScreen(
             enlacesServidor = enlacesServidor
         )
 
-        else -> {}
+        else -> ErrorScreen(
+            mensaje = "Error al abrir el libro",
+            onReintentar = onReintentar
+        )
     }
 }

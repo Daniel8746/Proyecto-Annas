@@ -17,9 +17,9 @@ class Scraper @Inject constructor(
     suspend fun buscarLibro(nombreLibro: String): List<Libro> {
         val cssSelector = "div.flex.pt-3.pb-3.border-b"
 
-        webViewScraper.cssSelector = cssSelector
-
-        val html = webViewScraper.loadUrlAndGetHtml("$baseUrl/search?q=$nombreLibro")
+        val html = webViewScraper.loadUrlAndGetHtml(
+            "$baseUrl/search?q=$nombreLibro", cssSelector
+        )
 
         return withContext(Dispatchers.IO) {
             val doc = Jsoup.parse(html)
@@ -32,9 +32,9 @@ class Scraper @Inject constructor(
     suspend fun servidorDescarga(enlace: String): Pair<String, List<String>> {
         val cssSelector = "div.mt-4.js-md5-top-box-description"
 
-        webViewScraper.cssSelector = cssSelector
-
-        val html = webViewScraper.loadUrlAndGetHtml("$baseUrl/$enlace")
+        val html = webViewScraper.loadUrlAndGetHtml(
+            "$baseUrl/$enlace", cssSelector
+        )
 
         return withContext(Dispatchers.IO) {
             val doc = Jsoup.parse(html)

@@ -12,6 +12,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 class WebViewScraper(@param:ApplicationContext private val context: Context) {
+    @SuppressLint("SetJavaScriptEnabled")
     private val webView = WebView(context).apply {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
@@ -20,10 +21,8 @@ class WebViewScraper(@param:ApplicationContext private val context: Context) {
         CookieManager.getInstance().setAcceptCookie(true)
     }
 
-    var cssSelector: String = ""
-
     @MainThread
-    suspend fun loadUrlAndGetHtml(url: String): String =
+    suspend fun loadUrlAndGetHtml(url: String, cssSelector: String): String =
         suspendCancellableCoroutine { cont ->
 
             // Interfaz para recibir el HTML desde JS
@@ -37,7 +36,6 @@ class WebViewScraper(@param:ApplicationContext private val context: Context) {
             webView.addJavascriptInterface(WebAppInterface(), "Android")
 
             webView.webViewClient = object : WebViewClient() {
-                @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
                 override fun onPageFinished(view: WebView?, url: String?) {
                     // Inyectamos el MutationObserver
                     val js = """

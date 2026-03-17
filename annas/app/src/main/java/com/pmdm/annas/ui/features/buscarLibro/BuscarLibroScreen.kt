@@ -71,7 +71,7 @@ fun BuscarLibroScreen(
                         )
                     }
 
-                    null -> PantallaInicial()
+                    else -> PantallaInicial()
                 }
             }
         }
