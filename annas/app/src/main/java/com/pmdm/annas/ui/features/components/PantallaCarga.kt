@@ -1,7 +1,6 @@
 package com.pmdm.annas.ui.features.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -20,9 +19,8 @@ import com.pmdm.annas.R
 
 @Composable
 fun PantallaCarga() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    Box(
+        contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(modifier = Modifier.size(48.dp))
         Spacer(modifier = Modifier.height(16.dp))
