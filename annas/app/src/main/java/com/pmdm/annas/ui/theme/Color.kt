@@ -2,10 +2,16 @@ package com.pmdm.annas.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Paleta Elegante y Moderna (Basada en Tonos Oceánicos y Neutros)
+val Primary = Color(0xFF0F4C81) // Classic Blue
+val Secondary = Color(0xFF588BAE)
+val Tertiary = Color(0xFFB0C4DE)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val Background = Color(0xFFF8FAFC)
+val Surface = Color(0xFFFFFFFF)
+val Error = Color(0xFFB91C1C)
+
+val DarkPrimary = Color(0xFF93C5FD)
+val DarkSecondary = Color(0xFF60A5FA)
+val DarkBackground = Color(0xFF0F172A)
+val DarkSurface = Color(0xFF1E293B)

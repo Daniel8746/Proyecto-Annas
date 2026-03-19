@@ -26,7 +26,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -61,11 +61,10 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.animation)
+    implementation(libs.androidx.compose.material3)
     ksp(libs.dagger.hilt.android.compiler)
     kspAndroidTest(libs.dagger.hilt.android.compiler)
 
@@ -76,13 +75,15 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.webkit)
-    implementation(libs.material3)
 
     implementation(libs.coil.compose)
 
     implementation(libs.lottie.compose)
 
     implementation(libs.jsoup)
+    implementation(libs.okhttp)
+
+    implementation(libs.androidx.compose.material.icons.extended.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

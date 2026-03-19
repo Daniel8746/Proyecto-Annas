@@ -8,6 +8,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -16,7 +18,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideScraperInstance(webViewScraper: WebViewScraper): Scraper = Scraper(webViewScraper)
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .followRedirects(true)
+            .followSslRedirects(true)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideScraperInstance(
+        webViewScraper: WebViewScraper,
+        okHttpClient: OkHttpClient
+    ): Scraper = Scraper(webViewScraper, okHttpClient)
 
     @Provides
     @Singleton

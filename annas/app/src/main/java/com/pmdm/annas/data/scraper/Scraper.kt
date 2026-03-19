@@ -1,59 +1,130 @@
 package com.pmdm.annas.data.scraper
 
+import android.util.Log
+import android.util.LruCache
 import com.pmdm.annas.data.repositorys.toLibros
 import com.pmdm.annas.model.Libro
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.jsoup.Jsoup
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@Singleton
 class Scraper @Inject constructor(
-    private val webViewScraper: WebViewScraper
+    private val webViewScraper: WebViewScraper,
+    private val okHttpClient: OkHttpClient
 ) {
-    private val baseUrl = "https://es.annas-archive.org"
+    private var activeBaseUrl: String = ""
+    private val mirrorUrls = listOf(
+        "https://annas-archive.gl",
+        "https://annas-archive.pk",
+        "https://annas-archive.gd"
+    )
 
-    suspend fun buscarLibro(nombreLibro: String): List<Libro> {
+    private val searchCache = LruCache<String, List<Libro>>(20)
+    private val detailsCache = LruCache<String, Pair<String, List<String>>>(50)
+
+    init {
+        // Inicializar la mejor URL en segundo plano
+        CoroutineScope(Dispatchers.IO).launch {
+            findBestMirror()
+        }
+    }
+
+    private fun findBestMirror() {
+        for (url in mirrorUrls) {
+            try {
+                val request = Request.Builder().url(url).head().build()
+                val response = okHttpClient.newCall(request).execute()
+                if (response.isSuccessful) {
+                    activeBaseUrl = url
+                    Log.d("Scraper", "URL activa seleccionada: $activeBaseUrl")
+                    return
+                }
+            } catch (e: Exception) {
+                Log.e("Scraper", "Error probando mirror $url: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun buscarLibro(
+        nombreLibro: String,
+        extensiones: List<String> = emptyList(),
+        idioma: String? = null
+    ): List<Libro> = withContext(Dispatchers.IO) {
+        val query = nombreLibro.trim()
+        if (query.isEmpty()) return@withContext emptyList()
+
+        val cacheKey = "$query-${extensiones.sorted().joinToString(",")}-$idioma"
+        searchCache.get(cacheKey)?.let { return@withContext it }
+
         val cssSelector = "div.flex.pt-3.pb-3.border-b"
 
-        val html = webViewScraper.loadUrlAndGetHtml(
-            "$baseUrl/search?q=$nombreLibro", cssSelector
-        )
+        try {
+            var url = "$activeBaseUrl/search?q=${UriEncoder.encode(query)}"
+            extensiones.forEach { ext -> url += "&ext=$ext" }
+            if (!idioma.isNullOrEmpty()) {
+                url += "&lang=$idioma"
+            }
 
-        return withContext(Dispatchers.IO) {
+            val html = webViewScraper.loadUrlAndGetHtml(url, cssSelector)
             val doc = Jsoup.parse(html)
+            val libros = doc.select(cssSelector).toLibros()
 
-            doc.select(cssSelector).toLibros()
+            if (libros.isNotEmpty()) {
+                searchCache.put(cacheKey, libros)
+            }
+            libros
+        } catch (e: Exception) {
+            // Si falla la URL actual, intentamos encontrar otra para la próxima vez
+            findBestMirror()
+            emptyList()
         }
     }
 
+    suspend fun servidorDescarga(enlace: String): Pair<String, List<String>> =
+        withContext(Dispatchers.IO) {
+            detailsCache.get(enlace)?.let { return@withContext it }
 
-    suspend fun servidorDescarga(enlace: String): Pair<String, List<String>> {
-        val cssSelector = "div.mt-4.js-md5-top-box-description"
+            val cssSelector = "div.mt-4.js-md5-top-box-description"
 
-        val html = webViewScraper.loadUrlAndGetHtml(
-            "$baseUrl/$enlace", cssSelector
-        )
+            try {
+                val url = if (enlace.startsWith("/")) "$activeBaseUrl$enlace" else enlace
+                val html = webViewScraper.loadUrlAndGetHtml(url, cssSelector)
 
-        return withContext(Dispatchers.IO) {
-            val doc = Jsoup.parse(html)
+                val doc = Jsoup.parse(html)
+                val enlaceDescarga = mutableListOf<String>()
 
-            val enlaceDescarga = mutableListOf<String>()
+                val descripcionElement = doc.selectFirst(cssSelector)
+                val descripcion =
+                    descripcionElement?.select("div.mb-1")?.text()?.trim() ?: "Sin descripción"
 
-            val descripcion = doc
-                .selectFirst(cssSelector)!!
-                .select("div.mb-1")
-                .text().trim()
-
-            doc
-                .select("ul.list-inside.mb-4.ml-1")[1]
-                .select("li")
-                .forEach {
-                    enlaceDescarga.add(it.selectFirst("a")!!.attr("href"))
+                doc.select("ul.list-inside li a, a.js-download-link").forEach {
+                    val href = it.attr("href")
+                    if (href.isNotEmpty()) {
+                        val fullUrl = if (href.startsWith("/")) "$activeBaseUrl$href" else href
+                        if (!enlaceDescarga.contains(fullUrl)) {
+                            enlaceDescarga.add(fullUrl)
+                        }
+                    }
                 }
 
-            Pair(descripcion, enlaceDescarga)
+                val result = Pair(descripcion, enlaceDescarga)
+                if (enlaceDescarga.isNotEmpty()) {
+                    detailsCache.put(enlace, result)
+                }
+                result
+            } catch (e: Exception) {
+                Pair("Error al obtener detalles", emptyList())
+            }
         }
-    }
+}
+
+object UriEncoder {
+    fun encode(s: String): String = java.net.URLEncoder.encode(s, "UTF-8")
 }

@@ -7,7 +7,11 @@ import javax.inject.Inject
 class BuscarLibroRepository @Inject constructor(
     private val scraper: Scraper
 ) {
-    suspend fun getLibros(nombre: String): List<Libro> {
-        return scraper.buscarLibro(nombre)
+    suspend fun getLibros(
+        nombre: String, 
+        extensiones: List<String> = emptyList(),
+        idioma: String? = null
+    ): List<Libro> {
+        return scraper.buscarLibro(nombre, extensiones, idioma)
     }
 }

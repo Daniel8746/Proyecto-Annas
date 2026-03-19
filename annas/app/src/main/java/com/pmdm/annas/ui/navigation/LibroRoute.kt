@@ -1,8 +1,13 @@
 package com.pmdm.annas.ui.navigation
 
-import android.util.Log
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.libro.LibroEvent
 import com.pmdm.annas.ui.features.libro.LibroScreen
@@ -10,26 +15,33 @@ import com.pmdm.annas.ui.features.libro.LibroViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
-object LibroRoute
+data class LibroRoute(val libro: Libro)
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.libroDestination(
-    vm: LibroViewModel,
-    libro: Libro
+    onNavigateBack: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope
 ) {
-    composable<LibroRoute> {
-        fun onReintentar() {
+    composable<LibroRoute> { backStackEntry ->
+        val route: LibroRoute = backStackEntry.toRoute()
+        val libro = route.libro
+        val vm: LibroViewModel = hiltViewModel()
+
+        LaunchedEffect(libro.enlace) {
             vm.onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace))
         }
 
-        onReintentar()
-
-        Log.d("Libro", libro.enlace)
         LibroScreen(
             libro = libro,
             descripcion = vm.descripcion,
             uiStateEnum = vm.uiStateEnum,
             enlacesServidor = vm.enlacesServidor,
-            onReintentar = { onReintentar() }
+            onReintentar = {
+                vm.onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace))
+            },
+            onNavigateBack = onNavigateBack,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this
         )
     }
 }

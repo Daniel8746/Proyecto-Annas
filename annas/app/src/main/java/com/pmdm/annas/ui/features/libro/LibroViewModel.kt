@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.pmdm.annas.data.repositorys.LibroRepository
 import com.pmdm.annas.ui.features.UIStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,13 +18,23 @@ class LibroViewModel @Inject constructor(
 ) : ViewModel() {
     var enlacesServidor: List<String> by mutableStateOf(emptyList())
     var descripcion by mutableStateOf("")
-
     var uiStateEnum: UIStateEnum? by mutableStateOf(null)
+    
+    private var loadingJob: Job? = null
+    private var lastEnlace: String? = null
 
     fun onLibroEvent(event: LibroEvent) {
         when (event) {
             is LibroEvent.ObtenerLinksServidor -> {
-                viewModelScope.launch {
+                // Evitar recargar si es el mismo enlace y ya está cargado o cargando
+                if (event.enlace == lastEnlace && (uiStateEnum == UIStateEnum.CARGANDO || uiStateEnum == UIStateEnum.CARGADO)) {
+                    return
+                }
+                
+                lastEnlace = event.enlace
+                loadingJob?.cancel()
+                
+                loadingJob = viewModelScope.launch {
                     try {
                         uiStateEnum = UIStateEnum.CARGANDO
                         val result = libroRepository.getLinksServidor(event.enlace)
@@ -31,7 +42,8 @@ class LibroViewModel @Inject constructor(
                         descripcion = result.first
                         enlacesServidor = result.second
                         uiStateEnum = UIStateEnum.CARGADO
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                         uiStateEnum = UIStateEnum.ERROR
                     }
                 }

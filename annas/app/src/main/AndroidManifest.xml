@@ -2,25 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!--
-    <uses-feature
-        android:name="android.hardware.camera.any"
-        android:required="true" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-feature
-        android:name="android.hardware.telephony"
-        android:required="true" />
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    -->
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".AnnasApplication"
@@ -44,17 +29,13 @@
             </intent-filter>
         </activity>
 
-        <!--
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/path_provider" />
-        </provider>
-        -->
+        <receiver
+            android:name=".utils.NotificationCancelReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="CANCEL_DOWNLOAD" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
