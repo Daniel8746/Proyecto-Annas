@@ -1,24 +1,51 @@
 package com.pmdm.annas.ui.features.buscarLibro.components
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.pmdm.annas.R
 import com.pmdm.annas.model.Libro
+import com.pmdm.annas.ui.features.components.InfoBadge
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -36,7 +63,7 @@ fun MostrarLibros(
     ) {
         itemsIndexed(libros, key = { _, libro -> libro.enlace }) { index, libro ->
             AnimatedLibroItem(
-                libro = libro, 
+                libro = libro,
                 index = index,
                 onClick = { onLibroClick(libro) },
                 sharedTransitionScope = sharedTransitionScope,
@@ -49,14 +76,14 @@ fun MostrarLibros(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AnimatedLibroItem(
-    libro: Libro, 
-    index: Int, 
+    libro: Libro,
+    index: Int,
     onClick: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var visible by remember { mutableStateOf(false) }
-    
+
     LaunchedEffect(Unit) {
         visible = true
     }
@@ -71,7 +98,7 @@ fun AnimatedLibroItem(
         )
     ) {
         LibroItem(
-            libro = libro, 
+            libro = libro,
             onClick = onClick,
             sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = animatedVisibilityScope
@@ -82,7 +109,7 @@ fun AnimatedLibroItem(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun LibroItem(
-    libro: Libro, 
+    libro: Libro,
     onClick: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
@@ -92,7 +119,10 @@ fun LibroItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onClick() },
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp, pressedElevation = 8.dp),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp,
+                pressedElevation = 8.dp
+            ),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
@@ -112,11 +142,14 @@ fun LibroItem(
                         ),
                     tonalElevation = 2.dp
                 ) {
+                    // Gestión robusta de la imagen: si está vacía o falla, se pone el pato mareado
                     AsyncImage(
-                        model = libro.portada,
+                        model = libro.portada.ifBlank { R.drawable.pato_no_funciona },
                         contentDescription = "Portada de ${libro.titulo}",
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.pato_no_funciona),
+                        error = painterResource(id = R.drawable.pato_no_funciona)
                     )
                 }
 
@@ -142,9 +175,9 @@ fun LibroItem(
                                 animatedVisibilityScope = animatedVisibilityScope
                             )
                         )
-                        
+
                         Spacer(modifier = Modifier.height(4.dp))
-                        
+
                         Text(
                             text = libro.autor,
                             style = MaterialTheme.typography.bodyMedium,
@@ -153,46 +186,29 @@ fun LibroItem(
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.height(12.dp))
-                    
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        InfoBadge(text = libro.idioma, color = MaterialTheme.colorScheme.primaryContainer)
-                        InfoBadge(text = libro.formato.uppercase(), color = MaterialTheme.colorScheme.secondaryContainer)
-                        
-                        if (libro.tamano.isNotEmpty() && libro.tamano != "Desconocido") {
-                            Text(
-                                text = libro.tamano,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.outline
-                            )
-                        }
+                        InfoBadge(
+                            text = libro.idioma,
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        )
+                        InfoBadge(
+                            text = libro.formato,
+                            color = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                        InfoBadge(
+                            text = libro.tamano,
+                            color = MaterialTheme.colorScheme.tertiaryContainer
+                        )
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun InfoBadge(text: String, color: Color) {
-    if (text.isEmpty() || text == "Desconocido") return
-    
-    Surface(
-        color = color,
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.wrapContentSize()
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
-        )
     }
 }

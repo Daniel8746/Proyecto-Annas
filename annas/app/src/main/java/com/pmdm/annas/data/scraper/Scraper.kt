@@ -30,7 +30,6 @@ class Scraper @Inject constructor(
     private val detailsCache = LruCache<String, Pair<String, List<String>>>(50)
 
     init {
-        // Inicializar la mejor URL en segundo plano
         CoroutineScope(Dispatchers.IO).launch {
             findBestMirror()
         }
@@ -73,15 +72,14 @@ class Scraper @Inject constructor(
             }
 
             val html = webViewScraper.loadUrlAndGetHtml(url, cssSelector)
-            val doc = Jsoup.parse(html)
-            val libros = doc.select(cssSelector).toLibros()
+            val libros = Jsoup.parseBodyFragment(html).body().children().toLibros()
 
             if (libros.isNotEmpty()) {
                 searchCache.put(cacheKey, libros)
             }
             libros
         } catch (e: Exception) {
-            // Si falla la URL actual, intentamos encontrar otra para la próxima vez
+            e.printStackTrace()
             findBestMirror()
             emptyList()
         }
@@ -91,7 +89,8 @@ class Scraper @Inject constructor(
         withContext(Dispatchers.IO) {
             detailsCache.get(enlace)?.let { return@withContext it }
 
-            val cssSelector = "div.mt-4.js-md5-top-box-description"
+            // Selector amplio para capturar toda la página de descarga
+            val cssSelector = "main, .js-md5-top-box-description, h3, ul"
 
             try {
                 val url = if (enlace.startsWith("/")) "$activeBaseUrl$enlace" else enlace
@@ -100,16 +99,26 @@ class Scraper @Inject constructor(
                 val doc = Jsoup.parse(html)
                 val enlaceDescarga = mutableListOf<String>()
 
-                val descripcionElement = doc.selectFirst(cssSelector)
-                val descripcion =
-                    descripcionElement?.select("div.mb-1")?.text()?.trim() ?: "Sin descripción"
+                val descripcion = doc.select(".js-md5-top-box-description div.mb-1")
+                    .firstOrNull()?.text()?.trim() ?: "Sin descripción"
 
-                doc.select("ul.list-inside li a, a.js-download-link").forEach {
-                    val href = it.attr("href")
-                    if (href.isNotEmpty()) {
-                        val fullUrl = if (href.startsWith("/")) "$activeBaseUrl$href" else href
-                        if (!enlaceDescarga.contains(fullUrl)) {
-                            enlaceDescarga.add(fullUrl)
+                // Buscamos la sección de "Slow downloads" de forma más robusta
+                val slowHeader = doc.select("h3").find { it.text().contains("Slow downloads", ignoreCase = true) }
+                
+                // Buscamos la lista UL que contenga los "Partner Server"
+                val ulLista = slowHeader?.parent()?.select("ul.list-inside").orEmpty()
+                    .plus(slowHeader?.nextElementSiblings()?.select("ul.list-inside").orEmpty())
+                    .firstOrNull()
+
+                ulLista?.select("li a")?.forEach {
+                    val text = it.text().lowercase()
+                    if (text.contains("partner server")) {
+                        val href = it.attr("href")
+                        if (href.isNotEmpty()) {
+                            val fullUrl = if (href.startsWith("/")) "$activeBaseUrl$href" else href
+                            if (!enlaceDescarga.contains(fullUrl)) {
+                                enlaceDescarga.add(fullUrl)
+                            }
                         }
                     }
                 }
@@ -120,6 +129,7 @@ class Scraper @Inject constructor(
                 }
                 result
             } catch (e: Exception) {
+                e.printStackTrace()
                 Pair("Error al obtener detalles", emptyList())
             }
         }

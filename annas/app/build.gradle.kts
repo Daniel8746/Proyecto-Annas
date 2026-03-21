@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.okhttp)
 
     implementation(libs.androidx.compose.material.icons.extended.android)
+    implementation(libs.readmore.material3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

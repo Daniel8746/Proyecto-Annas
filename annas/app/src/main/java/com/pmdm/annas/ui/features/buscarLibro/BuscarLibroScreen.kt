@@ -1,7 +1,13 @@
 package com.pmdm.annas.ui.features.buscarLibro
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -44,7 +50,11 @@ fun BuscarLibroScreen(
             AnimatedContent(
                 targetState = uiState,
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(400)) togetherWith fadeOut(animationSpec = tween(400))
+                    fadeIn(animationSpec = tween(400)) togetherWith fadeOut(
+                        animationSpec = tween(
+                            400
+                        )
+                    )
                 },
                 label = "UI State Transition",
                 modifier = Modifier

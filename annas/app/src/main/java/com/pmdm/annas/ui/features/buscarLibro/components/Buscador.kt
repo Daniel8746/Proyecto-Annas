@@ -75,7 +75,7 @@ fun Buscador(
                 value = buscarNombre,
                 onValueChange = onValueChange,
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Libros, autores, MD5...", fontSize = 14.sp) },
+                placeholder = { Text("Buscar libros, autores...", fontSize = 14.sp) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -130,7 +130,7 @@ fun Buscador(
                         .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val extensions = listOf("pdf", "epub", "mobi", "azw3", "cbr", "cbz")
+                    val extensions = listOf("pdf", "epub", "mobi", "cbr", "cbz")
                     extensions.forEach { ext ->
                         FilterChip(
                             selected = selectedExtensions.contains(ext),
@@ -162,8 +162,8 @@ fun Buscador(
                         null to "Todos",
                         "es" to "Español",
                         "en" to "Inglés",
-                        "fr" to "Francés"
                     )
+
                     languages.forEach { (code, name) ->
                         FilterChip(
                             selected = selectedLanguage == code,

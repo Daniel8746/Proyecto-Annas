@@ -10,7 +10,6 @@ import com.pmdm.annas.data.repositorys.BuscarLibroRepository
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.UIStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,21 +23,20 @@ class BuscarLibroViewModel @Inject constructor(
     var selectedLanguage: String? by mutableStateOf(null)
 
     var uistateEnum: UIStateEnum? by mutableStateOf(null)
-    private var searchJob: Job? = null
 
     fun onBuscarLibroEvent(event: BuscarLibroEvent) {
         when (event) {
             is BuscarLibroEvent.OnClickBuscar -> {
-                searchJob?.cancel()
-                searchJob = viewModelScope.launch {
+                viewModelScope.launch {
                     try {
                         uistateEnum = UIStateEnum.CARGANDO
                         libros = buscarLibroRepository.getLibros(
-                            buscar, 
-                            selectedExtensions.toList(), 
+                            buscar,
+                            selectedExtensions.toList(),
                             selectedLanguage
                         )
-                        uistateEnum = if (libros.isEmpty()) UIStateEnum.ERROR else UIStateEnum.CARGADO
+                        uistateEnum =
+                            if (libros.isEmpty()) UIStateEnum.ERROR else UIStateEnum.CARGADO
                     } catch (e: Exception) {
                         e.printStackTrace()
                         uistateEnum = UIStateEnum.ERROR
@@ -48,7 +46,7 @@ class BuscarLibroViewModel @Inject constructor(
 
             is BuscarLibroEvent.OnClickLibro -> event.onNavigateLibro()
             is BuscarLibroEvent.OnBuscarChange -> buscar = event.nombre
-            
+
             is BuscarLibroEvent.OnToggleExtension -> {
                 if (selectedExtensions.contains(event.ext)) {
                     selectedExtensions.remove(event.ext)
@@ -56,7 +54,7 @@ class BuscarLibroViewModel @Inject constructor(
                     selectedExtensions.add(event.ext)
                 }
             }
-            
+
             is BuscarLibroEvent.OnIdiomaChange -> {
                 selectedLanguage = event.idioma
             }

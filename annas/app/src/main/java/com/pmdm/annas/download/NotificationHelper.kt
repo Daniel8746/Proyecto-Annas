@@ -1,4 +1,4 @@
-package com.pmdm.annas.utils
+package com.pmdm.annas.download
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,13 +6,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import androidx.core.app.NotificationCompat
 
 class NotificationHelper(private val context: Context) {
     private val channelId = "downloads_channel"
     private val notificationId = 1001
-    private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     init {
         createNotificationChannel()
@@ -35,7 +35,10 @@ class NotificationHelper(private val context: Context) {
             action = "CANCEL_DOWNLOAD"
         }
         val cancelPendingIntent = PendingIntent.getBroadcast(
-            context, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            context,
+            0,
+            cancelIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val notification = NotificationCompat.Builder(context, channelId)
@@ -45,7 +48,11 @@ class NotificationHelper(private val context: Context) {
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(true)
             .setProgress(100, progress, false)
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Cancelar", cancelPendingIntent)
+            .addAction(
+                android.R.drawable.ic_menu_close_clear_cancel,
+                "Cancelar",
+                cancelPendingIntent
+            )
             .build()
 
         notificationManager.notify(notificationId, notification)
@@ -56,7 +63,7 @@ class NotificationHelper(private val context: Context) {
             setDataAndType(fileUri, "application/octet-stream")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
-        
+
         val pendingIntent = PendingIntent.getActivity(
             context, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -86,7 +93,7 @@ class NotificationHelper(private val context: Context) {
 
         notificationManager.notify(notificationId, notification)
     }
-    
+
     fun cancelNotification() {
         notificationManager.cancel(notificationId)
     }

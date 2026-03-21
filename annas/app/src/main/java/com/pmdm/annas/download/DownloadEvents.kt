@@ -1,4 +1,4 @@
-package com.pmdm.annas.utils
+package com.pmdm.annas.download
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

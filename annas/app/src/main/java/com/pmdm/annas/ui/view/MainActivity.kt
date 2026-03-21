@@ -31,10 +31,13 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     val permissions = mutableListOf<String>()
+                    
+                    // Permiso para notificaciones (Android 13+)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         permissions.add(Manifest.permission.POST_NOTIFICATIONS)
                     }
                     
+                    // Filtrar solo los que no han sido concedidos aún
                     val toRequest = permissions.filter {
                         ContextCompat.checkSelfPermission(this@MainActivity, it) != PackageManager.PERMISSION_GRANTED
                     }

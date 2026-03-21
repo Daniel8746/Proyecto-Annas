@@ -30,7 +30,7 @@
         </activity>
 
         <receiver
-            android:name=".utils.NotificationCancelReceiver"
+            android:name=".download.NotificationCancelReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="CANCEL_DOWNLOAD" />
