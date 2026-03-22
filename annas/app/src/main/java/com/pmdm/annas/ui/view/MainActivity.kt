@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             AnnasTheme {
                 val permissionLauncher = rememberLauncherForActivityResult(
@@ -31,17 +32,15 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     val permissions = mutableListOf<String>()
-                    
-                    // Permiso para notificaciones (Android 13+)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         permissions.add(Manifest.permission.POST_NOTIFICATIONS)
                     }
-                    
-                    // Filtrar solo los que no han sido concedidos aún
                     val toRequest = permissions.filter {
-                        ContextCompat.checkSelfPermission(this@MainActivity, it) != PackageManager.PERMISSION_GRANTED
+                        ContextCompat.checkSelfPermission(
+                            this@MainActivity,
+                            it
+                        ) != PackageManager.PERMISSION_GRANTED
                     }
-                    
                     if (toRequest.isNotEmpty()) {
                         permissionLauncher.launch(toRequest.toTypedArray())
                     }

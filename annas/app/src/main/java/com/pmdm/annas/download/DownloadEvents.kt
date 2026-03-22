@@ -4,7 +4,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 object DownloadEvents {
-    private val _cancelFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    // Aumentamos extraBufferCapacity para asegurar que el evento de cancelación se capture siempre
+    private val _cancelFlow = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 5)
     val cancelFlow = _cancelFlow.asSharedFlow()
 
     fun cancelDownload() {

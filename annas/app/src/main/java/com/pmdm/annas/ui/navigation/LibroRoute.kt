@@ -42,7 +42,8 @@ fun NavGraphBuilder.libroDestination(
             },
             onNavigateBack = onNavigateBack,
             sharedTransitionScope = sharedTransitionScope,
-            animatedVisibilityScope = this
+            animatedVisibilityScope = this,
+            okHttpClient = vm.okHttpClient
         )
     }
 }

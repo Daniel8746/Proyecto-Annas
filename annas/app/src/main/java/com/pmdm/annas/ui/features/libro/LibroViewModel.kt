@@ -10,40 +10,43 @@ import com.pmdm.annas.ui.features.UIStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 @HiltViewModel
 class LibroViewModel @Inject constructor(
-    private val libroRepository: LibroRepository
+    private val libroRepository: LibroRepository,
+    val okHttpClient: OkHttpClient
 ) : ViewModel() {
-    var enlacesServidor: List<String> by mutableStateOf(emptyList())
+    var enlacesServidor by mutableStateOf<List<String>>(emptyList())
+        private set
     var descripcion by mutableStateOf("")
-    var uiStateEnum: UIStateEnum? by mutableStateOf(null)
-    
+        private set
+    var uiStateEnum by mutableStateOf<UIStateEnum?>(null)
+        private set
+
     private var loadingJob: Job? = null
     private var lastEnlace: String? = null
 
     fun onLibroEvent(event: LibroEvent) {
         when (event) {
             is LibroEvent.ObtenerLinksServidor -> {
-                // Evitar recargar si es el mismo enlace y ya está cargado o cargando
                 if (event.enlace == lastEnlace && (uiStateEnum == UIStateEnum.CARGANDO || uiStateEnum == UIStateEnum.CARGADO)) {
                     return
                 }
-                
+
                 lastEnlace = event.enlace
                 loadingJob?.cancel()
-                
+
                 loadingJob = viewModelScope.launch {
                     try {
                         uiStateEnum = UIStateEnum.CARGANDO
                         val result = libroRepository.getLinksServidor(event.enlace)
-                        
+
                         descripcion = result.first
                         enlacesServidor = result.second
                         uiStateEnum = UIStateEnum.CARGADO
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    } catch (_: Exception) {
                         uiStateEnum = UIStateEnum.ERROR
                     }
                 }

@@ -110,10 +110,12 @@ class Scraper @Inject constructor(
                     .plus(slowHeader?.nextElementSiblings()?.select("ul.list-inside").orEmpty())
                     .firstOrNull()
 
-                ulLista?.select("li a")?.forEach {
-                    val text = it.text().lowercase()
-                    if (text.contains("partner server")) {
-                        val href = it.attr("href")
+                ulLista?.select("li")?.forEach { li ->
+                    val text = li.text().lowercase()
+                    // Filtramos solo los servidores que no tienen lista de espera (no waitlist)
+                    if (text.contains("partner server") && text.contains("no waitlist")) {
+                        val aTag = li.selectFirst("a")
+                        val href = aTag?.attr("href") ?: ""
                         if (href.isNotEmpty()) {
                             val fullUrl = if (href.startsWith("/")) "$activeBaseUrl$href" else href
                             if (!enlaceDescarga.contains(fullUrl)) {

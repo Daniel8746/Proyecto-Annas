@@ -10,6 +10,7 @@ import com.pmdm.annas.data.repositorys.BuscarLibroRepository
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.UIStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,29 +18,37 @@ import javax.inject.Inject
 class BuscarLibroViewModel @Inject constructor(
     private val buscarLibroRepository: BuscarLibroRepository
 ) : ViewModel() {
-    var libros: List<Libro> by mutableStateOf(emptyList())
+    var libros by mutableStateOf<List<Libro>>(emptyList())
+        private set
     var buscar by mutableStateOf("")
-    var selectedExtensions = mutableStateListOf<String>()
+        private set
+    val selectedExtensions = mutableStateListOf<String>()
     var selectedLanguage: String? by mutableStateOf(null)
+        private set
 
-    var uistateEnum: UIStateEnum? by mutableStateOf(null)
+    var uiStateEnum by mutableStateOf<UIStateEnum?>(null)
+        private set
+
+    private var searchJob: Job? = null
 
     fun onBuscarLibroEvent(event: BuscarLibroEvent) {
         when (event) {
             is BuscarLibroEvent.OnClickBuscar -> {
-                viewModelScope.launch {
+                if (buscar.isBlank()) return
+
+                searchJob?.cancel()
+                searchJob = viewModelScope.launch {
                     try {
-                        uistateEnum = UIStateEnum.CARGANDO
+                        uiStateEnum = UIStateEnum.CARGANDO
                         libros = buscarLibroRepository.getLibros(
                             buscar,
                             selectedExtensions.toList(),
                             selectedLanguage
                         )
-                        uistateEnum =
+                        uiStateEnum =
                             if (libros.isEmpty()) UIStateEnum.ERROR else UIStateEnum.CARGADO
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        uistateEnum = UIStateEnum.ERROR
+                    } catch (_: Exception) {
+                        uiStateEnum = UIStateEnum.ERROR
                     }
                 }
             }
@@ -48,16 +57,12 @@ class BuscarLibroViewModel @Inject constructor(
             is BuscarLibroEvent.OnBuscarChange -> buscar = event.nombre
 
             is BuscarLibroEvent.OnToggleExtension -> {
-                if (selectedExtensions.contains(event.ext)) {
-                    selectedExtensions.remove(event.ext)
-                } else {
+                if (!selectedExtensions.remove(event.ext)) {
                     selectedExtensions.add(event.ext)
                 }
             }
 
-            is BuscarLibroEvent.OnIdiomaChange -> {
-                selectedLanguage = event.idioma
-            }
+            is BuscarLibroEvent.OnIdiomaChange -> selectedLanguage = event.idioma
         }
     }
 }

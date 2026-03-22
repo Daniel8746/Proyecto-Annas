@@ -1,6 +1,7 @@
 package com.pmdm.annas.ui.features.libro
 
 import android.webkit.URLUtil
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -18,6 +19,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,11 +31,14 @@ import androidx.compose.ui.unit.dp
 import com.pmdm.annas.download.DownloadWebView
 import com.pmdm.annas.download.NotificationHelper
 import com.pmdm.annas.download.downloadFileWithNotification
+import com.pmdm.annas.download.getMime
+import com.pmdm.annas.download.getMimeFromExtension
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.UIStateEnum
 import com.pmdm.annas.ui.features.components.ErrorScreen
 import com.pmdm.annas.ui.features.components.PantallaCarga
 import com.pmdm.annas.ui.features.libro.components.MostrarLibro
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 
@@ -47,7 +52,8 @@ fun LibroScreen(
     onReintentar: () -> Unit,
     onNavigateBack: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    okHttpClient: OkHttpClient
 ) {
     var showWebView by remember { mutableStateOf(false) }
     var currentDownloadUrl by remember { mutableStateOf("") }
@@ -55,90 +61,110 @@ fun LibroScreen(
     var currentContentDisposition by remember { mutableStateOf("") }
     var currentMimeType by remember { mutableStateOf("application/octet-stream") }
     var currentFileName by remember { mutableStateOf("") }
+    var currentLength by remember { mutableLongStateOf(0L) }
+    var currentReferer by remember { mutableStateOf<String?>(null) }
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
     val notificationHelper = remember { NotificationHelper(context) }
-    val okHttpClient = remember { OkHttpClient() }
 
     val createFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument(currentMimeType)
+        contract = ActivityResultContracts.CreateDocument("*/*")
     ) { uri ->
         uri?.let {
-            onNavigateBack()
             scope.launch {
                 downloadFileWithNotification(
                     context = context,
                     client = okHttpClient,
                     url = currentDownloadUrl,
-                    userAgent = currentUserAgent,
-                    contentDisposition = currentContentDisposition,
-                    mimetype = currentMimeType,
-                    destinationUri = it,
+                    ua = currentUserAgent,
+                    cd = currentContentDisposition,
+                    mime = currentMimeType,
+                    dest = it,
                     fileName = currentFileName,
-                    notificationHelper = notificationHelper
+                    helper = notificationHelper,
+                    len = currentLength,
+                    ref = currentReferer
                 )
             }
+            onNavigateBack()
+        }
+    }
+
+    PredictiveBackHandler(enabled = showWebView) { progress ->
+        try {
+            progress.collect { }
+            showWebView = false
+        } catch (_: CancellationException) {
         }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (uiStateEnum) {
             UIStateEnum.CARGANDO -> PantallaCarga()
-
             UIStateEnum.CARGADO -> MostrarLibro(
-                portada = libro.portada,
-                titulo = libro.titulo,
-                autor = libro.autor,
-                descripcion = descripcion,
-                enlacesServidor = enlacesServidor,
-                idioma = libro.idioma,
-                formato = libro.formato,
-                tamano = libro.tamano,
+                portada = libro.portada, titulo = libro.titulo, autor = libro.autor,
+                descripcion = descripcion, enlacesServidor = enlacesServidor,
+                idioma = libro.idioma, formato = libro.formato, tamano = libro.tamano,
                 onDownloadClick = { url ->
+                    // Siempre pasar por WebView para asegurar cookies
                     currentDownloadUrl = url
                     showWebView = true
                 },
-                enlaceKey = libro.enlace,
-                sharedTransitionScope = sharedTransitionScope,
+                enlaceKey = libro.enlace, sharedTransitionScope = sharedTransitionScope,
                 animatedVisibilityScope = animatedVisibilityScope
             )
 
-            else -> ErrorScreen(
-                mensaje = "Error al abrir el libro",
-                onReintentar = onReintentar
-            )
+            else -> ErrorScreen(mensaje = "Error al abrir el libro", onReintentar = onReintentar)
         }
 
         if (showWebView) {
             ModalBottomSheet(
                 onDismissRequest = { showWebView = false },
-                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-                modifier = Modifier.fillMaxSize()
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     DownloadWebView(
                         url = currentDownloadUrl,
-                        onDownloadStart = { url, userAgent, contentDisposition, mimetype, _ ->
-                            currentDownloadUrl = url
-                            currentUserAgent = userAgent
-                            currentContentDisposition = contentDisposition
-                            currentMimeType = mimetype.ifBlank { "application/octet-stream" }
-                            currentFileName =
-                                URLUtil.guessFileName(url, contentDisposition, mimetype)
+                        onDownloadStart = { url, ua, cd, mime, len, ref ->
+                            scope.launch {
+                                currentDownloadUrl = url
+                                currentUserAgent = ua
+                                currentContentDisposition = cd
+                                currentReferer = ref
+                                currentLength = len
 
-                            showWebView = false
-                            createFileLauncher.launch(currentFileName)
+                                val suggestedMime =
+                                    if (mime.isBlank() || mime == "application/octet-stream") {
+                                        getMime(url).let {
+                                            if (it == "application/octet-stream") getMimeFromExtension(
+                                                libro.formato
+                                            ) else it
+                                        }
+                                    } else mime
+
+                                currentMimeType = suggestedMime
+                                var fileName = URLUtil.guessFileName(url, cd, suggestedMime)
+
+                                if (fileName.endsWith(".bin")) {
+                                    val ext = libro.formato.lowercase().trim()
+                                        .let { if (it.startsWith(".")) it else ".$it" }
+                                    fileName = fileName.substringBeforeLast(".") + ext
+                                }
+
+                                currentFileName = fileName
+                                showWebView = false
+                                createFileLauncher.launch(currentFileName)
+                            }
                         }
                     )
-
                     IconButton(
                         onClick = { showWebView = false },
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(8.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Cerrar")
+                        Icon(Icons.Default.Close, "Cerrar")
                     }
                 }
             }

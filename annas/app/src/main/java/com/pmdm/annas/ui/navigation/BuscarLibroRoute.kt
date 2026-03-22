@@ -22,7 +22,7 @@ fun NavGraphBuilder.buscarLibroDestination(
         val vm: BuscarLibroViewModel = hiltViewModel()
         BuscarLibroScreen(
             buscarNombre = vm.buscar,
-            uiState = vm.uistateEnum,
+            uiState = vm.uiStateEnum,
             libros = vm.libros,
             selectedExtensions = vm.selectedExtensions,
             selectedLanguage = vm.selectedLanguage,
