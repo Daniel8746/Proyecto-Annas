@@ -13,6 +13,7 @@ class BuscarLibroRepository @Inject constructor(
         idioma: String? = null,
         pagina: Int = 1
     ): List<Libro> {
+        // Ahora pasamos el parámetro 'pagina' de forma modular
         return scraper.buscarLibro(nombre, extensiones, idioma, pagina)
     }
 }

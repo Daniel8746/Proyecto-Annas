@@ -54,18 +54,19 @@ class Scraper @Inject constructor(
     suspend fun buscarLibro(
         nombreLibro: String,
         extensiones: List<String> = emptyList(),
-        idioma: String? = null
+        idioma: String? = null,
+        pagina: Int = 1
     ): List<Libro> = withContext(Dispatchers.IO) {
         val query = nombreLibro.trim()
         if (query.isEmpty()) return@withContext emptyList()
 
-        val cacheKey = "$query-${extensiones.sorted().joinToString(",")}-$idioma"
+        val cacheKey = "$query-${extensiones.sorted().joinToString(",")}-$idioma-$pagina"
         searchCache.get(cacheKey)?.let { return@withContext it }
 
         val cssSelector = "div.flex.pt-3.pb-3.border-b"
 
         try {
-            var url = "$activeBaseUrl/search?q=${UriEncoder.encode(query)}"
+            var url = "$activeBaseUrl/search?q=${UriEncoder.encode(query)}&page=$pagina"
             extensiones.forEach { ext -> url += "&ext=$ext" }
             if (!idioma.isNullOrEmpty()) {
                 url += "&lang=$idioma"
@@ -103,8 +104,9 @@ class Scraper @Inject constructor(
                     .firstOrNull()?.text()?.trim() ?: "Sin descripción"
 
                 // Buscamos la sección de "Slow downloads" de forma más robusta
-                val slowHeader = doc.select("h3").find { it.text().contains("Slow downloads", ignoreCase = true) }
-                
+                val slowHeader = doc.select("h3")
+                    .find { it.text().contains("Slow downloads", ignoreCase = true) }
+
                 // Buscamos la lista UL que contenga los "Partner Server"
                 val ulLista = slowHeader?.parent()?.select("ul.list-inside").orEmpty()
                     .plus(slowHeader?.nextElementSiblings()?.select("ul.list-inside").orEmpty())

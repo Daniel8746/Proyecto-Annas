@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -55,7 +57,9 @@ fun Buscador(
     selectedExtensions: List<String>,
     onToggleExtension: (String) -> Unit,
     selectedLanguage: String?,
-    onIdiomaChange: (String?) -> Unit
+    onIdiomaChange: (String?) -> Unit,
+    pagina: Int,
+    onPaginaChange: (Int) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     var showFilters by remember { mutableStateOf(false) }
@@ -87,7 +91,7 @@ fun Buscador(
                         Icon(
                             imageVector = Icons.Default.FilterList,
                             contentDescription = "Filtros",
-                            tint = if (selectedExtensions.isNotEmpty() || selectedLanguage != null)
+                            tint = if (selectedExtensions.isNotEmpty() || selectedLanguage != null || pagina > 1)
                                 MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -146,38 +150,82 @@ fun Buscador(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Idioma",
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                    fontWeight = FontWeight.Bold
-                )
                 Row(
                     modifier = Modifier
-                        .horizontalScroll(rememberScrollState())
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val languages = mapOf(
-                        null to "Todos",
-                        "es" to "Español",
-                        "en" to "Inglés",
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Idioma",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Row(
+                            modifier = Modifier
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            val languages = mapOf(
+                                null to "Todos",
+                                "es" to "Español",
+                                "en" to "Inglés",
+                            )
 
-                    languages.forEach { (code, name) ->
-                        FilterChip(
-                            selected = selectedLanguage == code,
-                            onClick = { onIdiomaChange(code) },
-                            label = { Text(name) },
-                            leadingIcon = if (selectedLanguage == code) {
-                                {
-                                    Icon(
-                                        Icons.Default.Language,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
+                            languages.forEach { (code, name) ->
+                                FilterChip(
+                                    selected = selectedLanguage == code,
+                                    onClick = { onIdiomaChange(code) },
+                                    label = { Text(name) },
+                                    leadingIcon = if (selectedLanguage == code) {
+                                        {
+                                            Icon(
+                                                Icons.Default.Language,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    } else null
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = "Página",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        OutlinedTextField(
+                            value = pagina.toString(),
+                            onValueChange = {onPaginaChange(pagina)},
+                            modifier = Modifier.width(80.dp),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    if (pagina < 1) {
+                                        onPaginaChange(1)
+                                    }
+                                    focusManager.clearFocus()
                                 }
-                            } else null
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            textStyle = MaterialTheme.typography.bodyMedium,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                            )
                         )
                     }
                 }

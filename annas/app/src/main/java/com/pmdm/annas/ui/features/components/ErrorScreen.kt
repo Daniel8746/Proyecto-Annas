@@ -61,7 +61,7 @@ fun ErrorScreen(
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
-            enableMergePaths = true,
+            // Quitamos enableMergePaths ya que suele causar problemas de color/renderizado en Android
             modifier = Modifier
                 .size(240.dp)
                 .graphicsLayer(rotationZ = rotation),

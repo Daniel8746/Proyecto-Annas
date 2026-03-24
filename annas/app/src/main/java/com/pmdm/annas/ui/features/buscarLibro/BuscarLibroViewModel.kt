@@ -1,6 +1,7 @@
 package com.pmdm.annas.ui.features.buscarLibro
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -25,6 +26,8 @@ class BuscarLibroViewModel @Inject constructor(
     val selectedExtensions = mutableStateListOf<String>()
     var selectedLanguage: String? by mutableStateOf(null)
         private set
+    var pagina by mutableIntStateOf(1)
+        private set
 
     var uiStateEnum by mutableStateOf<UIStateEnum?>(null)
         private set
@@ -43,7 +46,8 @@ class BuscarLibroViewModel @Inject constructor(
                         libros = buscarLibroRepository.getLibros(
                             buscar,
                             selectedExtensions.toList(),
-                            selectedLanguage
+                            selectedLanguage,
+                            pagina
                         )
                         uiStateEnum =
                             if (libros.isEmpty()) UIStateEnum.ERROR else UIStateEnum.CARGADO
@@ -63,6 +67,9 @@ class BuscarLibroViewModel @Inject constructor(
             }
 
             is BuscarLibroEvent.OnIdiomaChange -> selectedLanguage = event.idioma
+            is BuscarLibroEvent.OnPaginaChange -> {
+                pagina = event.pagina
+            }
         }
     }
 }

@@ -3,23 +3,24 @@ package com.pmdm.annas.download
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.io.IOException
 import java.util.concurrent.CancellationException
 
 const val DESKTOP_UA =
@@ -109,7 +110,7 @@ fun DownloadWebView(
             }
             loadUrl(url)
         }
-    }, modifier = Modifier.fillMaxSize())
+    })
 }
 
 fun guessCD(url: String): String {
@@ -126,18 +127,6 @@ fun getMime(url: String) = when {
     url.contains(".azw3", ignoreCase = true) -> "application/x-mobipocket-ebook"
     url.contains(".zip", ignoreCase = true) -> "application/zip"
     else -> "application/octet-stream"
-}
-
-fun getMimeFromExtension(ext: String): String {
-    val e = ext.lowercase().trim().removePrefix(".")
-    return when (e) {
-        "pdf" -> "application/pdf"
-        "epub" -> "application/epub+zip"
-        "mobi" -> "application/x-mobipocket-ebook"
-        "azw3" -> "application/x-mobipocket-ebook"
-        "zip" -> "application/zip"
-        else -> "application/octet-stream"
-    }
 }
 
 fun isDirect(url: String): Boolean {
@@ -162,56 +151,85 @@ suspend fun downloadFileWithNotification(
         } catch (_: Exception) {
         }
     }
-    try {
-        withContext(Dispatchers.IO) {
-            helper.showProgressNotification(fileName, 0)
-            val cookies = CookieManager.getInstance().getCookie(url)
-            val req = Request.Builder()
-                .url(url)
-                .header("User-Agent", ua)
-                .header("Accept", mime ?: "*/*")
-                .apply {
-                    cd?.let { if (it.isNotBlank()) header("Content-Disposition", it) }
-                    ref?.let { header("Referer", it) }
-                    cookies?.let { header("Cookie", it) }
-                }.build()
 
-            client.newCall(req).execute().use { resp ->
-                if (!resp.isSuccessful) {
-                    helper.showErrorNotification(fileName)
-                    return@withContext
-                }
-                val body = resp.body
-                val total = if (body.contentLength() > 0) body.contentLength() else len
-                if (total <= 0) helper.showProgressNotification(fileName, -1)
-                context.contentResolver.openOutputStream(dest)?.use { out ->
-                    val buffer = ByteArray(64 * 1024)
-                    var bytes: Int
+    var attempt = 0
+    val maxAttempts = 3
+    var success = false
+
+    while (attempt < maxAttempts && !success && isActive) {
+        attempt++
+        try {
+            withContext(Dispatchers.IO) {
+                helper.showProgressNotification(
+                    if (attempt > 1) "($attempt/$maxAttempts) $fileName" else fileName,
+                    0
+                )
+                val cookies = CookieManager.getInstance().getCookie(url)
+                val req = Request.Builder()
+                    .url(url)
+                    .header("User-Agent", ua)
+                    .header("Accept", mime ?: "*/*")
+                    .apply {
+                        cd?.let { if (it.isNotBlank()) header("Content-Disposition", it) }
+                        ref?.let { header("Referer", it) }
+                        cookies?.let { header("Cookie", it) }
+                    }.build()
+
+                client.newCall(req).execute().use { resp ->
+                    if (!resp.isSuccessful) throw IOException("Unexpected code $resp")
+
+                    val body = resp.body
+                    val total = if (body.contentLength() > 0) body.contentLength() else len
+                    if (total <= 0) helper.showProgressNotification(fileName, -1)
+
                     var current = 0L
-                    var lastUpdate = 0L
-                    body.byteStream().use { input ->
-                        while (input.read(buffer).also { bytes = it } != -1) {
-                            if (!isActive) throw CancellationException()
-                            out.write(buffer, 0, bytes)
-                            current += bytes
-                            val now = System.currentTimeMillis()
-                            if (total > 0 && now - lastUpdate > 800) {
-                                helper.showProgressNotification(
-                                    fileName,
-                                    ((current * 100) / total).toInt()
-                                )
-                                lastUpdate = now
+                    context.contentResolver.openOutputStream(dest)?.use { out ->
+                        val buffer = ByteArray(64 * 1024)
+                        var bytes: Int
+                        var lastUpdate = 0L
+                        body.byteStream().use { input ->
+                            while (input.read(buffer).also { bytes = it } != -1) {
+                                if (!isActive) throw CancellationException()
+                                out.write(buffer, 0, bytes)
+                                current += bytes
+                                val now = System.currentTimeMillis()
+                                if (total > 0 && now - lastUpdate > 800) {
+                                    helper.showProgressNotification(
+                                        if (attempt > 1) "($attempt/$maxAttempts) $fileName" else fileName,
+                                        ((current * 100) / total).toInt()
+                                    )
+                                    lastUpdate = now
+                                }
                             }
                         }
                     }
+
+                    if (total > 0 && current < total) {
+                        throw IOException("Incomplete download: received $current of $total bytes")
+                    }
+
+                    success = true
+                    helper.showCompletedNotification(fileName, dest)
                 }
-                helper.showCompletedNotification(fileName, dest)
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) {
+                helper.cancelNotification()
+                break
+            }
+
+            // Borrar el archivo parcial antes del reintento
+            try {
+                DocumentsContract.deleteDocument(context.contentResolver, dest)
+            } catch (_: Exception) {
+            }
+
+            if (attempt < maxAttempts) {
+                delay(2000) // Esperar 2 segundos antes de reintentar
+            } else {
+                helper.showErrorNotification(fileName)
             }
         }
-    } catch (e: Exception) {
-        if (e is CancellationException) helper.cancelNotification()
-        else helper.showErrorNotification(fileName)
-    } finally {
-        cJob.cancel()
     }
+    cJob.cancel()
 }

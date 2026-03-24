@@ -10,18 +10,22 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -54,13 +58,25 @@ fun MostrarLibros(
     libros: List<Libro>,
     onLibroClick: (Libro) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    listState: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
+        state = listState,
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(bottom = 16.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Espaciador para que el primer elemento no quede debajo del buscador flotante
+        item {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .height(76.dp) // Altura aproximada del buscador (56 campo + 16/2 paddings)
+            )
+        }
+
         itemsIndexed(libros, key = { _, libro -> libro.enlace }) { index, libro ->
             AnimatedLibroItem(
                 libro = libro,
@@ -106,7 +122,7 @@ fun AnimatedLibroItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun LibroItem(
     libro: Libro,
@@ -129,12 +145,13 @@ fun LibroItem(
             Row(
                 modifier = Modifier
                     .padding(12.dp)
-                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Top // Alineamos al principio para que crezca bien
             ) {
                 Surface(
                     modifier = Modifier
                         .width(90.dp)
-                        .fillMaxHeight()
+                        .aspectRatio(2f / 3f) // Relación de aspecto de portada estándar
                         .clip(RoundedCornerShape(12.dp))
                         .sharedElement(
                             rememberSharedContentState(key = "image-${libro.enlace}"),
@@ -142,7 +159,6 @@ fun LibroItem(
                         ),
                     tonalElevation = 2.dp
                 ) {
-                    // Gestión robusta de la imagen: si está vacía o falla, se pone el pato mareado
                     AsyncImage(
                         model = libro.portada.ifBlank { R.drawable.pato_no_funciona },
                         contentDescription = "Portada de ${libro.titulo}",
@@ -159,8 +175,7 @@ fun LibroItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .padding(vertical = 4.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
+                        .padding(vertical = 4.dp)
                 ) {
                     Column {
                         Text(
@@ -189,10 +204,11 @@ fun LibroItem(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    Row(
+                    // Usamos FlowRow para que los badges bajen de línea si no caben
+                    FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         InfoBadge(
                             text = libro.idioma,

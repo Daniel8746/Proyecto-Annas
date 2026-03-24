@@ -5,6 +5,8 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -47,7 +49,7 @@ import com.webtoonscorp.android.readmore.foundation.ReadMoreTextOverflow
 import com.webtoonscorp.android.readmore.foundation.ToggleArea
 import com.webtoonscorp.android.readmore.material3.ReadMoreText
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun MostrarLibro(
     portada: String,
@@ -86,7 +88,7 @@ fun MostrarLibro(
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top // Cambiado a Top para soportar múltiples líneas de badges
                 ) {
                     AsyncImage(
                         model = portada.ifBlank { R.drawable.pato_no_funciona },
@@ -106,7 +108,7 @@ fun MostrarLibro(
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    Column {
+                    Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = titulo,
                             style = MaterialTheme.typography.titleLarge,
@@ -124,9 +126,13 @@ fun MostrarLibro(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        // Cambiado a FlowRow para manejar textos largos (como el tamaño en EPUBs)
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                             InfoBadge(
                                 text = idioma,
                                 color = MaterialTheme.colorScheme.primaryContainer
@@ -137,7 +143,7 @@ fun MostrarLibro(
                             )
                             InfoBadge(
                                 text = tamano,
-                                color = MaterialTheme.colorScheme.secondaryContainer
+                                color = MaterialTheme.colorScheme.tertiaryContainer
                             )
                         }
                     }

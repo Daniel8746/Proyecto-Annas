@@ -1,6 +1,7 @@
 package com.pmdm.annas.ui.features.libro
 
 import android.webkit.URLUtil
+import androidx.activity.BackEventCompat
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,6 +11,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +21,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,13 +30,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.pmdm.annas.download.DownloadWebView
 import com.pmdm.annas.download.NotificationHelper
 import com.pmdm.annas.download.downloadFileWithNotification
 import com.pmdm.annas.download.getMime
-import com.pmdm.annas.download.getMimeFromExtension
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.UIStateEnum
 import com.pmdm.annas.ui.features.components.ErrorScreen
@@ -64,6 +68,10 @@ fun LibroScreen(
     var currentLength by remember { mutableLongStateOf(0L) }
     var currentReferer by remember { mutableStateOf<String?>(null) }
 
+    // Estado para la animación predictiva
+    var predictiveBackProgress by remember { mutableFloatStateOf(0f) }
+    var swipeEdge by remember { mutableIntStateOf(BackEventCompat.EDGE_LEFT) }
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val notificationHelper = remember { NotificationHelper(context) }
@@ -87,19 +95,45 @@ fun LibroScreen(
                     ref = currentReferer
                 )
             }
-            onNavigateBack()
         }
     }
 
-    PredictiveBackHandler(enabled = showWebView) { progress ->
+    // Manejador del gesto lateral con animación completa
+    PredictiveBackHandler(enabled = !showWebView) { progress ->
         try {
-            progress.collect { }
-            showWebView = false
+            progress.collect { event ->
+                predictiveBackProgress = event.progress
+                swipeEdge = event.swipeEdge
+            }
+            onNavigateBack()
         } catch (_: CancellationException) {
+            predictiveBackProgress = 0f
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                // 1. Escala: Se encoge ligeramente (hasta un 10%)
+                val scale = 1f - (predictiveBackProgress * 0.1f)
+                scaleX = scale
+                scaleY = scale
+                
+                // 2. Traslación: Se mueve lateralmente siguiendo el dedo (efecto pull)
+                val maxTranslation = 30.dp.toPx()
+                translationX = if (swipeEdge == BackEventCompat.EDGE_LEFT) {
+                    predictiveBackProgress * maxTranslation
+                } else {
+                    -predictiveBackProgress * maxTranslation
+                }
+                
+                // 3. Opacidad y Esquinas
+                alpha = 1f - (predictiveBackProgress * 0.2f)
+                shape = RoundedCornerShape((predictiveBackProgress * 28).dp)
+                clip = predictiveBackProgress > 0
+            }
+    ) {
         when (uiStateEnum) {
             UIStateEnum.CARGANDO -> PantallaCarga()
             UIStateEnum.CARGADO -> MostrarLibro(
@@ -107,7 +141,6 @@ fun LibroScreen(
                 descripcion = descripcion, enlacesServidor = enlacesServidor,
                 idioma = libro.idioma, formato = libro.formato, tamano = libro.tamano,
                 onDownloadClick = { url ->
-                    // Siempre pasar por WebView para asegurar cookies
                     currentDownloadUrl = url
                     showWebView = true
                 },
@@ -136,21 +169,11 @@ fun LibroScreen(
 
                                 val suggestedMime =
                                     if (mime.isBlank() || mime == "application/octet-stream") {
-                                        getMime(url).let {
-                                            if (it == "application/octet-stream") getMimeFromExtension(
-                                                libro.formato
-                                            ) else it
-                                        }
+                                        getMime(url)
                                     } else mime
 
                                 currentMimeType = suggestedMime
-                                var fileName = URLUtil.guessFileName(url, cd, suggestedMime)
-
-                                if (fileName.endsWith(".bin")) {
-                                    val ext = libro.formato.lowercase().trim()
-                                        .let { if (it.startsWith(".")) it else ".$it" }
-                                    fileName = fileName.substringBeforeLast(".") + ext
-                                }
+                                val fileName = URLUtil.guessFileName(url, cd, suggestedMime)
 
                                 currentFileName = fileName
                                 showWebView = false

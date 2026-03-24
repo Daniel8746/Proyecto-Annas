@@ -26,6 +26,7 @@ fun NavGraphBuilder.buscarLibroDestination(
             libros = vm.libros,
             selectedExtensions = vm.selectedExtensions,
             selectedLanguage = vm.selectedLanguage,
+            pagina = vm.pagina,
             onBuscarLibroEvent = { vm.onBuscarLibroEvent(it) },
             onLibroClick = onNavigateToLibro,
             sharedTransitionScope = sharedTransitionScope,
