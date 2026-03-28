@@ -20,18 +20,35 @@ class Scraper @Inject constructor(
     private val okHttpClient: OkHttpClient
 ) {
     private var activeBaseUrl: String = ""
-    private val mirrorUrls = listOf(
-        "https://annas-archive.gl",
-        "https://annas-archive.pk",
-        "https://annas-archive.gd"
-    )
+    private val urlMirror: String = "https://shadowlibraries.github.io/DirectDownloads/AnnasArchive/"
+    private val mirrorUrls = mutableListOf<String>()
 
     private val searchCache = LruCache<String, List<Libro>>(20)
     private val detailsCache = LruCache<String, Pair<String, List<String>>>(50)
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
+            findMirrors()
             findBestMirror()
+        }
+    }
+
+    private suspend fun findMirrors() {
+        try {
+            val cssSelector = "ul"
+            val html = webViewScraper.loadUrlAndGetHtml(urlMirror, cssSelector)
+            val doc = Jsoup.parse(html)
+            doc.select("li").forEach { li ->
+                val href = li.selectFirst("a")
+                    ?.attr("href")
+                    ?.substringBefore("/?") ?: ""
+
+                if (href.isNotEmpty()) {
+                    mirrorUrls.add(href)
+                }
+            }
+        } catch (_ : Exception) {
+            findMirrors()
         }
     }
 

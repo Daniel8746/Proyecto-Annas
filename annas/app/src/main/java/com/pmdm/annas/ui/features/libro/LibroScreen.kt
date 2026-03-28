@@ -10,15 +10,8 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -28,15 +21,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.pmdm.annas.download.DownloadWebView
 import com.pmdm.annas.download.NotificationHelper
 import com.pmdm.annas.download.downloadFileWithNotification
 import com.pmdm.annas.download.getMime
+import com.pmdm.annas.download.launchSilentDownload
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.UIStateEnum
 import com.pmdm.annas.ui.features.components.ErrorScreen
@@ -59,7 +51,6 @@ fun LibroScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     okHttpClient: OkHttpClient
 ) {
-    var showWebView by remember { mutableStateOf(false) }
     var currentDownloadUrl by remember { mutableStateOf("") }
     var currentUserAgent by remember { mutableStateOf("") }
     var currentContentDisposition by remember { mutableStateOf("") }
@@ -99,7 +90,7 @@ fun LibroScreen(
     }
 
     // Manejador del gesto lateral con animación completa
-    PredictiveBackHandler(enabled = !showWebView) { progress ->
+    PredictiveBackHandler(true) { progress ->
         try {
             progress.collect { event ->
                 predictiveBackProgress = event.progress
@@ -119,7 +110,7 @@ fun LibroScreen(
                 val scale = 1f - (predictiveBackProgress * 0.1f)
                 scaleX = scale
                 scaleY = scale
-                
+
                 // 2. Traslación: Se mueve lateralmente siguiendo el dedo (efecto pull)
                 val maxTranslation = 30.dp.toPx()
                 translationX = if (swipeEdge == BackEventCompat.EDGE_LEFT) {
@@ -127,7 +118,7 @@ fun LibroScreen(
                 } else {
                     -predictiveBackProgress * maxTranslation
                 }
-                
+
                 // 3. Opacidad y Esquinas
                 alpha = 1f - (predictiveBackProgress * 0.2f)
                 shape = RoundedCornerShape((predictiveBackProgress * 28).dp)
@@ -141,24 +132,9 @@ fun LibroScreen(
                 descripcion = descripcion, enlacesServidor = enlacesServidor,
                 idioma = libro.idioma, formato = libro.formato, tamano = libro.tamano,
                 onDownloadClick = { url ->
-                    currentDownloadUrl = url
-                    showWebView = true
-                },
-                enlaceKey = libro.enlace, sharedTransitionScope = sharedTransitionScope,
-                animatedVisibilityScope = animatedVisibilityScope
-            )
-
-            else -> ErrorScreen(mensaje = "Error al abrir el libro", onReintentar = onReintentar)
-        }
-
-        if (showWebView) {
-            ModalBottomSheet(
-                onDismissRequest = { showWebView = false },
-                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    DownloadWebView(
-                        url = currentDownloadUrl,
+                    launchSilentDownload(
+                        context = context,
+                        url = url,
                         onDownloadStart = { url, ua, cd, mime, len, ref ->
                             scope.launch {
                                 currentDownloadUrl = url
@@ -176,21 +152,16 @@ fun LibroScreen(
                                 val fileName = URLUtil.guessFileName(url, cd, suggestedMime)
 
                                 currentFileName = fileName
-                                showWebView = false
                                 createFileLauncher.launch(currentFileName)
                             }
                         }
                     )
-                    IconButton(
-                        onClick = { showWebView = false },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(8.dp)
-                    ) {
-                        Icon(Icons.Default.Close, "Cerrar")
-                    }
-                }
-            }
+                },
+                enlaceKey = libro.enlace, sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope
+            )
+
+            else -> ErrorScreen(mensaje = "Error al abrir el libro", onReintentar = onReintentar)
         }
     }
 }

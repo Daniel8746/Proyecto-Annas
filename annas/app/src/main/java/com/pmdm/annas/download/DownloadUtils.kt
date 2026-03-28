@@ -9,8 +9,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -27,23 +25,22 @@ const val DESKTOP_UA =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 
 @SuppressLint("SetJavaScriptEnabled")
-@Composable
-fun DownloadWebView(
+fun launchSilentDownload(
+    context: Context,
     url: String,
     onDownloadStart: (String, String, String, String, Long, String?) -> Unit
 ) {
-    AndroidView(factory = { ctx ->
-        WebView(ctx).apply {
-            settings.apply {
-                javaScriptEnabled = true
-                domStorageEnabled = true
-                cacheMode = WebSettings.LOAD_NO_CACHE
-                userAgentString = DESKTOP_UA
-            }
-            clearCache(true)
-            webViewClient = object : WebViewClient() {
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    val js = """
+    WebView(context).apply {
+        settings.apply {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            cacheMode = WebSettings.LOAD_NO_CACHE
+            userAgentString = DESKTOP_UA
+        }
+        clearCache(true)
+        object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                val js = """
                         (function() {
                             function bypassAndExtract() {
                                 // 1. Resetear el timer
@@ -90,27 +87,27 @@ fun DownloadWebView(
                             setTimeout(() => { clearInterval(interval); observer.disconnect(); }, 20000);
                         })();
                     """.trimIndent()
-                    view?.evaluateJavascript(js, null)
-                }
+                view?.evaluateJavascript(js, null)
+            }
 
-                override fun shouldOverrideUrlLoading(
-                    v: WebView?,
-                    r: WebResourceRequest?
-                ): Boolean {
-                    val rUrl = r?.url?.toString() ?: ""
-                    if (isDirect(rUrl)) {
-                        onDownloadStart(rUrl, DESKTOP_UA, guessCD(rUrl), getMime(rUrl), 0, v?.url)
-                        return true
-                    }
-                    return false
+            override fun shouldOverrideUrlLoading(
+                v: WebView?,
+                r: WebResourceRequest?
+            ): Boolean {
+                val rUrl = r?.url?.toString() ?: ""
+                if (isDirect(rUrl)) {
+                    onDownloadStart(rUrl, DESKTOP_UA, guessCD(rUrl), getMime(rUrl), 0, v?.url)
+                    return true
                 }
+                return false
             }
-            setDownloadListener { dUrl, ua, cd, mime, len ->
-                onDownloadStart(dUrl, ua, cd, mime, len, this.url)
-            }
-            loadUrl(url)
         }
-    })
+        setDownloadListener { dUrl, ua, cd, mime, len ->
+            onDownloadStart(dUrl, ua, cd, mime, len, this.url)
+            this.destroy()
+        }
+        loadUrl(url)
+    }
 }
 
 fun guessCD(url: String): String {
