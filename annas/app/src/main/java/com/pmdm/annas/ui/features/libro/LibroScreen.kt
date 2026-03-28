@@ -59,6 +59,9 @@ fun LibroScreen(
     var currentLength by remember { mutableLongStateOf(0L) }
     var currentReferer by remember { mutableStateOf<String?>(null) }
 
+    // Estado para controlar si estamos buscando el enlace de descarga en segundo plano
+    var isSearchingDownload by remember { mutableStateOf(false) }
+
     // Estado para la animación predictiva
     var predictiveBackProgress by remember { mutableFloatStateOf(0f) }
     var swipeEdge by remember { mutableIntStateOf(BackEventCompat.EDGE_LEFT) }
@@ -106,12 +109,10 @@ fun LibroScreen(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer {
-                // 1. Escala: Se encoge ligeramente (hasta un 10%)
                 val scale = 1f - (predictiveBackProgress * 0.1f)
                 scaleX = scale
                 scaleY = scale
 
-                // 2. Traslación: Se mueve lateralmente siguiendo el dedo (efecto pull)
                 val maxTranslation = 30.dp.toPx()
                 translationX = if (swipeEdge == BackEventCompat.EDGE_LEFT) {
                     predictiveBackProgress * maxTranslation
@@ -119,25 +120,25 @@ fun LibroScreen(
                     -predictiveBackProgress * maxTranslation
                 }
 
-                // 3. Opacidad y Esquinas
                 alpha = 1f - (predictiveBackProgress * 0.2f)
                 shape = RoundedCornerShape((predictiveBackProgress * 28).dp)
                 clip = predictiveBackProgress > 0
             }
     ) {
-        when (uiStateEnum) {
-            UIStateEnum.CARGANDO -> PantallaCarga()
-            UIStateEnum.CARGADO -> MostrarLibro(
+        when {
+            uiStateEnum == UIStateEnum.CARGANDO || isSearchingDownload -> PantallaCarga()
+            uiStateEnum == UIStateEnum.CARGADO -> MostrarLibro(
                 portada = libro.portada, titulo = libro.titulo, autor = libro.autor,
                 descripcion = descripcion, enlacesServidor = enlacesServidor,
                 idioma = libro.idioma, formato = libro.formato, tamano = libro.tamano,
                 onDownloadClick = { url ->
+                    isSearchingDownload = true
                     launchSilentDownload(
                         context = context,
                         url = url,
-                        onDownloadStart = { url, ua, cd, mime, len, ref ->
+                        onDownloadStart = { dUrl, ua, cd, mime, len, ref ->
                             scope.launch {
-                                currentDownloadUrl = url
+                                currentDownloadUrl = dUrl
                                 currentUserAgent = ua
                                 currentContentDisposition = cd
                                 currentReferer = ref
@@ -145,13 +146,14 @@ fun LibroScreen(
 
                                 val suggestedMime =
                                     if (mime.isBlank() || mime == "application/octet-stream") {
-                                        getMime(url)
+                                        getMime(dUrl)
                                     } else mime
 
                                 currentMimeType = suggestedMime
-                                val fileName = URLUtil.guessFileName(url, cd, suggestedMime)
+                                val fileName = URLUtil.guessFileName(dUrl, cd, suggestedMime)
 
                                 currentFileName = fileName
+                                isSearchingDownload = false
                                 createFileLauncher.launch(currentFileName)
                             }
                         }
@@ -160,7 +162,6 @@ fun LibroScreen(
                 enlaceKey = libro.enlace, sharedTransitionScope = sharedTransitionScope,
                 animatedVisibilityScope = animatedVisibilityScope
             )
-
             else -> ErrorScreen(mensaje = "Error al abrir el libro", onReintentar = onReintentar)
         }
     }

@@ -30,20 +30,27 @@ fun launchSilentDownload(
     url: String,
     onDownloadStart: (String, String, String, String, Long, String?) -> Unit
 ) {
+    // Es importante que el WebView se cree en el hilo principal
     WebView(context).apply {
         settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
             cacheMode = WebSettings.LOAD_NO_CACHE
             userAgentString = DESKTOP_UA
+            // Permitir redirecciones y popups silenciosos
+            javaScriptCanOpenWindowsAutomatically = true
+            setSupportMultipleWindows(true)
         }
+        
         clearCache(true)
-        object : WebViewClient() {
+        
+        // CORRECCIÓN: Se debe asignar el webViewClient, no solo crear el objeto
+        webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 val js = """
                         (function() {
                             function bypassAndExtract() {
-                                // 1. Resetear el timer
+                                // 1. Resetear el timer si existe
                                 const timerIds = ['wait-timer', 'timer', 'seconds'];
                                 timerIds.forEach(id => {
                                     const el = document.getElementById(id);
@@ -51,7 +58,7 @@ fun launchSilentDownload(
                                 });
                                 if (typeof window.seconds_remaining !== 'undefined') window.seconds_remaining = 0;
 
-                                // 2. Buscar el SPAN con la URL (según la captura tiene clase 'break-all')
+                                // 2. Buscar el SPAN con la URL (según la estructura de Anna's Archive)
                                 const urlSpans = document.querySelectorAll('span.break-all');
                                 for (let span of urlSpans) {
                                     const text = span.innerText.trim();
@@ -81,10 +88,11 @@ fun launchSilentDownload(
                                 return false;
                             }
 
-                            const interval = setInterval(() => { if (bypassAndExtract()) clearInterval(interval); }, 500);
+                            // Ejecutar periódicamente hasta encontrar el enlace o agotar tiempo
+                            const interval = setInterval(() => { if (bypassAndExtract()) clearInterval(interval); }, 1000);
                             const observer = new MutationObserver(() => { if (bypassAndExtract()) { observer.disconnect(); clearInterval(interval); } });
                             observer.observe(document.body, { childList: true, subtree: true });
-                            setTimeout(() => { clearInterval(interval); observer.disconnect(); }, 20000);
+                            setTimeout(() => { clearInterval(interval); observer.disconnect(); }, 30000);
                         })();
                     """.trimIndent()
                 view?.evaluateJavascript(js, null)
@@ -95,17 +103,24 @@ fun launchSilentDownload(
                 r: WebResourceRequest?
             ): Boolean {
                 val rUrl = r?.url?.toString() ?: ""
+                // Si detectamos que es un enlace directo de descarga, lo capturamos
                 if (isDirect(rUrl)) {
                     onDownloadStart(rUrl, DESKTOP_UA, guessCD(rUrl), getMime(rUrl), 0, v?.url)
+                    // No destruimos aquí para dejar que termine el proceso si es necesario, 
+                    // o podemos destruirlo si ya tenemos lo que queremos.
                     return true
                 }
                 return false
             }
         }
+
         setDownloadListener { dUrl, ua, cd, mime, len ->
+            // El DownloadListener es la forma más fiable de capturar la descarga real
             onDownloadStart(dUrl, ua, cd, mime, len, this.url)
-            this.destroy()
+            // Una vez capturado, ya no necesitamos este WebView
+            post { destroy() }
         }
+        
         loadUrl(url)
     }
 }
@@ -128,13 +143,14 @@ fun getMime(url: String) = when {
 
 fun isDirect(url: String): Boolean {
     val low = url.lowercase()
+    // Evitar capturar la página de espera de Anna's Archive como descarga
     if (low.contains("slow_download") && low.contains("annas-archive.org")) return false
 
     return listOf(".pdf", ".epub", ".mobi", ".azw3", ".zip").any {
         low.endsWith(it) || low.contains("$it?")
     } || low.contains("get.php") || low.contains("libgen") || low.contains("/get/") || (low.contains(
         "/download/"
-    ) && !low.contains("annas-archive.org")) || low.contains(":6060") // Puertos comunes de mirrors directos
+    ) && !low.contains("annas-archive.org")) || low.contains(":6060")
 }
 
 suspend fun downloadFileWithNotification(
