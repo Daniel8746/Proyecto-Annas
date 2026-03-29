@@ -5,10 +5,13 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
@@ -47,7 +50,7 @@ fun BuscarLibroScreen(
 ) {
     val listState = rememberLazyListState()
 
-    // Lógica para detectar la dirección del scroll
+    // Lógica optimizada para detectar scroll con inercia (Android 16 Style)
     var previousIndex by remember { mutableIntStateOf(0) }
     var previousScrollOffset by remember { mutableIntStateOf(0) }
 
@@ -73,23 +76,24 @@ fun BuscarLibroScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { _ ->
-        // Usamos un Box para que el buscador flote sobre el contenido
         Box(modifier = Modifier.fillMaxSize()) {
             AnimatedContent(
                 targetState = uiState,
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(400)) togetherWith fadeOut(
-                        animationSpec = tween(400)
-                    )
+                    val springSpec = spring<Float>(stiffness = Spring.StiffnessLow)
+                    (fadeIn(springSpec) + scaleIn(initialScale = 0.98f, animationSpec = springSpec))
+                        .togetherWith(fadeOut(springSpec) + scaleOut(targetScale = 1.02f, animationSpec = springSpec))
                 },
                 label = "UI State Transition",
                 modifier = Modifier.fillMaxSize()
             ) { targetState ->
                 when (targetState) {
-                    UIStateEnum.CARGANDO -> PantallaCarga()
+                    UIStateEnum.CARGANDO -> PantallaCarga(texto = "Buscando en los archivos...")
                     UIStateEnum.CARGADO -> {
                         MostrarLibros(
                             libros = libros,
+                            pagina = pagina,
+                            onPaginaChange = { onBuscarLibroEvent(BuscarLibroEvent.OnPaginaChange(it)) },
                             onLibroClick = onLibroClick,
                             sharedTransitionScope = sharedTransitionScope,
                             animatedVisibilityScope = animatedVisibilityScope,
@@ -108,11 +112,11 @@ fun BuscarLibroScreen(
                 }
             }
 
-            // El buscador ahora flota arriba y no empuja el contenido
+            // El buscador ahora usa transiciones de entrada y salida ultra-suaves
             AnimatedVisibility(
                 visible = showSearchBar,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
+                enter = fadeIn(spring(stiffness = Spring.StiffnessMediumLow)) + expandVertically(),
+                exit = fadeOut(spring(stiffness = Spring.StiffnessMediumLow)) + shrinkVertically()
             ) {
                 Buscador(
                     buscarNombre = buscarNombre,
@@ -121,9 +125,7 @@ fun BuscarLibroScreen(
                     selectedExtensions = selectedExtensions,
                     onToggleExtension = { onBuscarLibroEvent(BuscarLibroEvent.OnToggleExtension(it)) },
                     selectedLanguage = selectedLanguage,
-                    onIdiomaChange = { onBuscarLibroEvent(BuscarLibroEvent.OnIdiomaChange(it)) },
-                    pagina = pagina,
-                    onPaginaChange = { onBuscarLibroEvent(BuscarLibroEvent.OnPaginaChange(it)) }
+                    onIdiomaChange = { onBuscarLibroEvent(BuscarLibroEvent.OnIdiomaChange(it)) }
                 )
             }
         }

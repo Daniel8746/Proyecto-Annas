@@ -1,6 +1,5 @@
 package com.pmdm.annas.ui.features.libro
 
-import android.webkit.URLUtil
 import androidx.activity.BackEventCompat
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -23,7 +23,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.pmdm.annas.download.NotificationHelper
 import com.pmdm.annas.download.downloadFileWithNotification
@@ -34,6 +36,7 @@ import com.pmdm.annas.ui.features.UIStateEnum
 import com.pmdm.annas.ui.features.components.ErrorScreen
 import com.pmdm.annas.ui.features.components.PantallaCarga
 import com.pmdm.annas.ui.features.libro.components.MostrarLibro
+import com.pmdm.annas.uri.UriUtils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -59,7 +62,6 @@ fun LibroScreen(
     var currentLength by remember { mutableLongStateOf(0L) }
     var currentReferer by remember { mutableStateOf<String?>(null) }
 
-    // Estado para controlar si estamos buscando el enlace de descarga en segundo plano
     var isSearchingDownload by remember { mutableStateOf(false) }
 
     // Estado para la animación predictiva
@@ -67,8 +69,20 @@ fun LibroScreen(
     var swipeEdge by remember { mutableIntStateOf(BackEventCompat.EDGE_LEFT) }
 
     val context = LocalContext.current
+    val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     val notificationHelper = remember { NotificationHelper(context) }
+
+    // Lógica para vibración reactiva durante el gesto (Estilo Android 16 - Granular)
+    LaunchedEffect(predictiveBackProgress) {
+        // Generamos un pequeño "tick" físico cada 10% de progreso para dar sensación de textura
+        if (predictiveBackProgress > 0.05f) {
+            val progressInt = (predictiveBackProgress * 100).toInt()
+            if (progressInt % 10 == 0) {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            }
+        }
+    }
 
     val createFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("*/*")
@@ -92,13 +106,14 @@ fun LibroScreen(
         }
     }
 
-    // Manejador del gesto lateral con animación completa
     PredictiveBackHandler(true) { progress ->
         try {
             progress.collect { event ->
                 predictiveBackProgress = event.progress
                 swipeEdge = event.swipeEdge
             }
+            // Feedback final de confirmación al soltar y completar el gesto
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             onNavigateBack()
         } catch (_: CancellationException) {
             predictiveBackProgress = 0f
@@ -109,11 +124,18 @@ fun LibroScreen(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer {
-                val scale = 1f - (predictiveBackProgress * 0.1f)
+                val scale = 1f - (predictiveBackProgress * 0.12f) // Un poco más de escala para notar la profundidad
                 scaleX = scale
                 scaleY = scale
 
-                val maxTranslation = 30.dp.toPx()
+                // Rotación 3D sutil (Android 16 Style)
+                rotationY = if (swipeEdge == BackEventCompat.EDGE_LEFT) {
+                    predictiveBackProgress * 3f
+                } else {
+                    -predictiveBackProgress * 3f
+                }
+
+                val maxTranslation = 24.dp.toPx()
                 translationX = if (swipeEdge == BackEventCompat.EDGE_LEFT) {
                     predictiveBackProgress * maxTranslation
                 } else {
@@ -121,12 +143,12 @@ fun LibroScreen(
                 }
 
                 alpha = 1f - (predictiveBackProgress * 0.2f)
-                shape = RoundedCornerShape((predictiveBackProgress * 28).dp)
+                shape = RoundedCornerShape((predictiveBackProgress * 32).dp)
                 clip = predictiveBackProgress > 0
             }
     ) {
         when {
-            uiStateEnum == UIStateEnum.CARGANDO || isSearchingDownload -> PantallaCarga()
+            uiStateEnum == UIStateEnum.CARGANDO || isSearchingDownload -> PantallaCarga(texto = "Preparando tu lectura...")
             uiStateEnum == UIStateEnum.CARGADO -> MostrarLibro(
                 portada = libro.portada, titulo = libro.titulo, autor = libro.autor,
                 descripcion = descripcion, enlacesServidor = enlacesServidor,
@@ -150,9 +172,10 @@ fun LibroScreen(
                                     } else mime
 
                                 currentMimeType = suggestedMime
-                                val fileName = URLUtil.guessFileName(dUrl, cd, suggestedMime)
+                                currentFileName = UriUtils.decode(
+                                    UriUtils.getRawFileName(dUrl, cd, suggestedMime)
+                                )
 
-                                currentFileName = fileName
                                 isSearchingDownload = false
                                 createFileLauncher.launch(currentFileName)
                             }

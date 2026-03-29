@@ -1,12 +1,19 @@
 package com.pmdm.annas.ui.features.buscarLibro.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,15 +27,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,6 +61,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.pmdm.annas.R
 import com.pmdm.annas.model.Libro
@@ -56,6 +72,8 @@ import com.pmdm.annas.ui.features.components.InfoBadge
 fun MostrarLibros(
     modifier: Modifier = Modifier,
     libros: List<Libro>,
+    pagina: Int,
+    onPaginaChange: (Int) -> Unit,
     onLibroClick: (Libro) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -64,26 +82,119 @@ fun MostrarLibros(
     LazyColumn(
         state = listState,
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 16.dp, start = 16.dp, end = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        contentPadding = PaddingValues(bottom = 32.dp, start = 16.dp, end = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Espaciador para que el primer elemento no quede debajo del buscador flotante
         item {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .height(76.dp) // Altura aproximada del buscador (56 campo + 16/2 paddings)
+                    .height(92.dp) // Un poco más de aire en la parte superior para Android 16
             )
         }
 
-        itemsIndexed(libros, key = { _, libro -> libro.enlace }) { index, libro ->
+        items(libros, key = { libro -> libro.enlace }) { libro ->
             AnimatedLibroItem(
                 libro = libro,
-                index = index,
                 onClick = { onLibroClick(libro) },
                 sharedTransitionScope = sharedTransitionScope,
                 animatedVisibilityScope = animatedVisibilityScope
+            )
+        }
+
+        item {
+            Paginacion(
+                pagina = pagina,
+                onPaginaChange = onPaginaChange
+            )
+        }
+    }
+}
+
+@Composable
+fun Paginacion(
+    pagina: Int,
+    onPaginaChange: (Int) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp, bottom = 64.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Física de muelles refinada para navegación de páginas (Butter Smooth)
+        val springSpec = spring<Float>(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+
+        FilledTonalIconButton(
+            onClick = { if (pagina > 1) onPaginaChange(pagina - 1) },
+            enabled = pagina > 1,
+            modifier = Modifier.size(56.dp),
+            colors = IconButtonDefaults.filledTonalIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.primary
+            ),
+            shape = RoundedCornerShape(18.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                contentDescription = "Página anterior",
+                modifier = Modifier.size(20.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(28.dp))
+
+        Surface(
+            shape = RoundedCornerShape(22.dp),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            tonalElevation = 4.dp
+        ) {
+            AnimatedContent(
+                targetState = pagina,
+                transitionSpec = {
+                    if (targetState > initialState) {
+                        (slideInVertically(spring()) { height -> height / 2 } + fadeIn(springSpec)).togetherWith(
+                            slideOutVertically(spring()) { height -> -height / 2 } + fadeOut(springSpec))
+                    } else {
+                        (slideInVertically(spring()) { height -> -height / 2 } + fadeIn(springSpec)).togetherWith(
+                            slideOutVertically(spring()) { height -> height / 2 } + fadeOut(springSpec))
+                    }.using(
+                        SizeTransform(clip = false)
+                    )
+                },
+                label = "PageNumberAnimation"
+            ) { targetPage ->
+                Text(
+                    text = targetPage.toString(),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(horizontal = 32.dp, vertical = 14.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(28.dp))
+
+        FilledTonalIconButton(
+            onClick = { onPaginaChange(pagina + 1) },
+            modifier = Modifier.size(56.dp),
+            colors = IconButtonDefaults.filledTonalIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.primary
+            ),
+            shape = RoundedCornerShape(18.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                contentDescription = "Siguiente página",
+                modifier = Modifier.size(20.dp)
             )
         }
     }
@@ -93,7 +204,6 @@ fun MostrarLibros(
 @Composable
 fun AnimatedLibroItem(
     libro: Libro,
-    index: Int,
     onClick: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
@@ -104,13 +214,23 @@ fun AnimatedLibroItem(
         visible = true
     }
 
+    // Cascada orgánica para Android 16: Entrada en diagonal con inercia elástica
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(
-            animationSpec = tween(durationMillis = 400, delayMillis = index * 50)
+            animationSpec = spring(stiffness = Spring.StiffnessVeryLow)
         ) + slideInVertically(
-            animationSpec = tween(durationMillis = 400, delayMillis = index * 50),
-            initialOffsetY = { 40 }
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessLow
+            ),
+            initialOffsetY = { 80 }
+        ) + slideInHorizontally(
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessLow
+            ),
+            initialOffsetX = { 40 }
         )
     ) {
         LibroItem(
@@ -133,31 +253,36 @@ fun LibroItem(
     with(sharedTransitionScope) {
         Card(
             modifier = Modifier
+                .widthIn(max = 700.dp)
                 .fillMaxWidth()
                 .clickable { onClick() },
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 4.dp,
-                pressedElevation = 8.dp
+            elevation = CardDefaults.elevatedCardElevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 8.dp,
+                hoveredElevation = 4.dp
             ),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            shape = RoundedCornerShape(28.dp), // Redondeado más profundo y moderno
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            )
         ) {
             Row(
                 modifier = Modifier
-                    .padding(12.dp)
+                    .padding(18.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.Top // Alineamos al principio para que crezca bien
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Surface(
                     modifier = Modifier
-                        .width(90.dp)
-                        .aspectRatio(2f / 3f) // Relación de aspecto de portada estándar
-                        .clip(RoundedCornerShape(12.dp))
+                        .width(100.dp)
+                        .aspectRatio(0.68f)
+                        .clip(RoundedCornerShape(16.dp))
                         .sharedElement(
                             rememberSharedContentState(key = "image-${libro.enlace}"),
                             animatedVisibilityScope = animatedVisibilityScope
                         ),
-                    tonalElevation = 2.dp
+                    tonalElevation = 6.dp,
+                    shadowElevation = 4.dp
                 ) {
                     AsyncImage(
                         model = libro.portada.ifBlank { R.drawable.pato_no_funciona },
@@ -169,57 +294,50 @@ fun LibroItem(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(22.dp))
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .padding(vertical = 4.dp)
                 ) {
-                    Column {
-                        Text(
-                            text = libro.titulo,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.sharedElement(
-                                rememberSharedContentState(key = "title-${libro.enlace}"),
-                                animatedVisibilityScope = animatedVisibilityScope
-                            )
-                        )
+                    Text(
+                        text = libro.titulo,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.sharedElement(
+                            rememberSharedContentState(key = "title-${libro.enlace}"),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        ),
+                        letterSpacing = (-0.4).sp,
+                        lineHeight = 22.sp
+                    )
 
-                        Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = libro.autor,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
-                        Text(
-                            text = libro.autor,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Usamos FlowRow para que los badges bajen de línea si no caben
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         InfoBadge(
                             text = libro.idioma,
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        )
-                        InfoBadge(
-                            text = libro.formato,
                             color = MaterialTheme.colorScheme.secondaryContainer
                         )
                         InfoBadge(
-                            text = libro.tamano,
+                            text = libro.formato.uppercase(),
                             color = MaterialTheme.colorScheme.tertiaryContainer
                         )
                     }

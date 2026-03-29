@@ -4,6 +4,7 @@ import android.util.Log
 import android.util.LruCache
 import com.pmdm.annas.data.repositorys.toLibros
 import com.pmdm.annas.model.Libro
+import com.pmdm.annas.uri.UriUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,7 +84,7 @@ class Scraper @Inject constructor(
         val cssSelector = "div.flex.pt-3.pb-3.border-b"
 
         try {
-            var url = "$activeBaseUrl/search?q=${UriEncoder.encode(query)}&page=$pagina"
+            var url = "$activeBaseUrl/search?q=${UriUtils.encode(query)}&page=$pagina"
             extensiones.forEach { ext -> url += "&ext=$ext" }
             if (!idioma.isNullOrEmpty()) {
                 url += "&lang=$idioma"
@@ -154,8 +155,4 @@ class Scraper @Inject constructor(
                 Pair("Error al obtener detalles", emptyList())
             }
         }
-}
-
-object UriEncoder {
-    fun encode(s: String): String = java.net.URLEncoder.encode(s, "UTF-8")
 }

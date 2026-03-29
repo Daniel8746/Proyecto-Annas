@@ -3,8 +3,8 @@ package com.pmdm.annas.ui.navigation
 import android.net.Uri
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -12,6 +12,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -22,66 +23,72 @@ import kotlinx.serialization.json.Json
 fun AnnasNavHost() {
     val navController: NavHostController = rememberNavController()
     
-    // Curva de "Respuesta Inmediata" (Material 3 Emphasized Decelerate)
-    // Empieza con mucha energía y se asienta con una suavidad extrema.
-    val ultraFluidEasing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
-    val duration = 400 // 400ms es el "Sweet Spot" para que se note pero no sea lento.
+    // Configuración de física para Android 16: Fluidez absoluta (System Physics Tuning)
+    // Aumentamos la rigidez inicial para respuesta inmediata y bajamos el rebote para elegancia
+    val fluidSpring = spring<Float>(
+        dampingRatio = Spring.DampingRatioLowBouncy,
+        stiffness = Spring.StiffnessMediumLow 
+    )
+    
+    val offsetSpring = spring<IntOffset>(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMediumLow
+    )
 
     SharedTransitionLayout {
         NavHost(
             navController = navController,
             startDestination = BuscarLibroRoute,
             
-            // AVANZAR: La nueva pantalla entra con un leve empuje y escala desde el fondo.
+            // AVANZAR: Entrada elástica sutil con mayor profundidad (Android 16 Style)
             enterTransition = {
-                fadeIn(animationSpec = tween(duration, easing = ultraFluidEasing)) +
+                fadeIn(animationSpec = fluidSpring) +
                 slideInHorizontally(
-                    initialOffsetX = { it / 10 }, // Leve parallax (10%) para dar dirección
-                    animationSpec = tween(duration, easing = ultraFluidEasing)
+                    initialOffsetX = { it / 8 }, 
+                    animationSpec = offsetSpring
                 ) +
                 scaleIn(
-                    initialScale = 0.92f, 
-                    animationSpec = tween(duration, easing = ultraFluidEasing)
+                    initialScale = 0.9f, 
+                    animationSpec = fluidSpring
                 )
             },
             
-            // SALIR ADELANTE: La lista se retrae y se aleja sutilmente.
+            // SALIR ADELANTE: La pantalla anterior se aleja con efecto paralaje mejorado
             exitTransition = {
-                fadeOut(animationSpec = tween(duration, easing = ultraFluidEasing)) +
+                fadeOut(animationSpec = fluidSpring) +
                 slideOutHorizontally(
-                    targetOffsetX = { -it / 10 }, 
-                    animationSpec = tween(duration, easing = ultraFluidEasing)
+                    targetOffsetX = { -it / 8 }, 
+                    animationSpec = offsetSpring
                 ) +
                 scaleOut(
-                    targetScale = 1.08f, 
-                    animationSpec = tween(duration, easing = ultraFluidEasing)
+                    targetScale = 1.1f, 
+                    animationSpec = fluidSpring
                 )
             },
             
-            // VOLVER ATRÁS: La lista "regresa" desde el fondo.
+            // VOLVER ATRÁS: La lista regresa con inercia física refinada
             popEnterTransition = {
-                fadeIn(animationSpec = tween(duration, easing = ultraFluidEasing)) +
+                fadeIn(animationSpec = fluidSpring) +
                 slideInHorizontally(
-                    initialOffsetX = { -it / 10 },
-                    animationSpec = tween(duration, easing = ultraFluidEasing)
+                    initialOffsetX = { -it / 8 },
+                    animationSpec = offsetSpring
                 ) +
                 scaleIn(
-                    initialScale = 1.08f, 
-                    animationSpec = tween(duration, easing = ultraFluidEasing)
+                    initialScale = 1.1f, 
+                    animationSpec = fluidSpring
                 )
             },
             
-            // SALIR ATRÁS: La pantalla sale deslizándose hacia la derecha.
-            // Esto encaja perfectamente con el gesto de atrás del sistema.
+            // SALIR ATRÁS: Sincronización perfecta con gestos predictivos de API 36
             popExitTransition = {
-                fadeOut(animationSpec = tween(duration, easing = ultraFluidEasing)) +
+                fadeOut(animationSpec = fluidSpring) +
                 slideOutHorizontally(
-                    targetOffsetX = { it }, // Sale completamente para revelar la lista
-                    animationSpec = tween(duration, easing = ultraFluidEasing)
+                    targetOffsetX = { it }, 
+                    animationSpec = offsetSpring
                 ) +
                 scaleOut(
-                    targetScale = 0.92f, 
-                    animationSpec = tween(duration, easing = ultraFluidEasing)
+                    targetScale = 0.9f,
+                    animationSpec = fluidSpring
                 )
             }
         ) {

@@ -50,15 +50,7 @@ fun launchSilentDownload(
                 val js = """
                         (function() {
                             function bypassAndExtract() {
-                                // 1. Resetear el timer si existe
-                                const timerIds = ['wait-timer', 'timer', 'seconds'];
-                                timerIds.forEach(id => {
-                                    const el = document.getElementById(id);
-                                    if (el) { el.innerText = '0'; el.textContent = '0'; }
-                                });
-                                if (typeof window.seconds_remaining !== 'undefined') window.seconds_remaining = 0;
-
-                                // 2. Buscar el SPAN con la URL (según la estructura de Anna's Archive)
+                                // 1. Buscar el SPAN con la URL (según la estructura de Anna's Archive)
                                 const urlSpans = document.querySelectorAll('span.break-all');
                                 for (let span of urlSpans) {
                                     const text = span.innerText.trim();
@@ -68,7 +60,7 @@ fun launchSilentDownload(
                                     }
                                 }
 
-                                // 3. Backup: Buscar el botón de "copy" que tiene la URL en el atributo onclick
+                                // 2. Backup: Buscar el botón de "copy" que tiene la URL en el atributo onclick
                                 const copyBtn = document.querySelector('button[onclick*="http"]');
                                 if (copyBtn) {
                                     const attr = copyBtn.getAttribute('onclick');
@@ -79,8 +71,8 @@ fun launchSilentDownload(
                                     }
                                 }
 
-                                // 4. Intentar clicar botones normales si aparecieran
-                                const btn = document.querySelector('a.download-button') || document.querySelector('.js-download-link');
+                                // 3. Intentar clicar botones normales si aparecieran
+                                const btn = document.querySelector('p.font-bold a') || document.querySelector('.js-download-link');
                                 if (btn && btn.offsetParent !== null) {
                                     btn.click();
                                     return true;
