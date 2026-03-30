@@ -43,7 +43,7 @@ fun NavGraphBuilder.libroDestination(
             onNavigateBack = onNavigateBack,
             sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this,
-            okHttpClient = vm.okHttpClient
+            silentDownloader = vm.silentDownloader
         )
     }
 }

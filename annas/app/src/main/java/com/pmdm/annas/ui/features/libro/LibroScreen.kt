@@ -28,9 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.pmdm.annas.download.NotificationHelper
-import com.pmdm.annas.download.downloadFileWithNotification
-import com.pmdm.annas.download.getMime
-import com.pmdm.annas.download.launchSilentDownload
+import com.pmdm.annas.download.SilentDownloader
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.UIStateEnum
 import com.pmdm.annas.ui.features.components.ErrorScreen
@@ -39,7 +37,6 @@ import com.pmdm.annas.ui.features.libro.components.MostrarLibro
 import com.pmdm.annas.uri.UriUtils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -52,7 +49,7 @@ fun LibroScreen(
     onNavigateBack: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    okHttpClient: OkHttpClient
+    silentDownloader: SilentDownloader
 ) {
     var currentDownloadUrl by remember { mutableStateOf("") }
     var currentUserAgent by remember { mutableStateOf("") }
@@ -89,9 +86,7 @@ fun LibroScreen(
     ) { uri ->
         uri?.let {
             scope.launch {
-                downloadFileWithNotification(
-                    context = context,
-                    client = okHttpClient,
+                silentDownloader.downloadFileWithNotification(
                     url = currentDownloadUrl,
                     ua = currentUserAgent,
                     cd = currentContentDisposition,
@@ -155,8 +150,7 @@ fun LibroScreen(
                 idioma = libro.idioma, formato = libro.formato, tamano = libro.tamano,
                 onDownloadClick = { url ->
                     isSearchingDownload = true
-                    launchSilentDownload(
-                        context = context,
+                    silentDownloader.launchSilentDownload(
                         url = url,
                         onDownloadStart = { dUrl, ua, cd, mime, len, ref ->
                             scope.launch {
@@ -168,7 +162,7 @@ fun LibroScreen(
 
                                 val suggestedMime =
                                     if (mime.isBlank() || mime == "application/octet-stream") {
-                                        getMime(dUrl)
+                                        silentDownloader.getMime(dUrl)
                                     } else mime
 
                                 currentMimeType = suggestedMime

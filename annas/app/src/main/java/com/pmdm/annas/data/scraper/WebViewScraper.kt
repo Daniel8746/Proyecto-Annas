@@ -11,6 +11,7 @@ import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.MainThread
+import com.pmdm.annas.utils.isUnnecessaryResource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
@@ -25,28 +26,32 @@ import kotlin.coroutines.resume
 class WebViewScraper(@param:ApplicationContext private val context: Context) {
 
     private val mutex = Mutex()
+    private var currentCssSelector: String = ""
 
     @SuppressLint("SetJavaScriptEnabled")
     private val webView = WebView(context).apply {
         settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
-            cacheMode = WebSettings.LOAD_NO_CACHE
+            cacheMode = WebSettings.LOAD_DEFAULT
             loadsImagesAutomatically = false
             blockNetworkImage = true
             setSupportZoom(false)
             displayZoomControls = false
+            useWideViewPort = false
+            loadWithOverviewMode = false
+            mediaPlaybackRequiresUserGesture = false
             userAgentString =
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         }
         CookieManager.getInstance().setAcceptCookie(true)
-        clearCache(true)
     }
 
     private var currentContinuation: kotlinx.coroutines.CancellableContinuation<String>? = null
 
     init {
         setupWebView()
+        setupCliente()
     }
 
     private fun setupWebView() {
@@ -63,36 +68,14 @@ class WebViewScraper(@param:ApplicationContext private val context: Context) {
     suspend fun loadUrlAndGetHtml(
         url: String,
         cssSelector: String,
-        timeoutMs: Long = 15000
+        timeoutMs: Long = 8000
     ): String = mutex.withLock {
         withContext(Dispatchers.Main) {
-            // Limpieza proactiva de datos temporales antes de cada carga crítica
-            WebStorage.getInstance().deleteAllData()
-
             try {
                 withTimeout(timeoutMs) {
                     suspendCancellableCoroutine { cont ->
                         currentContinuation = cont
-                        webView.webViewClient = object : WebViewClient() {
-                            override fun shouldInterceptRequest(
-                                view: WebView?,
-                                request: WebResourceRequest?
-                            ): WebResourceResponse? {
-                                val requestUrl = request?.url?.toString()?.lowercase() ?: ""
-                                if (isUnnecessaryResource(requestUrl)) {
-                                    return WebResourceResponse(
-                                        "text/plain",
-                                        "UTF-8",
-                                        ByteArrayInputStream("".toByteArray())
-                                    )
-                                }
-                                return null
-                            }
-
-                            override fun onPageFinished(view: WebView?, url: String?) {
-                                injectScraperScript(cssSelector)
-                            }
-                        }
+                        currentCssSelector = cssSelector
                         webView.loadUrl(url)
                         cont.invokeOnCancellation {
                             webView.stopLoading()
@@ -101,19 +84,13 @@ class WebViewScraper(@param:ApplicationContext private val context: Context) {
                     }
                 }
             } catch (_: TimeoutCancellationException) {
+                limpiarWebViewStorage()
                 getInstantHtml(cssSelector)
             } finally {
                 currentContinuation = null
             }
         }
     }
-
-    private fun isUnnecessaryResource(url: String): Boolean =
-        url.endsWith(".jpg") || url.endsWith(".png") || url.endsWith(".jpeg") ||
-                url.endsWith(".gif") || url.endsWith(".svg") || url.endsWith(".css") ||
-                url.endsWith(".woff") || url.endsWith(".woff2") || url.endsWith(".ttf") ||
-                url.contains("google-analytics") || url.contains("doubleclick") ||
-                url.contains("facebook") || url.contains("adsystem")
 
     private fun injectScraperScript(cssSelector: String) {
         val js = """
@@ -145,4 +122,50 @@ class WebViewScraper(@param:ApplicationContext private val context: Context) {
                 cont.resume(cleanHtml)
             }
         }
+
+    fun limpiarWebViewStorage() {
+        CookieManager.getInstance().removeAllCookies(null)
+        CookieManager.getInstance().flush()
+        WebStorage.getInstance().deleteAllData()
+        webView.clearCache(true)
+        webView.clearHistory()
+        webView.clearFormData()
+    }
+
+    private fun setupCliente() {
+        webView.webViewClient = object : WebViewClient() {
+
+            override fun shouldInterceptRequest(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): WebResourceResponse? {
+
+                val requestUrl = request?.url?.toString()?.lowercase() ?: ""
+
+                if (isUnnecessaryResource(requestUrl)) {
+                    return WebResourceResponse(
+                        "text/plain",
+                        "UTF-8",
+                        ByteArrayInputStream("".toByteArray())
+                    )
+                }
+
+                return null
+            }
+
+            override fun onPageCommitVisible(view: WebView?, url: String?) {
+                if (currentCssSelector.isNotEmpty()) {
+                    injectScraperScript(currentCssSelector)
+                }
+            }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: android.webkit.WebResourceError?
+            ) {
+                view?.destroy()
+            }
+        }
+    }
 }

@@ -39,22 +39,7 @@ class BuscarLibroViewModel @Inject constructor(
             is BuscarLibroEvent.OnClickBuscar -> {
                 if (buscar.isBlank()) return
 
-                searchJob?.cancel()
-                searchJob = viewModelScope.launch {
-                    try {
-                        uiStateEnum = UIStateEnum.CARGANDO
-                        libros = buscarLibroRepository.getLibros(
-                            buscar,
-                            selectedExtensions.toList(),
-                            selectedLanguage,
-                            pagina
-                        )
-                        uiStateEnum =
-                            if (libros.isEmpty()) UIStateEnum.ERROR else UIStateEnum.CARGADO
-                    } catch (_: Exception) {
-                        uiStateEnum = UIStateEnum.ERROR
-                    }
-                }
+                buscarLibro()
             }
 
             is BuscarLibroEvent.OnClickLibro -> event.onNavigateLibro()
@@ -69,6 +54,28 @@ class BuscarLibroViewModel @Inject constructor(
             is BuscarLibroEvent.OnIdiomaChange -> selectedLanguage = event.idioma
             is BuscarLibroEvent.OnPaginaChange -> {
                 pagina = event.pagina
+
+                buscarLibro()
+            }
+        }
+    }
+
+    private fun buscarLibro() {
+        searchJob?.cancel()
+
+        searchJob = viewModelScope.launch {
+            try {
+                uiStateEnum = UIStateEnum.CARGANDO
+                libros = buscarLibroRepository.getLibros(
+                    buscar,
+                    selectedExtensions.toList(),
+                    selectedLanguage,
+                    pagina
+                )
+                uiStateEnum =
+                    if (libros.isEmpty()) UIStateEnum.ERROR else UIStateEnum.CARGADO
+            } catch (_: Exception) {
+                uiStateEnum = UIStateEnum.ERROR
             }
         }
     }

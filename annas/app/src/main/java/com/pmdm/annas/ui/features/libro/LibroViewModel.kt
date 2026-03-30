@@ -6,17 +6,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pmdm.annas.data.repositorys.LibroRepository
+import com.pmdm.annas.download.SilentDownloader
 import com.pmdm.annas.ui.features.UIStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class LibroViewModel @Inject constructor(
     private val libroRepository: LibroRepository,
-    val okHttpClient: OkHttpClient
+    val silentDownloader: SilentDownloader
 ) : ViewModel() {
     var enlacesServidor by mutableStateOf<List<String>>(emptyList())
         private set
