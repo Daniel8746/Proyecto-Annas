@@ -3,6 +3,7 @@ package com.pmdm.annas.di
 import android.content.Context
 import com.pmdm.annas.data.scraper.Scraper
 import com.pmdm.annas.data.scraper.WebViewScraper
+import com.pmdm.annas.download.SilentDownloader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,9 +23,9 @@ object AppModule {
     @Singleton
     fun provideScraperClient(): OkHttpClient =
         OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
             .followRedirects(true)
             .followSslRedirects(true)
             .build()
@@ -34,9 +35,9 @@ object AppModule {
     @Singleton
     fun provideDownloadClient(): OkHttpClient =
         OkHttpClient.Builder()
-            .connectTimeout(20, TimeUnit.SECONDS)
-            .readTimeout(180, TimeUnit.SECONDS) // tiempo largo porque los mirrors son lentos
-            .writeTimeout(20, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(300, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .followRedirects(true)
             .followSslRedirects(true)
             .retryOnConnectionFailure(true)
@@ -44,7 +45,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideScraperInstance(
+    fun provideScraper(
         webViewScraper: WebViewScraper,
         @Named("scraperClient") okHttpClient: OkHttpClient,
         @ApplicationContext context: Context
@@ -52,6 +53,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWebViewInstance(@ApplicationContext context: Context): WebViewScraper =
+    fun provideWebViewScraper(@ApplicationContext context: Context): WebViewScraper =
         WebViewScraper(context)
+
+    @Provides
+    @Singleton
+    fun provideSilentDownloader(
+        @ApplicationContext context: Context,
+        @Named("downloadClient") okHttpClient: OkHttpClient
+    ): SilentDownloader = SilentDownloader(context, okHttpClient)
 }

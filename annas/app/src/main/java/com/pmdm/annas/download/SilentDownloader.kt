@@ -3,6 +3,8 @@ package com.pmdm.annas.download
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.provider.DocumentsContract
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
@@ -26,43 +28,39 @@ import java.io.IOException
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
 
 const val DESKTOP_UA =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 
-@SuppressLint("SetJavaScriptEnabled")
+@Singleton
 class SilentDownloader @Inject constructor(
     @param:ApplicationContext private val context: Context,
     @param:Named("downloadClient") private val client: OkHttpClient
 ) {
 
-    /**
-     * Lanza un WebView silencioso para extraer enlaces de descarga de Anna's Archive
-     */
+    @SuppressLint("SetJavaScriptEnabled")
     fun launchSilentDownload(
         url: String,
         onDownloadStart: (String, String, String, String, Long, String?) -> Unit
     ) {
-        WebView(context).apply {
-            settings.apply {
+        Handler(Looper.getMainLooper()).post {
+            val wv = WebView(context)
+            wv.settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
-                cacheMode = WebSettings.LOAD_NO_CACHE
+                cacheMode = WebSettings.LOAD_DEFAULT // Optimización: usar caché si es posible
                 userAgentString = DESKTOP_UA
                 javaScriptCanOpenWindowsAutomatically = true
                 setSupportMultipleWindows(true)
             }
 
-            clearCache(true)
-
-            webViewClient = object : WebViewClient() {
+            wv.webViewClient = object : WebViewClient() {
                 override fun shouldInterceptRequest(
                     view: WebView?,
                     request: WebResourceRequest?
                 ): WebResourceResponse? {
-
                     val requestUrl = request?.url?.toString()?.lowercase() ?: ""
-
                     if (isUnnecessaryResource(requestUrl)) {
                         return WebResourceResponse(
                             "text/plain",
@@ -70,7 +68,6 @@ class SilentDownloader @Inject constructor(
                             ByteArrayInputStream("".toByteArray())
                         )
                     }
-
                     return null
                 }
 
@@ -110,6 +107,7 @@ class SilentDownloader @Inject constructor(
                     val rUrl = r?.url?.toString() ?: ""
                     if (isDirect(rUrl)) {
                         onDownloadStart(rUrl, DESKTOP_UA, guessCD(rUrl), getMime(rUrl), 0, v?.url)
+                        v?.destroy()
                         return true
                     }
                     return false
@@ -120,16 +118,16 @@ class SilentDownloader @Inject constructor(
                     request: WebResourceRequest?,
                     error: android.webkit.WebResourceError?
                 ) {
-                    view?.destroy()
+                    if (request?.isForMainFrame == true) view?.destroy()
                 }
             }
 
-            setDownloadListener { dUrl, ua, cd, mime, len ->
-                onDownloadStart(dUrl, ua, cd, mime, len, this.url)
-                post { destroy() }
+            wv.setDownloadListener { dUrl, ua, cd, mime, len ->
+                onDownloadStart(dUrl, ua, cd, mime, len, wv.url)
+                wv.destroy()
             }
 
-            loadUrl(url)
+            wv.loadUrl(url)
         }
     }
 
@@ -158,9 +156,6 @@ class SilentDownloader @Inject constructor(
                 (low.contains("/download/") && !low.contains("annas-archive.org")) || low.contains(":6060")
     }
 
-    /**
-     * Descarga un archivo con OkHttp, notificaciones y reintentos
-     */
     suspend fun downloadFileWithNotification(
         url: String,
         ua: String,
@@ -241,14 +236,11 @@ class SilentDownloader @Inject constructor(
                 }
             } catch (e: Exception) {
                 if (e is CancellationException) { helper.cancelNotification(); break }
-
                 try { DocumentsContract.deleteDocument(context.contentResolver, dest) } catch (_: Exception) {}
-
-                if (attempt < maxAttempts) delay(1500L * attempt)
+                if (attempt < maxAttempts) delay(2000L * attempt)
                 else helper.showErrorNotification(fileName)
             }
         }
-
         cJob.cancel()
     }
 }
