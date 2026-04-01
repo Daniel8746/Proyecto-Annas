@@ -40,7 +40,9 @@ class WebViewScraper @Inject constructor(@param:ApplicationContext private val c
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
-                cacheMode = WebSettings.LOAD_DEFAULT
+                // OPTIMIZACIÓN: Priorizar caché sobre red siempre que sea posible
+                cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+                
                 loadsImagesAutomatically = false
                 blockNetworkImage = true
                 setSupportZoom(false)
@@ -49,7 +51,7 @@ class WebViewScraper @Inject constructor(@param:ApplicationContext private val c
                 loadWithOverviewMode = false
                 mediaPlaybackRequiresUserGesture = false
                 userAgentString =
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
             }
             CookieManager.getInstance().setAcceptCookie(true)
 
@@ -67,6 +69,7 @@ class WebViewScraper @Inject constructor(@param:ApplicationContext private val c
                     request: WebResourceRequest?
                 ): WebResourceResponse? {
                     val requestUrl = request?.url?.toString()?.lowercase() ?: ""
+                    // OPTIMIZACIÓN: Bloqueo agresivo de recursos innecesarios
                     if (isUnnecessaryResource(requestUrl)) {
                         return WebResourceResponse(
                             "text/plain",
@@ -88,6 +91,7 @@ class WebViewScraper @Inject constructor(@param:ApplicationContext private val c
                     request: WebResourceRequest?,
                     error: android.webkit.WebResourceError?
                 ) {
+                    // Solo cancelar si es el frame principal
                     if (request?.isForMainFrame == true) {
                         currentContinuation?.let { if (it.isActive) it.resume("") }
                     }
@@ -113,7 +117,7 @@ class WebViewScraper @Inject constructor(@param:ApplicationContext private val c
                 if (!send()) {
                     const observer = new MutationObserver(() => { if (send()) observer.disconnect(); });
                     observer.observe(document.body, { childList: true, subtree: true });
-                    setTimeout(() => { send(); observer.disconnect(); }, 5000);
+                    setTimeout(() => { if (send()) observer.disconnect(); }, 5000);
                 }
             })();
         """.trimIndent()
@@ -123,7 +127,7 @@ class WebViewScraper @Inject constructor(@param:ApplicationContext private val c
     suspend fun loadUrlAndGetHtml(
         url: String,
         cssSelector: String,
-        timeoutMs: Long = 10000
+        timeoutMs: Long = 12000 // Aumentado para dar tiempo a Cloudflare si es necesario
     ): String = mutex.withLock {
         withContext(Dispatchers.Main) {
             val wv = getOrCreateWebView()
@@ -140,6 +144,7 @@ class WebViewScraper @Inject constructor(@param:ApplicationContext private val c
                     }
                 }
             } catch (_: Exception) {
+                // Si falla por timeout, intentar extraer lo que haya cargado (caché parcial)
                 getInstantHtml(wv, cssSelector)
             } finally {
                 currentContinuation = null
@@ -156,6 +161,7 @@ class WebViewScraper @Inject constructor(@param:ApplicationContext private val c
             }
         }
 
+    // Solo llamar cuando sea VERDADERAMENTE necesario (mirrors muertos)
     suspend fun limpiarWebViewStorage() = withContext(Dispatchers.Main) {
         CookieManager.getInstance().removeAllCookies(null)
         CookieManager.getInstance().flush()

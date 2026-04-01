@@ -30,8 +30,9 @@ class Scraper @Inject constructor(
     private var activeMirrorIndex = 0
     private val urlMirror = "https://shadowlibraries.github.io/DirectDownloads/AnnasArchive/"
 
-    private val searchCache = LruCache<String, List<Libro>>(100)
-    private val detailsCache = LruCache<String, Pair<String, List<String>>>(200)
+    // OPTIMIZACIÓN: Caché aumentada significativamente para una respuesta instantánea
+    private val searchCache = LruCache<String, List<Libro>>(200)
+    private val detailsCache = LruCache<String, Pair<String, List<String>>>(400)
 
     private var activeBaseUrl: String
         get() = mirrorUrls.getOrNull(activeMirrorIndex) ?: prefs.getString("mirror", "") ?: ""

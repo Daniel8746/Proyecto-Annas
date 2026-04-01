@@ -49,7 +49,8 @@ class SilentDownloader @Inject constructor(
             wv.settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
-                cacheMode = WebSettings.LOAD_DEFAULT // Optimización: usar caché si es posible
+                // OPTIMIZACIÓN: Priorizar caché sobre red para una extracción instantánea
+                cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
                 userAgentString = DESKTOP_UA
                 javaScriptCanOpenWindowsAutomatically = true
                 setSupportMultipleWindows(true)
@@ -206,7 +207,7 @@ class SilentDownloader @Inject constructor(
 
                         var current = 0L
                         context.contentResolver.openOutputStream(dest)?.use { out ->
-                            val buffer = ByteArray(64 * 1024)
+                            val buffer = ByteArray(256 * 1024) // Aumentado a 256KB para mayor velocidad
                             var bytes: Int
                             var lastUpdate = 0L
                             body.byteStream().use { input ->
@@ -215,7 +216,7 @@ class SilentDownloader @Inject constructor(
                                     out.write(buffer, 0, bytes)
                                     current += bytes
                                     val now = System.currentTimeMillis()
-                                    if (total > 0 && now - lastUpdate > 800) {
+                                    if (total > 0 && now - lastUpdate > 1200) { // Actualización de UI menos frecuente
                                         helper.showProgressNotification(
                                             if (attempt > 1) "($attempt/$maxAttempts) $fileName" else fileName,
                                             ((current * 100) / total).toInt()
