@@ -1,8 +1,11 @@
 package com.pmdm.annas.ui.features.components
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,9 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -29,31 +30,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.pmdm.annas.R
 
 @Composable
 fun ErrorScreen(mensaje: String, onReintentar: () -> Unit) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.error))
-    
-    // Animación de escala elástica para el icono de error (consistente con el resto de la app)
-    val errorScale = remember { Animatable(0.95f) }
-    
-    LaunchedEffect(Unit) {
-        while (true) {
-            errorScale.animateTo(
-                targetValue = 1.05f, 
-                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessVeryLow)
-            )
-            errorScale.animateTo(
-                targetValue = 0.95f, 
-                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessVeryLow)
-            )
-        }
-    }
+
+    val infiniteTransition = rememberInfiniteTransition()
+    val scaleAnim by infiniteTransition.animateFloat(
+        initialValue = 0.95f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(700, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
 
     Column(
         modifier = Modifier
@@ -68,22 +63,22 @@ fun ErrorScreen(mensaje: String, onReintentar: () -> Unit) {
             modifier = Modifier
                 .size(180.dp)
                 .graphicsLayer {
-                    scaleX = errorScale.value
-                    scaleY = errorScale.value
+                    scaleX = scaleAnim
+                    scaleY = scaleAnim
                 }
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
             text = "¡Ups! Algo salió mal",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Black,
             color = MaterialTheme.colorScheme.onSurface
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         Text(
             text = mensaje,
             style = MaterialTheme.typography.bodyMedium,
@@ -91,9 +86,9 @@ fun ErrorScreen(mensaje: String, onReintentar: () -> Unit) {
             textAlign = TextAlign.Center,
             lineHeight = 22.sp
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         ElevatedButton(
             onClick = onReintentar,
             shape = RoundedCornerShape(16.dp),

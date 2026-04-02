@@ -7,10 +7,23 @@ import com.pmdm.annas.data.repositorys.toLibros
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.uri.UriUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
+import java.util.Collections
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -26,39 +39,49 @@ class Scraper @Inject constructor(
         context.getSharedPreferences("scraper_prefs", Context.MODE_PRIVATE)
     }
 
-    private var mirrorUrls = mutableListOf<String>()
+    private val mirrorUrls = Collections.synchronizedList(mutableListOf<String>())
     private var activeMirrorIndex = 0
     private val urlMirror = "https://shadowlibraries.github.io/DirectDownloads/AnnasArchive/"
 
-    // OPTIMIZACIÓN: Caché aumentada significativamente para una respuesta instantánea
     private val searchCache = LruCache<String, List<Libro>>(200)
     private val detailsCache = LruCache<String, Pair<String, List<String>>>(400)
+    private val cacheLock = Mutex()
 
     private var activeBaseUrl: String
-        get() = mirrorUrls.getOrNull(activeMirrorIndex) ?: prefs.getString("mirror", "") ?: ""
+        get() = mirrorUrls.getOrNull(activeMirrorIndex)
+            ?: prefs.getString("mirror", "")
+            ?: ""
         set(value) {
             val index = mirrorUrls.indexOf(value)
-            if (index != -1) activeMirrorIndex = index
+            if (index >= 0) activeMirrorIndex = index
             prefs.edit { putString("mirror", value) }
         }
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    @Volatile
     private var initializationJob: Job? = null
 
+    private companion object {
+        const val SEARCH_SELECTOR = "div.flex.pt-3.pb-3.border-b"
+        const val DETAILS_SELECTOR = "main, .js-md5-top-box-description, h3, ul"
+    }
+
     init {
-        // Cargar mirrors guardados si existen para tener algo inmediato
         val savedMirrors = prefs.getStringSet("mirror_list", emptySet())
+
         if (!savedMirrors.isNullOrEmpty()) {
             mirrorUrls.addAll(savedMirrors)
+
             val lastMirror = prefs.getString("mirror", "") ?: ""
-            activeMirrorIndex = mirrorUrls.indexOf(lastMirror).coerceAtLeast(0)
+            activeMirrorIndex =
+                mirrorUrls.indexOf(lastMirror).takeIf { it >= 0 } ?: 0
         }
 
         initializationJob = scope.launch {
             if (mirrorUrls.isEmpty()) {
                 initializeMirrors()
             } else {
-                // Si ya tenemos mirrors, solo comprobamos si el activo sigue vivo
                 checkActiveMirror()
             }
         }
@@ -66,16 +89,19 @@ class Scraper @Inject constructor(
 
     private suspend fun checkActiveMirror() {
         val current = activeBaseUrl
+
         if (current.isEmpty() || !isMirrorAlive(current)) {
             initializeMirrors()
         }
     }
 
-    private suspend fun isMirrorAlive(url: String): Boolean = withContext(Dispatchers.IO) {
-        try {
+    private fun isMirrorAlive(url: String): Boolean {
+        return try {
             val request = Request.Builder().url(url).head().build()
-            val response = okHttpClient.newCall(request).execute()
-            response.isSuccessful
+
+            okHttpClient.newCall(request).execute().use { response ->
+                response.isSuccessful
+            }
         } catch (_: Exception) {
             false
         }
@@ -84,17 +110,21 @@ class Scraper @Inject constructor(
     private suspend fun initializeMirrors() {
         repeat(2) { attempt ->
             try {
-                // Intentamos buscar sin limpiar caché primero para ser más rápidos
                 findMirrors()
+
                 if (mirrorUrls.isNotEmpty()) {
                     findBestMirror()
+
                     if (activeBaseUrl.isNotEmpty()) return
                 }
-                
-                // Si falla, entonces sí limpiamos para forzar recarga limpia del WebView
+
                 webViewScraper.limpiarWebViewStorage()
-                delay(500L * (attempt + 1))
-            } catch (_: Exception) {}
+
+                delay(if (mirrorUrls.isEmpty()) 500L * (attempt + 1) else 200L)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+            }
         }
     }
 
@@ -102,34 +132,51 @@ class Scraper @Inject constructor(
         repeat(2) { attempt ->
             try {
                 val cssSelector = "ul"
-                val html = webViewScraper.loadUrlAndGetHtml(urlMirror, cssSelector)
+                val html =
+                    webViewScraper.loadUrlAndGetHtml(urlMirror, cssSelector)
+
                 if (html.isEmpty()) throw Exception("HTML vacío")
-                
+
                 val doc = Jsoup.parse(html)
+
                 val newMirrors = mutableListOf<String>()
+
                 doc.select("li").forEach { li ->
-                    val href = li.selectFirst("a")?.attr("href")?.substringBefore("/?") ?: ""
-                    if (href.isNotEmpty() && href.startsWith("http")) {
+                    val href =
+                        li.selectFirst("a")
+                            ?.attr("href")
+                            ?.substringBefore("/?")
+                            ?: ""
+
+                    if (href.startsWith("http")) {
                         newMirrors.add(href)
                     }
                 }
-                
+
                 if (newMirrors.isNotEmpty()) {
                     mirrorUrls.clear()
                     mirrorUrls.addAll(newMirrors)
-                    prefs.edit { putStringSet("mirror_list", newMirrors.toSet()) }
+
+                    prefs.edit {
+                        putStringSet("mirror_list", newMirrors.toSet())
+                    }
+
                     return
                 }
-            } catch (_: Exception) {}
-            delay(1000L * (attempt + 1))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+            }
+
+            delay(if (mirrorUrls.isEmpty()) 1000L * (attempt + 1) else 200L)
         }
     }
 
     private suspend fun findBestMirror() = coroutineScope {
         if (mirrorUrls.isEmpty()) return@coroutineScope
-        
-        // Probamos el actual primero si existe
+
         val current = prefs.getString("mirror", "") ?: ""
+
         if (current.isNotEmpty() && isMirrorAlive(current)) {
             activeBaseUrl = current
             return@coroutineScope
@@ -142,42 +189,53 @@ class Scraper @Inject constructor(
         }
 
         val best = jobs.awaitAll().firstOrNull { it != null } ?: ""
+
         if (best.isNotEmpty()) activeBaseUrl = best
     }
 
-    private suspend fun <T> tryWithMirrors(block: suspend (mirror: String) -> T): T? {
-        initializationJob?.join() // Asegurarnos de que terminó la inicialización mínima
+    private suspend fun <T> tryWithMirrors(
+        block: suspend (mirror: String) -> T
+    ): T? {
+        initializationJob?.join()
 
-        // Intentar con el mirror activo
         val active = activeBaseUrl
+
         if (active.isNotEmpty()) {
             try {
                 return block(active)
-            } catch (_: Exception) {}
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+            }
         }
 
-        // Si falla, probar todos los demás
-        for (i in mirrorUrls.indices) {
-            val mirror = mirrorUrls[i]
+        for (mirror in mirrorUrls) {
             if (mirror == active) continue
+
             try {
                 val result = block(mirror)
                 activeBaseUrl = mirror
                 return result
-            } catch (_: Exception) {}
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+            }
         }
 
-        // Si todos fallan catastróficamente, reiniciamos todo una vez
         webViewScraper.limpiarWebViewStorage()
         initializeMirrors()
-        
+
         val finalActive = activeBaseUrl
+
         if (finalActive.isNotEmpty()) {
             try {
                 return block(finalActive)
-            } catch (_: Exception) {}
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+            }
         }
-        
+
         return null
     }
 
@@ -188,12 +246,19 @@ class Scraper @Inject constructor(
         pagina: Int = 1
     ): List<Libro> = withContext(Dispatchers.IO) {
         val query = nombreLibro.trim()
+
         if (query.isEmpty()) return@withContext emptyList()
 
-        val cacheKey = "$query-${extensiones.sorted().joinToString(",")}-$idioma-$pagina"
-        searchCache.get(cacheKey)?.let { return@withContext it }
+        val cacheKey =
+            "$query-${extensiones.sorted().joinToString(separator = ",")}-$idioma-$pagina"
 
-        val cssSelector = "div.flex.pt-3.pb-3.border-b"
+        cacheLock.withLock {
+            searchCache.get(cacheKey)
+        }?.let {
+            return@withContext it
+        }
+
+        val cssSelector = SEARCH_SELECTOR
 
         val result = tryWithMirrors { mirror ->
             val url = buildString {
@@ -202,67 +267,140 @@ class Scraper @Inject constructor(
                 append(UriUtils.encode(query))
                 append("&page=")
                 append(pagina)
-                extensiones.forEach { append("&ext=").append(it) }
-                idioma?.let { append("&lang=").append(it) }
+
+                extensiones.forEach {
+                    append("&ext=").append(it)
+                }
+
+                idioma?.let {
+                    append("&lang=").append(it)
+                }
             }
 
-            val html = webViewScraper.loadUrlAndGetHtml(url, cssSelector)
+            val html =
+                webViewScraper.loadUrlAndGetHtml(url, cssSelector)
+
             if (html.isEmpty()) throw Exception("No se obtuvo contenido")
-            
-            val libros = Jsoup.parseBodyFragment(html).body().children().toLibros()
+
+            val libros =
+                Jsoup.parseBodyFragment(html)
+                    .body()
+                    .children()
+                    .toLibros()
 
             if (libros.isNotEmpty()) {
-                searchCache.put(cacheKey, libros)
+                cacheLock.withLock {
+                    searchCache.put(cacheKey, libros)
+                }
             }
+
             libros
         }
 
         result ?: emptyList()
     }
 
-    suspend fun servidorDescarga(enlace: String): Pair<String, List<String>> =
+    suspend fun servidorDescarga(
+        enlace: String
+    ): Pair<String, List<String>> =
         withContext(Dispatchers.IO) {
 
-            detailsCache.get(enlace)?.let { return@withContext it }
+            cacheLock.withLock {
+                detailsCache.get(enlace)
+            }?.let {
+                return@withContext it
+            }
 
-            val cssSelector = "main, .js-md5-top-box-description, h3, ul"
+            val cssSelector = DETAILS_SELECTOR
 
             val result = tryWithMirrors { mirror ->
-                val url = if (enlace.startsWith("/")) "$mirror$enlace" else enlace
-                val html = webViewScraper.loadUrlAndGetHtml(url, cssSelector)
-                if (html.isEmpty()) throw Exception("No se obtuvo contenido")
-                
+                val url =
+                    if (enlace.startsWith("/"))
+                        "$mirror$enlace"
+                    else enlace
+
+                val html =
+                    webViewScraper.loadUrlAndGetHtml(url, cssSelector)
+
+                if (html.isEmpty())
+                    throw Exception("No se obtuvo contenido")
+
                 val doc = Jsoup.parse(html)
 
-                val enlaceDescarga = mutableListOf<String>()
-                val descripcion = doc.select(".js-md5-top-box-description div.mb-1")
-                    .firstOrNull()?.text()?.trim() ?: "Sin descripción"
+                val enlaces = mutableListOf<String>()
 
-                val slowHeader = doc.select("h3")
-                    .find { it.text().contains("Slow downloads", ignoreCase = true) }
+                val descripcion =
+                    doc.select(".js-md5-top-box-description div.mb-1")
+                        .firstOrNull()
+                        ?.text()
+                        ?.trim()
+                        ?: "Sin descripción"
 
-                val ulLista = slowHeader?.parent()?.select("ul.list-inside").orEmpty()
-                    .plus(slowHeader?.nextElementSiblings()?.select("ul.list-inside").orEmpty())
-                    .firstOrNull()
-
-                ulLista?.select("li")?.forEach { li ->
-                    val text = li.text().lowercase()
-                    if (text.contains("partner server") && text.contains("no waitlist")) {
-                        val href = li.selectFirst("a")?.attr("href") ?: ""
-                        if (href.isNotEmpty()) {
-                            val fullUrl = if (href.startsWith("/")) "$mirror$href" else href
-                            if (!enlaceDescarga.contains(fullUrl)) enlaceDescarga.add(fullUrl)
+                val slowHeader =
+                    doc.select("h3")
+                        .find {
+                            it.text().contains(
+                                "Slow downloads",
+                                ignoreCase = true
+                            )
                         }
+
+                val ulLista =
+                    slowHeader
+                        ?.parent()
+                        ?.select("ul.list-inside")
+                        .orEmpty()
+                        .plus(
+                            slowHeader
+                                ?.nextElementSiblings()
+                                ?.select("ul.list-inside")
+                                .orEmpty()
+                        )
+                        .firstOrNull()
+
+                ulLista
+                    ?.select("li")
+                    ?.forEach { li ->
+                        val text =
+                            li.text().lowercase()
+
+                        if (
+                            text.contains("partner server")
+                            && text.contains("no waitlist")
+                        ) {
+                            val href =
+                                li.selectFirst("a")
+                                    ?.attr("href")
+                                    ?: ""
+
+                            if (href.isNotEmpty()) {
+                                val fullUrl =
+                                    if (href.startsWith("/"))
+                                        "$mirror$href"
+                                    else href
+
+                                if (!enlaces.contains(fullUrl)) {
+                                    enlaces.add(fullUrl)
+                                }
+                            }
+                        }
+                    }
+
+                val pair =
+                    Pair(descripcion, enlaces)
+
+                if (enlaces.isNotEmpty()) {
+                    cacheLock.withLock {
+                        detailsCache.put(enlace, pair)
                     }
                 }
 
-                val pair = Pair(descripcion, enlaceDescarga)
-                if (enlaceDescarga.isNotEmpty()) {
-                    detailsCache.put(enlace, pair)
-                }
                 pair
             }
 
-            result ?: Pair("Error al obtener detalles", emptyList())
+            result ?: Pair(
+                "Error al obtener detalles",
+                emptyList()
+            )
         }
 }

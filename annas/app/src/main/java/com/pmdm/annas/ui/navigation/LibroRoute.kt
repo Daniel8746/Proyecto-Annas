@@ -34,9 +34,9 @@ fun NavGraphBuilder.libroDestination(
 
         LibroScreen(
             libro = libro,
-            descripcion = vm.descripcion,
-            uiStateEnum = vm.uiStateEnum,
-            enlacesServidor = vm.enlacesServidor,
+            descripcion = vm.uiState.descripcion,
+            uiStateEnum = vm.uiState.uiStateEnum,
+            enlacesServidor = vm.uiState.enlacesServidor,
             onReintentar = {
                 vm.onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace))
             },

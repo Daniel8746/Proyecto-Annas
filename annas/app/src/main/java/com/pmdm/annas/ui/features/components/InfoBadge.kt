@@ -19,19 +19,18 @@ import androidx.compose.ui.unit.sp
 fun InfoBadge(text: String, color: Color) {
     if (text.isEmpty() || text == "Desconocido") return
 
-    // Diseño optimizado para Android 16: Contraste inteligente y formas fluidas
     Surface(
         color = color,
-        contentColor = contentColorFor(color), // Garantiza legibilidad automática en API 36
-        shape = RoundedCornerShape(12.dp), // Esquinas más suaves para el estilo "Clean"
+        contentColor = contentColorFor(color),
+        shape = RoundedCornerShape(12.dp),
         modifier = Modifier.wrapContentSize(),
-        tonalElevation = 2.dp 
+        tonalElevation = 2.dp
     ) {
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Black, // Peso máximo para legibilidad en badges
+            fontWeight = FontWeight.Black,
             textAlign = TextAlign.Center,
             letterSpacing = 0.4.sp,
             lineHeight = 12.sp

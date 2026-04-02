@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -69,16 +70,18 @@ fun MostrarLibro(
 ) {
     val (expanded, onExpandedChange) = rememberSaveable { mutableStateOf(false) }
     val statusBarsPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val scrollState = rememberScrollState()
 
     with(sharedTransitionScope) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp)
                 .padding(top = statusBarsPadding + 16.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // --- Portada y datos principales ---
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -158,6 +161,7 @@ fun MostrarLibro(
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            // --- Descripción ---
             Column(modifier = Modifier.widthIn(max = 600.dp)) {
                 SectionTitle(icon = Icons.Default.Info, title = "Descripción")
 
@@ -188,6 +192,7 @@ fun MostrarLibro(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
+                // --- Servidores de descarga ---
                 SectionTitle(icon = Icons.Default.Download, title = "Servidores de descarga")
 
                 if (enlacesServidor.isEmpty()) {
@@ -199,20 +204,26 @@ fun MostrarLibro(
                     )
                 } else {
                     enlacesServidor.forEachIndexed { index, enlaceServer ->
-                        ElevatedButton(
-                            onClick = { onDownloadClick(enlaceServer) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.elevatedButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        ) {
-                            Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(10.dp))
-                            Text(text = "Servidor ${index + 1}", fontWeight = FontWeight.Bold)
+                        key(enlaceServer) {
+                            ElevatedButton(
+                                onClick = { onDownloadClick(enlaceServer) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.elevatedButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            ) {
+                                Icon(
+                                    Icons.Default.Download,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(Modifier.width(10.dp))
+                                Text(text = "Servidor ${index + 1}", fontWeight = FontWeight.Bold)
+                            }
                         }
                     }
                 }

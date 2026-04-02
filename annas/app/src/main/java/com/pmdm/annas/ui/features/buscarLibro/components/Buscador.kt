@@ -68,7 +68,10 @@ fun Buscador(
         color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.96f),
         tonalElevation = 6.dp, // Elevación tonal más pronunciada para profundidad física
         shadowElevation = 12.dp,
-        shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp) // Redondeado más agresivo y moderno
+        shape = RoundedCornerShape(
+            bottomStart = 32.dp,
+            bottomEnd = 32.dp
+        ) // Redondeado más agresivo y moderno
     ) {
         Column(
             modifier = Modifier
@@ -88,13 +91,13 @@ fun Buscador(
                     value = buscarNombre,
                     onValueChange = onValueChange,
                     modifier = Modifier.weight(1f),
-                    placeholder = { 
+                    placeholder = {
                         Text(
-                            "¿Qué quieres leer hoy?", 
+                            "¿Qué quieres leer hoy?",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                        ) 
+                        )
                     },
                     leadingIcon = {
                         Icon(

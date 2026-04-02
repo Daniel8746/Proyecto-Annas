@@ -1,6 +1,5 @@
 package com.pmdm.annas.ui.features.libro
 
-import androidx.activity.BackEventCompat
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,6 +29,7 @@ import com.pmdm.annas.download.NotificationHelper
 import com.pmdm.annas.download.SilentDownloader
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.UIStateEnum
+import com.pmdm.annas.ui.features.buscarLibro.components.PantallaInicial
 import com.pmdm.annas.ui.features.components.ErrorScreen
 import com.pmdm.annas.ui.features.components.PantallaCarga
 import com.pmdm.annas.ui.features.libro.components.MostrarLibro
@@ -51,51 +50,54 @@ fun LibroScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     silentDownloader: SilentDownloader
 ) {
-    var currentDownloadUrl by remember { mutableStateOf("") }
-    var currentUserAgent by remember { mutableStateOf("") }
-    var currentContentDisposition by remember { mutableStateOf("") }
-    var currentMimeType by remember { mutableStateOf("application/octet-stream") }
-    var currentFileName by remember { mutableStateOf("") }
-    var currentLength by remember { mutableLongStateOf(0L) }
-    var currentReferer by remember { mutableStateOf<String?>(null) }
-
-    var isSearchingDownload by remember { mutableStateOf(false) }
-
-    // Estado para la animación predictiva
-    var predictiveBackProgress by remember { mutableFloatStateOf(0f) }
-    var swipeEdge by remember { mutableIntStateOf(BackEventCompat.EDGE_LEFT) }
-
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     val notificationHelper = remember { NotificationHelper(context) }
 
-    // Lógica para vibración reactiva durante el gesto (Estilo Android 16 - Granular)
+    // Estados para la descarga
+    var downloadState by remember {
+        mutableStateOf(
+            DownloadState(
+                url = "",
+                userAgent = "",
+                contentDisposition = "",
+                mimeType = "application/octet-stream",
+                fileName = "",
+                length = 0L,
+                referer = null
+            )
+        )
+    }
+    var isSearchingDownload by remember { mutableStateOf(false) }
+
+    // Estados predictivos para swipe back
+    var predictiveBackProgress by remember { mutableFloatStateOf(0f) }
+    var swipeEdge by remember { mutableIntStateOf(0) }
+
+    // Vibración durante el gesto
     LaunchedEffect(predictiveBackProgress) {
-        // Generamos un pequeño "tick" físico cada 10% de progreso para dar sensación de textura
         if (predictiveBackProgress > 0.05f) {
-            val progressInt = (predictiveBackProgress * 100).toInt()
-            if (progressInt % 10 == 0) {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-            }
+            val tick = (predictiveBackProgress * 100).toInt()
+            if (tick % 10 == 0) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         }
     }
 
     val createFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("*/*")
+        ActivityResultContracts.CreateDocument("*/*")
     ) { uri ->
-        uri?.let {
+        uri?.let { fileUri ->
             scope.launch {
                 silentDownloader.downloadFileWithNotification(
-                    url = currentDownloadUrl,
-                    ua = currentUserAgent,
-                    cd = currentContentDisposition,
-                    mime = currentMimeType,
-                    dest = it,
-                    fileName = currentFileName,
+                    url = downloadState.url,
+                    ua = downloadState.userAgent,
+                    cd = downloadState.contentDisposition,
+                    mime = downloadState.mimeType,
+                    dest = fileUri,
+                    fileName = downloadState.fileName,
                     helper = notificationHelper,
-                    len = currentLength,
-                    ref = currentReferer
+                    len = downloadState.length,
+                    ref = downloadState.referer
                 )
             }
         }
@@ -107,7 +109,6 @@ fun LibroScreen(
                 predictiveBackProgress = event.progress
                 swipeEdge = event.swipeEdge
             }
-            // Feedback final de confirmación al soltar y completar el gesto
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             onNavigateBack()
         } catch (_: CancellationException) {
@@ -119,67 +120,83 @@ fun LibroScreen(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer {
-                val scale = 1f - (predictiveBackProgress * 0.12f) // Un poco más de escala para notar la profundidad
+                val scale = 1f - predictiveBackProgress * 0.12f
                 scaleX = scale
                 scaleY = scale
-
-                // Rotación 3D sutil (Android 16 Style)
-                rotationY = if (swipeEdge == BackEventCompat.EDGE_LEFT) {
-                    predictiveBackProgress * 3f
-                } else {
-                    -predictiveBackProgress * 3f
-                }
-
+                rotationY =
+                    if (swipeEdge == 0) predictiveBackProgress * 3f else -predictiveBackProgress * 3f
                 val maxTranslation = 24.dp.toPx()
-                translationX = if (swipeEdge == BackEventCompat.EDGE_LEFT) {
-                    predictiveBackProgress * maxTranslation
-                } else {
-                    -predictiveBackProgress * maxTranslation
-                }
-
-                alpha = 1f - (predictiveBackProgress * 0.2f)
+                translationX =
+                    if (swipeEdge == 0) predictiveBackProgress * maxTranslation else -predictiveBackProgress * maxTranslation
+                alpha = 1f - predictiveBackProgress * 0.2f
                 shape = RoundedCornerShape((predictiveBackProgress * 32).dp)
                 clip = predictiveBackProgress > 0
             }
     ) {
         when {
-            uiStateEnum == UIStateEnum.CARGANDO || isSearchingDownload -> PantallaCarga(texto = "Preparando tu lectura...")
-            uiStateEnum == UIStateEnum.CARGADO -> MostrarLibro(
-                portada = libro.portada, titulo = libro.titulo, autor = libro.autor,
-                descripcion = descripcion, enlacesServidor = enlacesServidor,
-                idioma = libro.idioma, formato = libro.formato, tamano = libro.tamano,
-                onDownloadClick = { url ->
-                    isSearchingDownload = true
-                    silentDownloader.launchSilentDownload(
-                        url = url,
-                        onDownloadStart = { dUrl, ua, cd, mime, len, ref ->
-                            scope.launch {
-                                currentDownloadUrl = dUrl
-                                currentUserAgent = ua
-                                currentContentDisposition = cd
-                                currentReferer = ref
-                                currentLength = len
+            uiStateEnum == UIStateEnum.CARGANDO || isSearchingDownload ->
+                PantallaCarga(texto = "Preparando tu lectura...")
 
-                                val suggestedMime =
-                                    if (mime.isBlank() || mime == "application/octet-stream") {
-                                        silentDownloader.getMime(dUrl)
-                                    } else mime
-
-                                currentMimeType = suggestedMime
-                                currentFileName = UriUtils.decode(
-                                    UriUtils.getRawFileName(dUrl, cd, suggestedMime)
-                                )
-
-                                isSearchingDownload = false
-                                createFileLauncher.launch(currentFileName)
+            uiStateEnum == UIStateEnum.CARGADO ->
+                MostrarLibro(
+                    portada = libro.portada,
+                    titulo = libro.titulo,
+                    autor = libro.autor,
+                    descripcion = descripcion,
+                    enlacesServidor = enlacesServidor,
+                    idioma = libro.idioma,
+                    formato = libro.formato,
+                    tamano = libro.tamano,
+                    onDownloadClick = { url ->
+                        isSearchingDownload = true
+                        silentDownloader.launchSilentDownload(
+                            url = url,
+                            onDownloadStart = { dUrl, ua, cd, mime, len, ref ->
+                                scope.launch {
+                                    downloadState = DownloadState(
+                                        url = dUrl,
+                                        userAgent = ua,
+                                        contentDisposition = cd,
+                                        mimeType = if (mime.isBlank() || mime == "application/octet-stream") silentDownloader.getMime(
+                                            dUrl
+                                        ) else mime,
+                                        fileName = UriUtils.decode(
+                                            UriUtils.getRawFileName(
+                                                dUrl,
+                                                cd,
+                                                mime
+                                            )
+                                        ),
+                                        length = len,
+                                        referer = ref
+                                    )
+                                    isSearchingDownload = false
+                                    createFileLauncher.launch(downloadState.fileName)
+                                }
                             }
-                        }
-                    )
-                },
-                enlaceKey = libro.enlace, sharedTransitionScope = sharedTransitionScope,
-                animatedVisibilityScope = animatedVisibilityScope
+                        )
+                    },
+                    enlaceKey = libro.enlace,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
+
+            uiStateEnum == UIStateEnum.ERROR -> ErrorScreen(
+                mensaje = "Error al abrir el libro",
+                onReintentar = onReintentar
             )
-            else -> ErrorScreen(mensaje = "Error al abrir el libro", onReintentar = onReintentar)
+
+            else -> PantallaInicial()
         }
     }
 }
+
+private data class DownloadState(
+    val url: String,
+    val userAgent: String,
+    val contentDisposition: String,
+    val mimeType: String,
+    val fileName: String,
+    val length: Long,
+    val referer: String?
+)

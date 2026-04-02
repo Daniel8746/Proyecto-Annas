@@ -28,13 +28,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
@@ -77,7 +75,7 @@ fun MostrarLibros(
     onLibroClick: (Libro) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    listState: LazyListState = rememberLazyListState()
+    listState: LazyListState
 ) {
     LazyColumn(
         state = listState,
@@ -86,16 +84,9 @@ fun MostrarLibros(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .height(92.dp) // Un poco más de aire en la parte superior para Android 16
-            )
-        }
+        item { Spacer(modifier = Modifier.height(92.dp)) } // Espacio top
 
-        items(libros, key = { libro -> libro.enlace }) { libro ->
+        items(libros, key = { it.enlace }) { libro ->
             AnimatedLibroItem(
                 libro = libro,
                 onClick = { onLibroClick(libro) },
@@ -104,12 +95,7 @@ fun MostrarLibros(
             )
         }
 
-        item {
-            Paginacion(
-                pagina = pagina,
-                onPaginaChange = onPaginaChange
-            )
-        }
+        item { Paginacion(pagina = pagina, onPaginaChange = onPaginaChange) }
     }
 }
 
@@ -160,10 +146,14 @@ fun Paginacion(
                 transitionSpec = {
                     if (targetState > initialState) {
                         (slideInVertically(spring()) { height -> height / 2 } + fadeIn(springSpec)).togetherWith(
-                            slideOutVertically(spring()) { height -> -height / 2 } + fadeOut(springSpec))
+                            slideOutVertically(spring()) { height -> -height / 2 } + fadeOut(
+                                springSpec
+                            ))
                     } else {
                         (slideInVertically(spring()) { height -> -height / 2 } + fadeIn(springSpec)).togetherWith(
-                            slideOutVertically(spring()) { height -> height / 2 } + fadeOut(springSpec))
+                            slideOutVertically(spring()) { height -> height / 2 } + fadeOut(
+                                springSpec
+                            ))
                     }.using(
                         SizeTransform(clip = false)
                     )

@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PantallaInicial() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.girl_with_books))
-    
+
     // Usamos Animatable para poder aplicar física de muelles en bucles infinitos
     val scale = remember { Animatable(0.96f) }
     val rotation = remember { Animatable(-1.5f) }
@@ -46,22 +46,58 @@ fun PantallaInicial() {
         // Escala física elástica
         launch {
             while (true) {
-                scale.animateTo(1.04f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessVeryLow))
-                scale.animateTo(0.96f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessVeryLow))
+                scale.animateTo(
+                    1.04f,
+                    spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessVeryLow
+                    )
+                )
+                scale.animateTo(
+                    0.96f,
+                    spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessVeryLow
+                    )
+                )
             }
         }
         // Balanceo físico suave
         launch {
             while (true) {
-                rotation.animateTo(1.5f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessVeryLow))
-                rotation.animateTo(-1.5f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessVeryLow))
+                rotation.animateTo(
+                    1.5f,
+                    spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessVeryLow
+                    )
+                )
+                rotation.animateTo(
+                    -1.5f,
+                    spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessVeryLow
+                    )
+                )
             }
         }
         // Flotación física con inercia
         launch {
             while (true) {
-                translationY.animateTo(10f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessLow))
-                translationY.animateTo(-10f, spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessLow))
+                translationY.animateTo(
+                    10f,
+                    spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                )
+                translationY.animateTo(
+                    -10f,
+                    spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                )
             }
         }
     }
@@ -103,7 +139,7 @@ fun PantallaInicial() {
                 textAlign = TextAlign.Center,
                 letterSpacing = (-0.5).sp
             )
-            
+
             Text(
                 text = "Explora miles de títulos al instante",
                 style = MaterialTheme.typography.bodyMedium,

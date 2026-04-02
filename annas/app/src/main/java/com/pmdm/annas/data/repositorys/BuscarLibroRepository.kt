@@ -8,7 +8,7 @@ class BuscarLibroRepository @Inject constructor(
     private val scraper: Scraper
 ) {
     suspend fun getLibros(
-        nombre: String, 
+        nombre: String,
         extensiones: List<String> = emptyList(),
         idioma: String? = null,
         pagina: Int = 1

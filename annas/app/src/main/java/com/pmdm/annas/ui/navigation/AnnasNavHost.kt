@@ -1,6 +1,7 @@
 package com.pmdm.annas.ui.navigation
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.Spring
@@ -22,14 +23,14 @@ import kotlinx.serialization.json.Json
 @Composable
 fun AnnasNavHost() {
     val navController: NavHostController = rememberNavController()
-    
+
     // Configuración de física para Android 16: Fluidez absoluta (System Physics Tuning)
     // Aumentamos la rigidez inicial para respuesta inmediata y bajamos el rebote para elegancia
     val fluidSpring = spring<Float>(
         dampingRatio = Spring.DampingRatioLowBouncy,
-        stiffness = Spring.StiffnessMediumLow 
+        stiffness = Spring.StiffnessMediumLow
     )
-    
+
     val offsetSpring = spring<IntOffset>(
         dampingRatio = Spring.DampingRatioNoBouncy,
         stiffness = Spring.StiffnessMediumLow
@@ -39,65 +40,66 @@ fun AnnasNavHost() {
         NavHost(
             navController = navController,
             startDestination = BuscarLibroRoute,
-            
+
             // AVANZAR: Entrada elástica sutil con mayor profundidad (Android 16 Style)
             enterTransition = {
                 fadeIn(animationSpec = fluidSpring) +
-                slideInHorizontally(
-                    initialOffsetX = { it / 8 }, 
-                    animationSpec = offsetSpring
-                ) +
-                scaleIn(
-                    initialScale = 0.9f, 
-                    animationSpec = fluidSpring
-                )
+                        slideInHorizontally(
+                            initialOffsetX = { it / 8 },
+                            animationSpec = offsetSpring
+                        ) +
+                        scaleIn(
+                            initialScale = 0.9f,
+                            animationSpec = fluidSpring
+                        )
             },
-            
+
             // SALIR ADELANTE: La pantalla anterior se aleja con efecto paralaje mejorado
             exitTransition = {
                 fadeOut(animationSpec = fluidSpring) +
-                slideOutHorizontally(
-                    targetOffsetX = { -it / 8 }, 
-                    animationSpec = offsetSpring
-                ) +
-                scaleOut(
-                    targetScale = 1.1f, 
-                    animationSpec = fluidSpring
-                )
+                        slideOutHorizontally(
+                            targetOffsetX = { -it / 8 },
+                            animationSpec = offsetSpring
+                        ) +
+                        scaleOut(
+                            targetScale = 1.1f,
+                            animationSpec = fluidSpring
+                        )
             },
-            
+
             // VOLVER ATRÁS: La lista regresa con inercia física refinada
             popEnterTransition = {
                 fadeIn(animationSpec = fluidSpring) +
-                slideInHorizontally(
-                    initialOffsetX = { -it / 8 },
-                    animationSpec = offsetSpring
-                ) +
-                scaleIn(
-                    initialScale = 1.1f, 
-                    animationSpec = fluidSpring
-                )
+                        slideInHorizontally(
+                            initialOffsetX = { -it / 8 },
+                            animationSpec = offsetSpring
+                        ) +
+                        scaleIn(
+                            initialScale = 1.1f,
+                            animationSpec = fluidSpring
+                        )
             },
-            
+
             // SALIR ATRÁS: Sincronización perfecta con gestos predictivos de API 36
             popExitTransition = {
                 fadeOut(animationSpec = fluidSpring) +
-                slideOutHorizontally(
-                    targetOffsetX = { it }, 
-                    animationSpec = offsetSpring
-                ) +
-                scaleOut(
-                    targetScale = 0.9f,
-                    animationSpec = fluidSpring
-                )
+                        slideOutHorizontally(
+                            targetOffsetX = { it },
+                            animationSpec = offsetSpring
+                        ) +
+                        scaleOut(
+                            targetScale = 0.9f,
+                            animationSpec = fluidSpring
+                        )
             }
         ) {
             buscarLibroDestination(
-                onNavigateToLibro = { libro ->
+                onLibroClick = { libro ->
                     val libroJson = Uri.encode(Json.encodeToString(libro))
                     navController.navigate(LibroRoute(libroJson))
                 },
-                sharedTransitionScope = this@SharedTransitionLayout
+                sharedTransitionScope = this@SharedTransitionLayout,
+                animatedVisibilityScope = this as AnimatedVisibilityScope
             )
 
             libroDestination(

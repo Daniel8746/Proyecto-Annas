@@ -1,15 +1,77 @@
 package com.pmdm.annas.utils
 
+import java.util.Locale
+
+private val blockedExtensions = setOf(
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".svg",
+    ".css",
+    ".woff",
+    ".woff2",
+    ".ttf",
+    ".mp4",
+    ".webm",
+    ".mp3"
+)
+
+private val blockedKeywords = setOf(
+    "google-analytics",
+    "doubleclick",
+    "facebook",
+    "adsystem",
+    "analytics",
+    "tracker",
+    "pixel",
+    "fonts.googleapis",
+    "fonts.gstatic",
+    "disqus",
+    "sentry",
+    "hotjar",
+    "ads.",
+    "/ads/",
+    "beacon",
+    "stats.",
+    "cloudflareinsights"
+)
+
+/**
+ * JS que sabemos que NO es crítico para scraping Anna's Archive
+ */
+private val blockedJsKeywords = setOf(
+    "analytics.js",
+    "gtag",
+    "googletagmanager",
+    "ads.js",
+    "tracker.js",
+    "metrics.js",
+    "collect",
+    "pixel.js",
+    "advertising",
+    "pagead",
+    "amazon-adsystem"
+)
+
 fun isUnnecessaryResource(url: String): Boolean {
-    val low = url.lowercase()
-    return low.endsWith(".jpg") || low.endsWith(".png") || low.endsWith(".jpeg") ||
-            low.endsWith(".gif") || low.endsWith(".svg") || low.endsWith(".css") ||
-            low.endsWith(".woff") || low.endsWith(".woff2") || low.endsWith(".ttf") ||
-            low.endsWith(".mp4") || low.endsWith(".webm") || low.endsWith(".mp3") ||
-            low.contains("google-analytics") || low.contains("doubleclick") ||
-            low.contains("facebook") || low.contains("adsystem") ||
-            low.contains("analytics") || low.contains("tracker") || low.contains("pixel") ||
-            low.contains("fonts.googleapis") || low.contains("fonts.gstatic") ||
-            low.contains("disqus") || low.contains("sentry") || low.contains("hotjar") ||
-            low.contains("ads.") || low.contains("/ads/")
+
+    val low = url.lowercase(Locale.ROOT)
+
+    if (blockedExtensions.any { low.endsWith(it) }) {
+        return true
+    }
+
+    if (blockedKeywords.any { low.contains(it) }) {
+        return true
+    }
+
+    if (
+        low.endsWith(".js") &&
+        blockedJsKeywords.any { low.contains(it) }
+    ) {
+        return true
+    }
+
+    return false
 }
