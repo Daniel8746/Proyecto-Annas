@@ -1,0 +1,13 @@
+package com.pmdm.annas.data.network
+
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+
+object DownloadEvents {
+    private val _cancelFlow = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 5)
+    val cancelFlow = _cancelFlow.asSharedFlow()
+
+    fun cancelDownload() {
+        _cancelFlow.tryEmit(Unit)
+    }
+}

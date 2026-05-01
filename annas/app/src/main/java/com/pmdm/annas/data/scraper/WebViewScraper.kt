@@ -11,7 +11,10 @@ import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.MainThread
-import com.pmdm.annas.utils.isUnnecessaryResource
+import com.pmdm.annas.data.js.JsEngine
+import com.pmdm.annas.data.js.JsScripts.DOM_HTML_COLLECTOR
+import com.pmdm.annas.data.js.JsScripts.HTML_CAPTURE_AND_SEND
+import com.pmdm.annas.data.utils.isUnnecessaryResource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
@@ -41,9 +44,7 @@ class WebViewScraper @Inject constructor(
     private var webView: WebView? = null
 
     @Volatile
-    private var currentContinuation:
-            CancellableContinuation<String>? = null
-
+    private var currentContinuation: CancellableContinuation<String>? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     @MainThread
@@ -58,7 +59,7 @@ class WebViewScraper @Inject constructor(
                 javaScriptEnabled = true
                 domStorageEnabled = true
 
-                cacheMode = WebSettings.LOAD_NO_CACHE
+                cacheMode = WebSettings.LOAD_DEFAULT
 
                 loadsImagesAutomatically = false
                 blockNetworkImage = true
@@ -100,19 +101,15 @@ class WebViewScraper @Inject constructor(
             webViewClient = object : WebViewClient() {
 
                 override fun shouldInterceptRequest(
-                    view: WebView?,
-                    request: WebResourceRequest?
+                    view: WebView?, request: WebResourceRequest?
                 ): WebResourceResponse? {
 
-                    val requestUrl =
-                        request?.url?.toString()?.lowercase() ?: ""
+                    val requestUrl = request?.url?.toString()?.lowercase() ?: ""
 
                     if (isUnnecessaryResource(requestUrl)) {
 
                         return WebResourceResponse(
-                            "text/plain",
-                            "UTF-8",
-                            ByteArrayInputStream(ByteArray(0))
+                            "text/plain", "UTF-8", ByteArrayInputStream(ByteArray(0))
                         )
                     }
 
@@ -121,15 +118,13 @@ class WebViewScraper @Inject constructor(
 
 
                 override fun onPageCommitVisible(
-                    view: WebView?,
-                    url: String?
+                    view: WebView?, url: String?
                 ) {
 
                     if (currentCssSelector.isNotEmpty()) {
 
                         injectScraperScript(
-                            view,
-                            currentCssSelector
+                            view, currentCssSelector
                         )
                     }
                 }
@@ -161,69 +156,24 @@ class WebViewScraper @Inject constructor(
 
 
     private fun injectScraperScript(
-        view: WebView?,
-        cssSelector: String
+        view: WebView?, cssSelector: String
     ) {
-
         val selectorJs = JSONObject.quote(cssSelector)
 
-        val js = """
-            (function() {
-
-                const selector = $selectorJs;
-
-                function send() {
-
-                    const el =
-                        document.querySelectorAll(selector);
-
-                    if (el.length > 0) {
-
-                        Android.onHtmlReady(
-                            Array.from(el)
-                                .map(d => d.outerHTML)
-                                .join('')
-                        );
-
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                if (!send()) {
-
-                    const observer =
-                        new MutationObserver(() => {
-
-                            if (send()) observer.disconnect();
-
-                        });
-
-                    observer.observe(
-                        document.body,
-                        { childList: true }
-                    );
-
-                    setTimeout(() => {
-
-                        if (send())
-                            observer.disconnect();
-
-                    }, 5000);
-                }
-
-            })();
-        """.trimIndent()
-
-        view?.evaluateJavascript(js, null)
+        view?.evaluateJavascript(
+            JsEngine.render(
+                HTML_CAPTURE_AND_SEND,
+                mapOf(
+                    "SELECTOR" to selectorJs,
+                    "TIMEOUT" to 5000
+                )
+            ), null
+        )
     }
 
 
     suspend fun loadUrlAndGetHtml(
-        url: String,
-        cssSelector: String,
-        timeoutMs: Long = 9000
+        url: String, cssSelector: String, timeoutMs: Long = 9000
     ): String = mutex.withLock {
 
         withContext(Dispatchers.Main) {
@@ -256,10 +206,8 @@ class WebViewScraper @Inject constructor(
                 ""
 
             } catch (_: TimeoutCancellationException) {
-
                 getInstantHtml(
-                    wv,
-                    cssSelector
+                    wv, cssSelector
                 )
 
             } catch (e: CancellationException) {
@@ -273,51 +221,46 @@ class WebViewScraper @Inject constructor(
         }
     }
 
-
     private suspend fun getInstantHtml(
-        wv: WebView,
-        cssSelector: String
-    ): String =
-        suspendCancellableCoroutine { cont ->
+        wv: WebView, cssSelector: String
+    ): String = suspendCancellableCoroutine { cont ->
 
-            val selectorJs = JSONObject.quote(cssSelector)
+        val selectorJs = JSONObject.quote(cssSelector)
 
-            wv.evaluateJavascript(
-                "(function(){return Array.from(document.querySelectorAll($selectorJs)).map(d=>d.outerHTML).join('');})();"
-            ) { html ->
+        wv.evaluateJavascript(
+            JsEngine.render(
+                DOM_HTML_COLLECTOR,
+                mapOf(
+                    "SELECTOR" to selectorJs
+                )
+            )
+        ) { html ->
 
-                if (!cont.isActive) return@evaluateJavascript
+            if (!cont.isActive) return@evaluateJavascript
 
-                val clean =
-                    html?.removePrefix("\"")
-                        ?.removeSuffix("\"")
-                        ?.replace("\\u003C", "<")
-                        ?.replace("\\\"", "\"")
-                        ?: ""
+            val clean = html?.removePrefix("\"")?.removeSuffix("\"")?.replace("\\u003C", "<")
+                ?.replace("\\\"", "\"") ?: ""
 
-                cont.resume(clean)
-            }
+            cont.resume(clean)
         }
+    }
 
 
-    suspend fun limpiarWebViewStorage() =
-        withContext(Dispatchers.Main) {
+    suspend fun limpiarWebViewStorage() = withContext(Dispatchers.Main) {
 
-            CookieManager.getInstance()
-                .removeAllCookies(null)
+        CookieManager.getInstance().removeAllCookies(null)
 
-            CookieManager.getInstance().flush()
+        CookieManager.getInstance().flush()
 
-            WebStorage.getInstance()
-                .deleteAllData()
+        WebStorage.getInstance().deleteAllData()
 
-            webView?.apply {
+        webView?.apply {
 
-                clearCache(true)
+            clearCache(true)
 
-                clearHistory()
+            clearHistory()
 
-                clearFormData()
-            }
+            clearFormData()
         }
+    }
 }

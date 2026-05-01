@@ -29,7 +29,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.pmdm.annas.R
 
 @Composable
-fun PantallaCarga(texto: String = "Cargando...") {
+fun PantallaCarga(texto: String) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.book_search))
 
     val infiniteTransition = rememberInfiniteTransition()

@@ -1,9 +1,10 @@
 package com.pmdm.annas.di
 
 import android.content.Context
+import com.pmdm.annas.data.cache.MemoryCache
 import com.pmdm.annas.data.scraper.Scraper
 import com.pmdm.annas.data.scraper.WebViewScraper
-import com.pmdm.annas.download.SilentDownloader
+import com.pmdm.annas.data.network.SilentDownloader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +18,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideMemoryCache(): MemoryCache {
+        return MemoryCache()
+    }
 
     @Named("scraperClient")
     @Provides
@@ -48,8 +55,9 @@ object AppModule {
     fun provideScraper(
         webViewScraper: WebViewScraper,
         @Named("scraperClient") okHttpClient: OkHttpClient,
-        @ApplicationContext context: Context
-    ): Scraper = Scraper(webViewScraper, okHttpClient, context)
+        @ApplicationContext context: Context,
+        memoryCache: MemoryCache
+    ): Scraper = Scraper(webViewScraper, okHttpClient, context, memoryCache)
 
     @Provides
     @Singleton

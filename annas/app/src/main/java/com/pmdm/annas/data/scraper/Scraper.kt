@@ -1,8 +1,8 @@
 package com.pmdm.annas.data.scraper
 
 import android.content.Context
-import android.util.LruCache
 import androidx.core.content.edit
+import com.pmdm.annas.data.cache.MemoryCache
 import com.pmdm.annas.data.repositorys.toLibros
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.uri.UriUtils
@@ -17,8 +17,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -32,7 +30,8 @@ import javax.inject.Singleton
 class Scraper @Inject constructor(
     private val webViewScraper: WebViewScraper,
     @param:Named("scraperClient") private val okHttpClient: OkHttpClient,
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    private val cache: MemoryCache
 ) {
 
     private val prefs by lazy {
@@ -43,14 +42,8 @@ class Scraper @Inject constructor(
     private var activeMirrorIndex = 0
     private val urlMirror = "https://shadowlibraries.github.io/DirectDownloads/AnnasArchive/"
 
-    private val searchCache = LruCache<String, List<Libro>>(200)
-    private val detailsCache = LruCache<String, Pair<String, List<String>>>(400)
-    private val cacheLock = Mutex()
-
     private var activeBaseUrl: String
-        get() = mirrorUrls.getOrNull(activeMirrorIndex)
-            ?: prefs.getString("mirror", "")
-            ?: ""
+        get() = mirrorUrls.getOrNull(activeMirrorIndex) ?: prefs.getString("mirror", "") ?: ""
         set(value) {
             val index = mirrorUrls.indexOf(value)
             if (index >= 0) activeMirrorIndex = index
@@ -74,8 +67,7 @@ class Scraper @Inject constructor(
             mirrorUrls.addAll(savedMirrors)
 
             val lastMirror = prefs.getString("mirror", "") ?: ""
-            activeMirrorIndex =
-                mirrorUrls.indexOf(lastMirror).takeIf { it >= 0 } ?: 0
+            activeMirrorIndex = mirrorUrls.indexOf(lastMirror).takeIf { it >= 0 } ?: 0
         }
 
         initializationJob = scope.launch {
@@ -132,8 +124,7 @@ class Scraper @Inject constructor(
         repeat(2) { attempt ->
             try {
                 val cssSelector = "ul"
-                val html =
-                    webViewScraper.loadUrlAndGetHtml(urlMirror, cssSelector)
+                val html = webViewScraper.loadUrlAndGetHtml(urlMirror, cssSelector)
 
                 if (html.isEmpty()) throw Exception("HTML vacío")
 
@@ -142,11 +133,7 @@ class Scraper @Inject constructor(
                 val newMirrors = mutableListOf<String>()
 
                 doc.select("li").forEach { li ->
-                    val href =
-                        li.selectFirst("a")
-                            ?.attr("href")
-                            ?.substringBefore("/?")
-                            ?: ""
+                    val href = li.selectFirst("a")?.attr("href")?.substringBefore("/?") ?: ""
 
                     if (href.startsWith("http")) {
                         newMirrors.add(href)
@@ -245,16 +232,14 @@ class Scraper @Inject constructor(
         idioma: String? = null,
         pagina: Int = 1
     ): List<Libro> = withContext(Dispatchers.IO) {
-        val query = nombreLibro.trim()
+        val query = nombreLibro.trim().lowercase()
 
         if (query.isEmpty()) return@withContext emptyList()
 
         val cacheKey =
             "$query-${extensiones.sorted().joinToString(separator = ",")}-$idioma-$pagina"
 
-        cacheLock.withLock {
-            searchCache.get(cacheKey)
-        }?.let {
+        cache.getSearch(cacheKey)?.let {
             return@withContext it
         }
 
@@ -277,21 +262,14 @@ class Scraper @Inject constructor(
                 }
             }
 
-            val html =
-                webViewScraper.loadUrlAndGetHtml(url, cssSelector)
+            val html = webViewScraper.loadUrlAndGetHtml(url, cssSelector)
 
             if (html.isEmpty()) throw Exception("No se obtuvo contenido")
 
-            val libros =
-                Jsoup.parseBodyFragment(html)
-                    .body()
-                    .children()
-                    .toLibros()
+            val libros = Jsoup.parseBodyFragment(html).body().children().toLibros()
 
             if (libros.isNotEmpty()) {
-                cacheLock.withLock {
-                    searchCache.put(cacheKey, libros)
-                }
+                cache.putSearch(cacheKey, libros)
             }
 
             libros
@@ -302,105 +280,68 @@ class Scraper @Inject constructor(
 
     suspend fun servidorDescarga(
         enlace: String
-    ): Pair<String, List<String>> =
-        withContext(Dispatchers.IO) {
+    ): Pair<String, List<String>> = withContext(Dispatchers.IO) {
 
-            cacheLock.withLock {
-                detailsCache.get(enlace)
-            }?.let {
-                return@withContext it
-            }
+        cache.getDetails(enlace)?.let {
+            return@withContext it
+        }
 
-            val cssSelector = DETAILS_SELECTOR
+        val cssSelector = DETAILS_SELECTOR
 
-            val result = tryWithMirrors { mirror ->
-                val url =
-                    if (enlace.startsWith("/"))
-                        "$mirror$enlace"
-                    else enlace
+        val result = tryWithMirrors { mirror ->
+            val url = if (enlace.startsWith("/")) "$mirror$enlace"
+            else enlace
 
-                val html =
-                    webViewScraper.loadUrlAndGetHtml(url, cssSelector)
+            val html = webViewScraper.loadUrlAndGetHtml(url, cssSelector)
 
-                if (html.isEmpty())
-                    throw Exception("No se obtuvo contenido")
+            if (html.isEmpty()) throw Exception("No se obtuvo contenido")
 
-                val doc = Jsoup.parse(html)
+            val doc = Jsoup.parse(html)
 
-                val enlaces = mutableListOf<String>()
+            val enlaces = mutableListOf<String>()
 
-                val descripcion =
-                    doc.select(".js-md5-top-box-description div.mb-1")
-                        .firstOrNull()
-                        ?.text()
-                        ?.trim()
-                        ?: "Sin descripción"
+            val descripcion =
+                doc.select(".js-md5-top-box-description div.mb-1").firstOrNull()?.text()?.trim()
+                    ?: "Sin descripción"
 
-                val slowHeader =
-                    doc.select("h3")
-                        .find {
-                            it.text().contains(
-                                "Slow downloads",
-                                ignoreCase = true
-                            )
-                        }
+            val slowHeader = doc.select("h3").find {
+                    it.text().contains(
+                        "Slow downloads", ignoreCase = true
+                    )
+                }
 
-                val ulLista =
-                    slowHeader
-                        ?.parent()
-                        ?.select("ul.list-inside")
-                        .orEmpty()
-                        .plus(
-                            slowHeader
-                                ?.nextElementSiblings()
-                                ?.select("ul.list-inside")
-                                .orEmpty()
-                        )
-                        .firstOrNull()
+            val ulLista = slowHeader?.parent()?.select("ul.list-inside").orEmpty().plus(
+                    slowHeader?.nextElementSiblings()?.select("ul.list-inside").orEmpty()
+                ).firstOrNull()
 
-                ulLista
-                    ?.select("li")
-                    ?.forEach { li ->
-                        val text =
-                            li.text().lowercase()
+            ulLista?.select("li")?.forEach { li ->
+                    val text = li.text().lowercase()
 
-                        if (
-                            text.contains("partner server")
-                            && text.contains("no waitlist")
-                        ) {
-                            val href =
-                                li.selectFirst("a")
-                                    ?.attr("href")
-                                    ?: ""
+                    if (text.contains("partner server") && text.contains("no waitlist")) {
+                        val href = li.selectFirst("a")?.attr("href") ?: ""
 
-                            if (href.isNotEmpty()) {
-                                val fullUrl =
-                                    if (href.startsWith("/"))
-                                        "$mirror$href"
-                                    else href
+                        if (href.isNotEmpty()) {
+                            val fullUrl = if (href.startsWith("/")) "$mirror$href"
+                            else href
 
-                                if (!enlaces.contains(fullUrl)) {
-                                    enlaces.add(fullUrl)
-                                }
+                            if (!enlaces.contains(fullUrl)) {
+                                enlaces.add(fullUrl)
                             }
                         }
                     }
-
-                val pair =
-                    Pair(descripcion, enlaces)
-
-                if (enlaces.isNotEmpty()) {
-                    cacheLock.withLock {
-                        detailsCache.put(enlace, pair)
-                    }
                 }
 
-                pair
+            val pair = Pair(descripcion, enlaces)
+
+            if (enlaces.isNotEmpty()) {
+                cache.putDetails(enlace, pair)
             }
 
-            result ?: Pair(
-                "Error al obtener detalles",
-                emptyList()
-            )
+            pair
         }
+
+        result ?: Pair(
+            "Error al obtener detalles", emptyList()
+        )
+    }
 }

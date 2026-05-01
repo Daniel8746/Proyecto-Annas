@@ -1,7 +1,6 @@
 package com.pmdm.annas.ui.navigation
 
 import android.net.Uri
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.Spring
@@ -98,8 +97,7 @@ fun AnnasNavHost() {
                     val libroJson = Uri.encode(Json.encodeToString(libro))
                     navController.navigate(LibroRoute(libroJson))
                 },
-                sharedTransitionScope = this@SharedTransitionLayout,
-                animatedVisibilityScope = this as AnimatedVisibilityScope
+                sharedTransitionScope = this@SharedTransitionLayout
             )
 
             libroDestination(

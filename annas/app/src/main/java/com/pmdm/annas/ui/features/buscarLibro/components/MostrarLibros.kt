@@ -330,6 +330,10 @@ fun LibroItem(
                             text = libro.formato.uppercase(),
                             color = MaterialTheme.colorScheme.tertiaryContainer
                         )
+                        InfoBadge(
+                            text = libro.tamano,
+                            color = MaterialTheme.colorScheme.tertiaryContainer
+                        )
                     }
                 }
             }

@@ -45,7 +45,7 @@ fun BuscarLibroScaffold(
                 onReintentar = { onBuscarLibroEvent(BuscarLibroEvent.OnClickBuscar) }
             )
 
-            else -> {} // Pantalla inicial se maneja dentro de MostrarLibros si quieres
+            else -> PantallaInicial()
         }
 
         if (showSearchBar) {

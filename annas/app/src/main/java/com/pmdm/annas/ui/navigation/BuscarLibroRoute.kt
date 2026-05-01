@@ -1,6 +1,5 @@
 package com.pmdm.annas.ui.navigation
 
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -17,8 +16,7 @@ object BuscarLibroRoute
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.buscarLibroDestination(
     onLibroClick: (Libro) -> Unit,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    sharedTransitionScope: SharedTransitionScope
 ) {
     composable<BuscarLibroRoute> {
         val viewModel: BuscarLibroViewModel = hiltViewModel()
@@ -28,7 +26,7 @@ fun NavGraphBuilder.buscarLibroDestination(
             onBuscarLibroEvent = viewModel::onBuscarLibroEvent,
             onLibroClick = onLibroClick,
             sharedTransitionScope = sharedTransitionScope,
-            animatedVisibilityScope = animatedVisibilityScope
+            animatedVisibilityScope = this
         )
     }
 }
