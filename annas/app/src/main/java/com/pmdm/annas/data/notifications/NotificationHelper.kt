@@ -7,12 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.app.NotificationCompat
-import com.pmdm.annas.data.network.DownloadEvents
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.job
-import kotlin.coroutines.CoroutineContext
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class NotificationHelper(private val context: Context) {
+class NotificationHelper @Inject constructor(
+    @param:ApplicationContext private val context: Context
+) {
     private val channelId = "downloads_channel"
     private val notificationId = 1001
     private val requestCode = 2001
@@ -35,7 +35,8 @@ class NotificationHelper(private val context: Context) {
             }, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(android.R.drawable.stat_sys_download).setContentTitle(fileName).setOngoing(true)
+            .setSmallIcon(android.R.drawable.stat_sys_download).setContentTitle(fileName)
+            .setOngoing(true)
             .setOnlyAlertOnce(true)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Cancelar", cancelPI)
 
@@ -59,7 +60,8 @@ class NotificationHelper(private val context: Context) {
         manager.notify(
             notificationId,
             NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done).setContentTitle("Completado")
+                .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                .setContentTitle("Completado")
                 .setContentText(fileName).setAutoCancel(true).setContentIntent(pi)
                 .setPriority(NotificationCompat.PRIORITY_HIGH).build()
         )
@@ -81,7 +83,8 @@ class NotificationHelper(private val context: Context) {
         manager.notify(
             cancelCode,
             NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(android.R.drawable.ic_menu_close_clear_cancel).setContentTitle("Cancelación de la descarga")
+                .setSmallIcon(android.R.drawable.ic_menu_close_clear_cancel)
+                .setContentTitle("Cancelar Descarga")
                 .setContentText(fileName).setAutoCancel(true).build()
         )
     }

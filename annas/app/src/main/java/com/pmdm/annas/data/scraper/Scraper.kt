@@ -24,9 +24,7 @@ import org.jsoup.Jsoup
 import java.util.Collections
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
-@Singleton
 class Scraper @Inject constructor(
     private val webViewScraper: WebViewScraper,
     @param:Named("scraperClient") private val okHttpClient: OkHttpClient,
@@ -305,31 +303,31 @@ class Scraper @Inject constructor(
                     ?: "Sin descripción"
 
             val slowHeader = doc.select("h3").find {
-                    it.text().contains(
-                        "Slow downloads", ignoreCase = true
-                    )
-                }
+                it.text().contains(
+                    "Slow downloads", ignoreCase = true
+                )
+            }
 
             val ulLista = slowHeader?.parent()?.select("ul.list-inside").orEmpty().plus(
-                    slowHeader?.nextElementSiblings()?.select("ul.list-inside").orEmpty()
-                ).firstOrNull()
+                slowHeader?.nextElementSiblings()?.select("ul.list-inside").orEmpty()
+            ).firstOrNull()
 
             ulLista?.select("li")?.forEach { li ->
-                    val text = li.text().lowercase()
+                val text = li.text().lowercase()
 
-                    if (text.contains("partner server") && text.contains("no waitlist")) {
-                        val href = li.selectFirst("a")?.attr("href") ?: ""
+                if (text.contains("partner server") && text.contains("no waitlist")) {
+                    val href = li.selectFirst("a")?.attr("href") ?: ""
 
-                        if (href.isNotEmpty()) {
-                            val fullUrl = if (href.startsWith("/")) "$mirror$href"
-                            else href
+                    if (href.isNotEmpty()) {
+                        val fullUrl = if (href.startsWith("/")) "$mirror$href"
+                        else href
 
-                            if (!enlaces.contains(fullUrl)) {
-                                enlaces.add(fullUrl)
-                            }
+                        if (!enlaces.contains(fullUrl)) {
+                            enlaces.add(fullUrl)
                         }
                     }
                 }
+            }
 
             val pair = Pair(descripcion, enlaces)
 

@@ -28,10 +28,8 @@ import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.coroutines.resume
 
-@Singleton
 class WebViewScraper @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) {

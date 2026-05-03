@@ -19,11 +19,12 @@ class MemoryCache {
         }
     }
 
-    private val detailsCache = object : LruCache<String, CacheEntry<Pair<String, List<String>>>>(400) {
-        override fun sizeOf(key: String, value: CacheEntry<Pair<String, List<String>>>): Int {
-            return value.data.second.size
+    private val detailsCache =
+        object : LruCache<String, CacheEntry<Pair<String, List<String>>>>(400) {
+            override fun sizeOf(key: String, value: CacheEntry<Pair<String, List<String>>>): Int {
+                return value.data.second.size
+            }
         }
-    }
 
     // ---------------- SEARCH ----------------
 

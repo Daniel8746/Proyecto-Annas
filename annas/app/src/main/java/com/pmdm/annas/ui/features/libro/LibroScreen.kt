@@ -1,8 +1,5 @@
 package com.pmdm.annas.ui.features.libro
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,9 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -28,17 +23,14 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import com.pmdm.annas.data.network.SilentDownloader
-import com.pmdm.annas.data.network.getMime
-import com.pmdm.annas.data.notifications.NotificationHelper
+import com.pmdm.annas.data.extensions.findActivity
+import com.pmdm.annas.model.DownloadState
 import com.pmdm.annas.model.Libro
 import com.pmdm.annas.ui.features.UIStateEnum
 import com.pmdm.annas.ui.features.components.ErrorScreen
 import com.pmdm.annas.ui.features.components.PantallaCarga
 import com.pmdm.annas.ui.features.libro.components.MostrarLibro
-import com.pmdm.annas.uri.UriUtils
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -47,30 +39,15 @@ fun LibroScreen(
     descripcion: String,
     uiStateEnum: UIStateEnum?,
     enlacesServidor: List<String>,
-    onReintentar: () -> Unit,
+    downloadState: DownloadState,
+    onLibroEvent: (LibroEvent) -> Unit,
     onNavigateBack: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    silentDownloader: SilentDownloader
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    val context = LocalContext.current
+    val context = LocalContext.current.findActivity()
     val haptic = LocalHapticFeedback.current
-    val scope = rememberCoroutineScope()
-    val notificationHelper = remember { NotificationHelper(context) }
 
-    var downloadState by remember {
-        mutableStateOf(
-            DownloadState(
-                url = "",
-                userAgent = "",
-                contentDisposition = "",
-                mimeType = "application/octet-stream",
-                fileName = "",
-                length = 0L,
-                referer = null
-            )
-        )
-    }
     // Estados predictivos para swipe back
     var predictiveBackProgress by remember { mutableFloatStateOf(0f) }
     var swipeEdge by remember { mutableIntStateOf(0) }
@@ -84,22 +61,10 @@ fun LibroScreen(
     }
 
     val createFileLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("*/*")
+        ActivityResultContracts.CreateDocument(downloadState.mimeType)
     ) { uri ->
         uri?.let { fileUri ->
-            scope.launch {
-                silentDownloader.downloadFileWithNotification(
-                    url = downloadState.url,
-                    ua = downloadState.userAgent,
-                    cd = downloadState.contentDisposition,
-                    mime = downloadState.mimeType,
-                    dest = fileUri,
-                    fileName = downloadState.fileName,
-                    helper = notificationHelper,
-                    len = downloadState.length,
-                    ref = downloadState.referer
-                )
-            }
+            onLibroEvent(LibroEvent.DescargarLibro(fileUri))
         }
     }
 
@@ -123,38 +88,6 @@ fun LibroScreen(
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         }
     }
-
-    var urlRemember by remember { mutableStateOf("") }
-    val createSilentLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.CreateDocument(libro.formato)
-        ) {
-            silentDownloader.launchSilentDownload(
-                activity = context.findActivity(),
-                url = urlRemember,
-                onDownloadStart = { dUrl, ua, cd, mime, len, ref ->
-                    downloadState = DownloadState(
-                        url = dUrl,
-                        userAgent = ua,
-                        contentDisposition = cd,
-                        mimeType = if (mime.isBlank() || mime == "application/octet-stream") getMime(
-                            dUrl
-                        ) else mime,
-                        fileName = UriUtils.decode(
-                            UriUtils.getRawFileName(
-                                dUrl,
-                                cd,
-                                mime
-                            )
-                        ),
-                        length = len,
-                        referer = ref
-                    )
-                    createFileLauncher.launch(downloadState.fileName)
-                }
-            )
-        }
-
 
     Box(
         modifier = Modifier
@@ -188,9 +121,8 @@ fun LibroScreen(
                     formato = libro.formato,
                     tamano = libro.tamano,
                     onDownloadClick = { url ->
-                        urlRemember = url
-
-                        createSilentLauncher.launch("")
+                        onLibroEvent(LibroEvent.PrepararDescarga(context, url))
+                        createFileLauncher.launch(downloadState.fileName)
                     },
                     enlaceKey = libro.enlace,
                     sharedTransitionScope = sharedTransitionScope,
@@ -199,27 +131,9 @@ fun LibroScreen(
 
             else -> ErrorScreen(
                 mensaje = "Error al abrir el libro",
-                onReintentar = onReintentar
+                onReintentar = { onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace)) }
             )
         }
     }
 }
 
-private data class DownloadState(
-    val url: String,
-    val userAgent: String,
-    val contentDisposition: String,
-    val mimeType: String,
-    val fileName: String,
-    val length: Long,
-    val referer: String?
-)
-
-fun Context.findActivity(): Activity {
-    var ctx = this
-    while (ctx is ContextWrapper) {
-        if (ctx is Activity) return ctx
-        ctx = ctx.baseContext
-    }
-    throw IllegalStateException("No Activity found")
-}

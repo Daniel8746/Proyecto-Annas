@@ -30,12 +30,10 @@ import java.io.ByteArrayInputStream
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
 const val DESKTOP_UA =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 
-@Singleton
 class SilentDownloader @Inject constructor(
     @param:ApplicationContext private val context: Context,
     @param:Named("downloadClient") private val client: OkHttpClient
@@ -46,7 +44,9 @@ class SilentDownloader @Inject constructor(
 
     @SuppressLint("SetJavaScriptEnabled")
     fun launchSilentDownload(
-        activity: Activity, url: String, onDownloadStart: (String, String, String, String, Long, String?) -> Unit
+        activity: Activity,
+        url: String,
+        onDownloadStart: (String, String, String, String, Long, String?) -> Unit
     ) {
         val wv = WebView(activity)
 

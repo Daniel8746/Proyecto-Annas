@@ -2,9 +2,10 @@ package com.pmdm.annas.di
 
 import android.content.Context
 import com.pmdm.annas.data.cache.MemoryCache
+import com.pmdm.annas.data.network.SilentDownloader
+import com.pmdm.annas.data.notifications.NotificationHelper
 import com.pmdm.annas.data.scraper.Scraper
 import com.pmdm.annas.data.scraper.WebViewScraper
-import com.pmdm.annas.data.network.SilentDownloader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -70,4 +71,9 @@ object AppModule {
         @ApplicationContext context: Context,
         @Named("downloadClient") okHttpClient: OkHttpClient
     ): SilentDownloader = SilentDownloader(context, okHttpClient)
+
+    @Provides
+    @Singleton
+    fun provideNotificationHelper(@ApplicationContext context: Context): NotificationHelper =
+        NotificationHelper(context)
 }

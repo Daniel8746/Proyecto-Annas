@@ -37,13 +37,11 @@ fun NavGraphBuilder.libroDestination(
             descripcion = vm.uiState.descripcion,
             uiStateEnum = vm.uiState.uiStateEnum,
             enlacesServidor = vm.uiState.enlacesServidor,
-            onReintentar = {
-                vm.onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace))
-            },
+            downloadState = vm.downloadState,
+            onLibroEvent = vm::onLibroEvent,
             onNavigateBack = onNavigateBack,
             sharedTransitionScope = sharedTransitionScope,
-            animatedVisibilityScope = this,
-            silentDownloader = vm.silentDownloader
+            animatedVisibilityScope = this
         )
     }
 }
