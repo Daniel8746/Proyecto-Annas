@@ -28,21 +28,29 @@ class NotificationHelper @Inject constructor(
         )
     }
 
-    fun showProgressNotification(fileName: String, progress: Int) {
+    fun showProgressNotification(fileName: String, progress: Int, speedText: String = "") {
         val cancelPI = PendingIntent.getBroadcast(
             context, notificationId, Intent(context, NotificationCancelReceiver::class.java).apply {
                 action = "CANCEL_DOWNLOAD"
             }, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
+        val isprogress = progress in 0..100
+        val statusText = when {
+            isprogress -> "$progress%  •  $speedText"
+            else -> "Descargando...  •  $speedText"
+        }
+
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(android.R.drawable.stat_sys_download).setContentTitle(fileName)
+            .setContentText(statusText)
+            .setProgress(100, progress, false)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Cancelar", cancelPI)
 
-        if (progress in 0..100) builder.setProgress(100, progress, false)
-            .setContentText("$progress%")
-        else builder.setProgress(0, 0, true).setContentText("Descargando...")
+        if (isprogress) builder.setProgress(100, progress, false)
+        else builder.setProgress(0, 0, true)
 
         manager.notify(notificationId, builder.build())
     }

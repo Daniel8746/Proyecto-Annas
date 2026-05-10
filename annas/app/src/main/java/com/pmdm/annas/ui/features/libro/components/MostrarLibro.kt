@@ -24,7 +24,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,6 +42,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -205,6 +208,11 @@ fun MostrarLibro(
                 } else {
                     enlacesServidor.forEachIndexed { index, enlaceServer ->
                         key(enlaceServer) {
+                            when (index) {
+                                0 -> SectionTitle(Icons.Default.Speed, "Servidores de Descarga Rápida")
+                                4 -> SectionTitle(Icons.Default.HourglassEmpty, "Servidores de Descarga Lenta")
+                            }
+
                             ElevatedButton(
                                 onClick = { onDownloadClick(enlaceServer) },
                                 modifier = Modifier
@@ -222,7 +230,7 @@ fun MostrarLibro(
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Spacer(Modifier.width(10.dp))
-                                Text(text = "Servidor ${index + 1}", fontWeight = FontWeight.Bold)
+                                Text(text = "Servidor ${(index % 4) + 1}", fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -235,7 +243,7 @@ fun MostrarLibro(
 }
 
 @Composable
-private fun SectionTitle(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String) {
+private fun SectionTitle(icon: ImageVector, title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

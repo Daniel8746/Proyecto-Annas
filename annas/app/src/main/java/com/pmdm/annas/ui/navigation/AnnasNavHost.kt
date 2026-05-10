@@ -1,6 +1,7 @@
 package com.pmdm.annas.ui.navigation
 
 import android.net.Uri
+import android.os.Build
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.Spring
@@ -23,8 +24,8 @@ import kotlinx.serialization.json.Json
 fun AnnasNavHost() {
     val navController: NavHostController = rememberNavController()
 
-    // Configuración de física para Android 16: Fluidez absoluta (System Physics Tuning)
-    // Aumentamos la rigidez inicial para respuesta inmediata y bajamos el rebote para elegancia
+    val isAndroid16 = Build.VERSION.SDK_INT >= 36
+
     val fluidSpring = spring<Float>(
         dampingRatio = Spring.DampingRatioLowBouncy,
         stiffness = Spring.StiffnessMediumLow
@@ -40,56 +41,89 @@ fun AnnasNavHost() {
             navController = navController,
             startDestination = BuscarLibroRoute,
 
-            // AVANZAR: Entrada elástica sutil con mayor profundidad (Android 16 Style)
+            // ANDROID 16+: física completa + predictive back
+            // APIs antiguas: fallback compatible
             enterTransition = {
-                fadeIn(animationSpec = fluidSpring) +
-                        slideInHorizontally(
-                            initialOffsetX = { it / 8 },
-                            animationSpec = offsetSpring
-                        ) +
-                        scaleIn(
-                            initialScale = 0.9f,
-                            animationSpec = fluidSpring
-                        )
+                if (isAndroid16) {
+                    fadeIn(animationSpec = fluidSpring) +
+                            slideInHorizontally(
+                                initialOffsetX = { it / 8 },
+                                animationSpec = offsetSpring
+                            ) +
+                            scaleIn(
+                                initialScale = 0.9f,
+                                animationSpec = fluidSpring
+                            )
+                } else {
+                    fadeIn(animationSpec = fluidSpring) +
+                            slideInHorizontally(
+                                initialOffsetX = { it / 4 },
+                                animationSpec = offsetSpring
+                            )
+                }
             },
 
             // SALIR ADELANTE: La pantalla anterior se aleja con efecto paralaje mejorado
             exitTransition = {
-                fadeOut(animationSpec = fluidSpring) +
-                        slideOutHorizontally(
-                            targetOffsetX = { -it / 8 },
-                            animationSpec = offsetSpring
-                        ) +
-                        scaleOut(
-                            targetScale = 1.1f,
-                            animationSpec = fluidSpring
-                        )
+                if (isAndroid16) {
+                    fadeOut(animationSpec = fluidSpring) +
+                            slideOutHorizontally(
+                                targetOffsetX = { -it / 8 },
+                                animationSpec = offsetSpring
+                            ) +
+                            scaleOut(
+                                targetScale = 1.1f,
+                                animationSpec = fluidSpring
+                            )
+                } else {
+                    fadeOut(animationSpec = fluidSpring) +
+                            slideOutHorizontally(
+                                targetOffsetX = { -it / 4 },
+                                animationSpec = offsetSpring
+                            )
+                }
             },
 
             // VOLVER ATRÁS: La lista regresa con inercia física refinada
             popEnterTransition = {
-                fadeIn(animationSpec = fluidSpring) +
-                        slideInHorizontally(
-                            initialOffsetX = { -it / 8 },
-                            animationSpec = offsetSpring
-                        ) +
-                        scaleIn(
-                            initialScale = 1.1f,
-                            animationSpec = fluidSpring
-                        )
+                if (isAndroid16) {
+                    fadeIn(animationSpec = fluidSpring) +
+                            slideInHorizontally(
+                                initialOffsetX = { -it / 8 },
+                                animationSpec = offsetSpring
+                            ) +
+                            scaleIn(
+                                initialScale = 1.1f,
+                                animationSpec = fluidSpring
+                            )
+                } else {
+                    fadeIn(animationSpec = fluidSpring) +
+                            slideInHorizontally(
+                                initialOffsetX = { -it / 4 },
+                                animationSpec = offsetSpring
+                            )
+                }
             },
 
             // SALIR ATRÁS: Sincronización perfecta con gestos predictivos de API 36
             popExitTransition = {
-                fadeOut(animationSpec = fluidSpring) +
-                        slideOutHorizontally(
-                            targetOffsetX = { it },
-                            animationSpec = offsetSpring
-                        ) +
-                        scaleOut(
-                            targetScale = 0.9f,
-                            animationSpec = fluidSpring
-                        )
+                if (isAndroid16) {
+                    fadeOut(animationSpec = fluidSpring) +
+                            slideOutHorizontally(
+                                targetOffsetX = { it },
+                                animationSpec = offsetSpring
+                            ) +
+                            scaleOut(
+                                targetScale = 0.9f,
+                                animationSpec = fluidSpring
+                            )
+                } else {
+                    fadeOut(animationSpec = fluidSpring) +
+                            slideOutHorizontally(
+                                targetOffsetX = { it / 4 },
+                                animationSpec = offsetSpring
+                            )
+                }
             }
         ) {
             buscarLibroDestination(

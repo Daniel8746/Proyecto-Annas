@@ -26,8 +26,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.io.ByteArrayInputStream
-import java.io.IOException
+import okio.Buffer
+import okio.buffer
+import okio.sink
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -74,7 +75,7 @@ class SilentDownloader @Inject constructor(
 
                 return if (isUnnecessaryResource(requestUrl)) {
                     WebResourceResponse(
-                        "text/plain", "UTF-8", ByteArrayInputStream(ByteArray(0))
+                        "text/plain", "UTF-8", Buffer().inputStream()
                     )
                 } else null
             }
@@ -125,6 +126,8 @@ class SilentDownloader @Inject constructor(
         }
 
         wv.setDownloadListener { dUrl, ua, cd, mime, len ->
+            cookie.flush()
+
             onDownloadStart(
                 dUrl, ua, cd, mime, len, wv.url
             )
@@ -170,23 +173,41 @@ class SilentDownloader @Inject constructor(
 
             try {
                 withContext(Dispatchers.IO) {
-
                     helper.showProgressNotification(
                         if (attempt > 1) "($attempt/$maxAttempts) $fileName"
                         else fileName, 0
                     )
 
-                    val request = Request.Builder().url(url).header("User-Agent", ua)
-                        .header("Accept", mime ?: "*/*").apply {
-                            cd?.takeIf { it.isNotBlank() }
-                                ?.let { header("Content-Disposition", it) }
+                    val request = Request.Builder()
+                        .url(url)
+                        .header("User-Agent", ua)
+                        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
+                        .header("Accept-Language", "es-ES,es;q=0.9,en;q=0.8")
+                        .header("Accept-Encoding", "identity")
+                        .header("Sec-Ch-Ua", "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Google Chrome\";v=\"122\"")
+                        .header("Sec-Ch-Ua-Mobile", "?0")
+                        .header("Sec-Ch-Ua-Platform", "\"Windows\"")
+                        .header("Sec-Fetch-Dest", "document")
+                        .header("Sec-Fetch-Mode", "navigate")
+                        .header("Sec-Fetch-Site", "none")
+                        .header("Sec-Fetch-User", "?1")
+                        .header("Upgrade-Insecure-Requests", "1")
+                        .apply {
                             ref?.let { header("Referer", it) }
-                            CookieManager.getInstance().getCookie(url)?.let { header("Cookie", it) }
-                        }.build()
+
+                            cookie.getCookie(url)?.let {
+                                header("Cookie", it)
+                            }
+
+                            cd?.takeIf { it.isNotBlank() }?.let {
+                                header("Content-Disposition", it)
+                            }
+                        }
+                        .build()
 
                     client.newCall(request).execute().use { resp ->
 
-                        if (!resp.isSuccessful) throw IOException(
+                        if (!resp.isSuccessful) throw okio.IOException(
                             "Unexpected code $resp"
                         )
 
@@ -199,57 +220,69 @@ class SilentDownloader @Inject constructor(
 
                         var current = 0L
 
-                        val outputStream =
-                            context.contentResolver.openOutputStream(dest) ?: throw IOException(
+                        val outputStream = context.contentResolver.openOutputStream(dest)
+                            ?: throw okio.IOException(
                                 "No se pudo abrir el destino"
                             )
 
-                        outputStream.use { out ->
+                        val source = body.source()
+                        val sink = outputStream.sink().buffer()
 
-                            val buffer = ByteArray(256 * 1024)
+                        try {
+                            val buffer = Buffer()
+                            val readSize = 1024 * 1024L
 
-                            var bytes: Int
+                            var lastProgressUpdate = 0L
+                            var lastPercent = -1
+                            var bytesInLastInterval = 0L
+                            var lastSpeedUpdateTick = System.currentTimeMillis()
+                            var speedText = ""
 
-                            var lastUpdate = 0L
+                            while (source.read(buffer, readSize) != -1L) {
+                                if (!isActive) throw CancellationException()
 
+                                val bytesRead = buffer.size
+                                sink.write(buffer, bytesRead)
+                                current += bytesRead
+                                bytesInLastInterval += bytesRead
 
-                            body.byteStream().use { input ->
+                                val currentTime = System.currentTimeMillis()
+                                val timeDiff = currentTime - lastSpeedUpdateTick
 
-                                while (input.read(buffer).also {
-                                        bytes = it
-                                    } != -1) {
+                                if (timeDiff >= 1000L) {
+                                    val speedInBytesPerSecond = (bytesInLastInterval * 1000) / timeDiff
+                                    speedText = formatSpeed(speedInBytesPerSecond)
 
-                                    if (!isActive) throw CancellationException()
+                                    bytesInLastInterval = 0L
+                                    lastSpeedUpdateTick = currentTime
+                                }
 
-                                    out.write(
-                                        buffer, 0, bytes
-                                    )
+                                if (total > 0) {
+                                    val progress = (current * 100 / total).toInt()
 
-                                    current += bytes
-
-                                    val now = System.currentTimeMillis()
-
-                                    if (total > 0 && now - lastUpdate > 1200) {
-
+                                    if ((progress != lastPercent || speedText.isNotBlank()) && currentTime - lastProgressUpdate > 500L) {
                                         helper.showProgressNotification(
-                                            if (attempt > 1) "($attempt/$maxAttempts) $fileName"
-                                            else fileName, (current * 100 / total).toInt()
+                                            if (attempt > 1) "($attempt/$maxAttempts) $fileName" else fileName,
+                                            progress,
+                                            speedText
                                         )
 
-                                        lastUpdate = now
+                                        lastPercent = progress
+                                        lastProgressUpdate = currentTime
                                     }
                                 }
                             }
+                            sink.flush()
+                        } finally {
+                            source.close()
+                            sink.close()
                         }
 
-
                         if (total > 0 && current < total) {
-
-                            throw IOException(
+                            throw okio.IOException(
                                 "Incomplete download"
                             )
                         }
-
 
                         success = true
 
@@ -297,6 +330,15 @@ class SilentDownloader @Inject constructor(
                 destroy()
             }
         } catch (_: Exception) {
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun formatSpeed(bytesPerSecond: Long): String {
+        return when {
+            bytesPerSecond >= 1024 * 1024 -> String.format("%.1f MB/s", bytesPerSecond / (1024.0 * 1024.0))
+            bytesPerSecond >= 1024 -> String.format("%d KB/s", bytesPerSecond / 1024)
+            else -> "$bytesPerSecond B/s"
         }
     }
 }

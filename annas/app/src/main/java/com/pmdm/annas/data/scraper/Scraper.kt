@@ -21,7 +21,6 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
-import java.util.Collections
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -36,7 +35,7 @@ class Scraper @Inject constructor(
         context.getSharedPreferences("scraper_prefs", Context.MODE_PRIVATE)
     }
 
-    private val mirrorUrls = Collections.synchronizedList(mutableListOf<String>())
+    private val mirrorUrls = mutableListOf<String>()
     private var activeMirrorIndex = 0
     private val urlMirror = "https://shadowlibraries.github.io/DirectDownloads/AnnasArchive/"
 
@@ -59,16 +58,16 @@ class Scraper @Inject constructor(
     }
 
     init {
-        val savedMirrors = prefs.getStringSet("mirror_list", emptySet())
-
-        if (!savedMirrors.isNullOrEmpty()) {
-            mirrorUrls.addAll(savedMirrors)
-
-            val lastMirror = prefs.getString("mirror", "") ?: ""
-            activeMirrorIndex = mirrorUrls.indexOf(lastMirror).takeIf { it >= 0 } ?: 0
-        }
-
         initializationJob = scope.launch {
+            val savedMirrors = prefs.getStringSet("mirror_list", emptySet())
+
+            if (!savedMirrors.isNullOrEmpty()) {
+                mirrorUrls.addAll(savedMirrors)
+
+                val lastMirror = prefs.getString("mirror", "") ?: ""
+                activeMirrorIndex = mirrorUrls.indexOf(lastMirror).takeIf { it >= 0 } ?: 0
+            }
+
             if (mirrorUrls.isEmpty()) {
                 initializeMirrors()
             } else {
@@ -315,7 +314,7 @@ class Scraper @Inject constructor(
             ulLista?.select("li")?.forEach { li ->
                 val text = li.text().lowercase()
 
-                if (text.contains("partner server") && text.contains("no waitlist")) {
+                if (text.contains("partner server")) {
                     val href = li.selectFirst("a")?.attr("href") ?: ""
 
                     if (href.isNotEmpty()) {

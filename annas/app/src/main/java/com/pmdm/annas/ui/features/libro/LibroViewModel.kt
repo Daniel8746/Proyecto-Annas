@@ -61,6 +61,8 @@ class LibroViewModel @Inject constructor(
             }
 
             is LibroEvent.PrepararDescarga -> {
+                uiState = uiState.copy(uiStateEnum = UIStateEnum.CARGANDO)
+                downloadState = DownloadState()
                 silentDownloader.launchSilentDownload(
                     activity = event.context,
                     url = event.url,
@@ -87,19 +89,22 @@ class LibroViewModel @Inject constructor(
             }
 
             is LibroEvent.DescargarLibro -> {
+                val state = downloadState
                 viewModelScope.launch {
                     silentDownloader.downloadFileWithNotification(
-                        url = downloadState.url,
-                        ua = downloadState.userAgent,
-                        cd = downloadState.contentDisposition,
-                        mime = downloadState.mimeType,
+                        url = state.url,
+                        ua = state.userAgent,
+                        cd = state.contentDisposition,
+                        mime = state.mimeType,
                         dest = event.fileUri,
-                        fileName = downloadState.fileName,
+                        fileName = state.fileName,
                         helper = notificationHelper,
-                        len = downloadState.length,
-                        ref = downloadState.referer
+                        len = state.length,
+                        ref = state.referer
                     )
                 }
+
+                uiState = uiState.copy(uiStateEnum = UIStateEnum.CARGADO)
             }
         }
     }

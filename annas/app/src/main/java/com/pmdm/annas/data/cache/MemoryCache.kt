@@ -1,6 +1,7 @@
 package com.pmdm.annas.data.cache
 
 import android.util.LruCache
+import com.pmdm.annas.model.CacheEntry
 import com.pmdm.annas.model.Libro
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

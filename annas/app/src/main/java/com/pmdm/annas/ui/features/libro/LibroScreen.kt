@@ -1,5 +1,12 @@
 package com.pmdm.annas.ui.features.libro
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -32,6 +40,7 @@ import com.pmdm.annas.ui.features.components.PantallaCarga
 import com.pmdm.annas.ui.features.libro.components.MostrarLibro
 import kotlinx.coroutines.CancellationException
 
+@SuppressLint("ServiceCast")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun LibroScreen(
@@ -60,32 +69,63 @@ fun LibroScreen(
         }
     }
 
+    var isWaitingForDownload by remember { mutableStateOf(false) }
+
     val createFileLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument(downloadState.mimeType)
+        contract = ActivityResultContracts.CreateDocument(
+            downloadState.mimeType.ifEmpty { "application/octet-stream" }
+        )
     ) { uri ->
         uri?.let { fileUri ->
             onLibroEvent(LibroEvent.DescargarLibro(fileUri))
         }
     }
 
-    PredictiveBackHandler(true) { progress ->
-        try {
-            progress.collect { event ->
-                predictiveBackProgress = event.progress
-                swipeEdge = event.swipeEdge
+    LaunchedEffect(downloadState.url) {
+        if (isWaitingForDownload && downloadState.url.isNotEmpty()) {
+            try {
+                createFileLauncher.launch(downloadState.fileName)
+            } catch (_: Exception) {
+                // Evitar crash si no hay actividad que maneje el intent
             }
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            onNavigateBack()
-        } catch (_: CancellationException) {
-            predictiveBackProgress = 0f
+            isWaitingForDownload = false
         }
     }
 
-    LaunchedEffect(predictiveBackProgress) {
-        if (predictiveBackProgress > 0.05f) {
-            val tick = (predictiveBackProgress * 100).toInt()
-            if (tick % 10 == 0)
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+    val triggerNativeVibration = {
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+            vibratorManager?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        }
+
+        vibrator?.let { v ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                v.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+            } else
+                v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+        }
+    }
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        BackHandler {
+            triggerNativeVibration()
+            onNavigateBack()
+        }
+    } else {
+        PredictiveBackHandler { progress ->
+            try {
+                progress.collect { event ->
+                    predictiveBackProgress = event.progress
+                    swipeEdge = event.swipeEdge
+                }
+                triggerNativeVibration()
+                onNavigateBack()
+            } catch (_: CancellationException) {
+                predictiveBackProgress = 0f
+            }
         }
     }
 
@@ -121,8 +161,8 @@ fun LibroScreen(
                     formato = libro.formato,
                     tamano = libro.tamano,
                     onDownloadClick = { url ->
+                        isWaitingForDownload = true
                         onLibroEvent(LibroEvent.PrepararDescarga(context, url))
-                        createFileLauncher.launch(downloadState.fileName)
                     },
                     enlaceKey = libro.enlace,
                     sharedTransitionScope = sharedTransitionScope,
@@ -136,4 +176,3 @@ fun LibroScreen(
         }
     }
 }
-

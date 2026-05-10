@@ -11,6 +11,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -38,11 +39,17 @@ object AppModule {
             .followSslRedirects(true)
             .build()
 
+    val dispatcher = Dispatcher().apply {
+        maxRequests = 64
+        maxRequestsPerHost = 20
+    }
+
     @Named("downloadClient")
     @Provides
     @Singleton
     fun provideDownloadClient(): OkHttpClient =
         OkHttpClient.Builder()
+            .dispatcher(dispatcher)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(300, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
