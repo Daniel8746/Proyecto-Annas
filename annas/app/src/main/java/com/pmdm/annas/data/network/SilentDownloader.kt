@@ -15,6 +15,7 @@ import android.webkit.WebViewClient
 import com.pmdm.annas.data.js.JsScripts
 import com.pmdm.annas.data.notifications.NotificationHelper
 import com.pmdm.annas.data.utils.isUnnecessaryResource
+import com.pmdm.annas.data.utils.safeDestroy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -80,12 +81,14 @@ class SilentDownloader @Inject constructor(
                 } else null
             }
 
-            override fun onPageFinished(
+            override fun onPageCommitVisible(
                 view: WebView?, url: String?
             ) {
-                view?.let { wv ->
-                    wv.evaluateJavascript(JsScripts.AUTO_EXTRACT_AND_REDIRECT_SCRIPT, null)
+                view?.evaluateJavascript(JsScripts.AUTO_EXTRACT_AND_REDIRECT_SCRIPT, null)
+            }
 
+            override fun onPageFinished(view: WebView?, url: String?) {
+                view?.let { wv ->
                     // Destruye el WebView de forma segura tras 35 segundos
                     wv.postDelayed({
                         try {
@@ -318,19 +321,6 @@ class SilentDownloader @Inject constructor(
         }
 
         cancelJob.cancel()
-    }
-
-    private fun safeDestroy(v: WebView?) {
-        try {
-            v?.apply {
-                stopLoading()
-                loadUrl("about:blank")
-                clearHistory()
-                removeAllViews()
-                destroy()
-            }
-        } catch (_: Exception) {
-        }
     }
 
     @SuppressLint("DefaultLocale")

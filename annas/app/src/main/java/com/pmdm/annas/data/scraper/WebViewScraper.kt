@@ -127,7 +127,6 @@ class WebViewScraper @Inject constructor(
                     }
                 }
 
-
                 override fun onReceivedError(
                     view: WebView?,
                     request: WebResourceRequest?,
