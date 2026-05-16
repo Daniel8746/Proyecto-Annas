@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.pmdm.annas"
+    namespace = "com.annas"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.pmdm.annas"
+        applicationId = "com.annas"
         minSdk = 28
         targetSdk = 36
         versionCode = 1

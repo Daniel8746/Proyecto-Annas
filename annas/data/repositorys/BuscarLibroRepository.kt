@@ -1,7 +1,7 @@
-package com.pmdm.annas.data.repositorys
+package com.annas.data.repositorys
 
-import com.pmdm.annas.data.scraper.Scraper
-import com.pmdm.annas.model.Libro
+import com.annas.data.scraper.Scraper
+import com.annas.model.Libro
 import javax.inject.Inject
 
 class BuscarLibroRepository @Inject constructor(
