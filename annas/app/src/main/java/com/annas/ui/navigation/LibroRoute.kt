@@ -4,8 +4,11 @@ import android.net.Uri
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -35,12 +38,17 @@ fun NavGraphBuilder.libroDestination(
             vm.onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace))
         }
 
+        val uiState by vm.uiState.collectAsStateWithLifecycle()
+        val tiempoEspera by vm.tiempoEspera.collectAsStateWithLifecycle()
+        val downloadState by vm.downloadState.collectAsStateWithLifecycle()
+
         LibroScreen(
             libro = libro,
-            descripcion = vm.uiState.descripcion,
-            uiStateEnum = vm.uiState.uiStateEnum,
-            enlacesServidor = vm.uiState.enlacesServidor,
-            downloadState = vm.downloadState,
+            descripcion = uiState.descripcion,
+            uiStateEnum = uiState.uiStateEnum,
+            tiempoEspera = tiempoEspera,
+            enlacesServidor = uiState.enlacesServidor,
+            downloadState = downloadState,
             onLibroEvent = vm::onLibroEvent,
             onNavigateBack = onNavigateBack,
             sharedTransitionScope = sharedTransitionScope,

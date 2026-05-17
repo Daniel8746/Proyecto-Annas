@@ -6,6 +6,9 @@ import com.annas.data.network.SilentDownloader
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.scraper.Scraper
 import com.annas.data.scraper.WebViewScraper
+import com.annas.data.services.interceptors.ConnectVerifierInterceptor
+import com.annas.data.services.interceptors.NetworkMonitorService
+import com.annas.data.services.interceptors.NetworkMonitorServiceImplementation
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,9 +36,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideScraperClient(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        networkMonitor: NetworkMonitorService
     ): OkHttpClient =
         OkHttpClient.Builder()
+            .addInterceptor(ConnectVerifierInterceptor(networkMonitor))
             .cache(Cache(File(context.cacheDir, "scraper_http"), 12L * 1024L * 1024L))
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -53,8 +58,9 @@ object AppModule {
     @Named("downloadClient")
     @Provides
     @Singleton
-    fun provideDownloadClient(): OkHttpClient =
+    fun provideDownloadClient(networkMonitor: NetworkMonitorService): OkHttpClient =
         OkHttpClient.Builder()
+            .addInterceptor(ConnectVerifierInterceptor(networkMonitor))
             .dispatcher(dispatcher)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(300, TimeUnit.SECONDS)
@@ -89,4 +95,12 @@ object AppModule {
     @Singleton
     fun provideNotificationHelper(@ApplicationContext context: Context): NotificationHelper =
         NotificationHelper(context)
+
+    @Provides
+    @Singleton
+    fun provideNetworkMonitor(
+        @ApplicationContext appContext: Context
+    ): NetworkMonitorService {
+        return NetworkMonitorServiceImplementation(appContext)
+    }
 }

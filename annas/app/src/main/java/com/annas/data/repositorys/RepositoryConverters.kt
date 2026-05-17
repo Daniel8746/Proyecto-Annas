@@ -2,17 +2,19 @@ package com.annas.data.repositorys
 
 import com.annas.data.exceptions.LibroParseException
 import com.annas.model.Libro
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
 private val sizeRegex =
     Regex("""\d+(?:[.,]\d+)?\s*(?:B|KB|MB|GB|KIB|MIB|GIB)""", RegexOption.IGNORE_CASE)
 private val languageRegex =
-    Regex("""\[[a-z]{2,3}(?:-[a-z]{2})?\]""", RegexOption.IGNORE_CASE)
+    Regex("""\[[a-z]{2,3}(?:-[a-z]{2})?]""", RegexOption.IGNORE_CASE)
 private val infoSeparatorRegex = Regex("\\s*(?:\\u00C2?\\u00B7|[|])\\s*")
 
 fun Element.toLibro(): Libro {
-    val tituloTag = selectFirst("a.text-lg[href], a[href*=\"/md5/\"]")
+    val tituloTag = selectFirst("a.text-lg")
     val enlace = tituloTag?.attr("href").orEmpty()
 
     if (tituloTag == null || enlace.isBlank()) {
@@ -66,8 +68,8 @@ fun Element.toLibro(): Libro {
 private fun Element.extractInfoParts(): List<String> {
     val candidates = select(
         "div.text-gray-800.font-semibold.text-sm, " +
-            "div.dark\\:text-slate-400.font-semibold.text-sm, " +
-            "div[class*=\"font-semibold\"][class*=\"text-sm\"]"
+                "div.dark\\:text-slate-400.font-semibold.text-sm, " +
+                "div[class*=\"font-semibold\"][class*=\"text-sm\"]"
     )
 
     val infoText = candidates
@@ -88,3 +90,9 @@ fun Elements.toLibros(): List<Libro> = mapNotNull {
         null
     }
 }.distinctBy { it.enlace }
+
+inline fun <T> MutableStateFlow<T>.updateState(
+    block: T.() -> T
+) {
+    update(block)
+}

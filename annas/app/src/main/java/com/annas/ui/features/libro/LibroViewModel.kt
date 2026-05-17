@@ -1,20 +1,20 @@
 package com.annas.ui.features.libro
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.annas.data.network.SilentDownloader
 import com.annas.data.network.getMime
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.repositorys.LibroRepository
+import com.annas.data.repositorys.updateState
 import com.annas.model.DownloadState
 import com.annas.model.LibroUiState
 import com.annas.ui.features.UIStateEnum
 import com.annas.uri.UriUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,87 +24,95 @@ class LibroViewModel @Inject constructor(
     val silentDownloader: SilentDownloader,
     private val notificationHelper: NotificationHelper
 ) : ViewModel() {
-    var uiState by mutableStateOf(LibroUiState())
-        private set
+    private val _uiState = MutableStateFlow(LibroUiState())
+    val uiState = _uiState.asStateFlow()
 
     private var loadingJob: Job? = null
-    private var lastEnlace: String? = null
 
-    var downloadState by mutableStateOf(DownloadState())
-        private set
+    private val _downloadState = MutableStateFlow(DownloadState())
+    val downloadState = _downloadState.asStateFlow()
+
+    private val _tiempoEspera = MutableStateFlow(0)
+    val tiempoEspera = _tiempoEspera.asStateFlow()
 
     fun onLibroEvent(event: LibroEvent) {
         when (event) {
             is LibroEvent.ObtenerLinksServidor -> {
-                if (event.enlace == lastEnlace && (uiState.uiStateEnum == UIStateEnum.CARGANDO || uiState.uiStateEnum == UIStateEnum.CARGADO)) {
-                    return
-                }
-
-                lastEnlace = event.enlace
                 loadingJob?.cancel()
 
                 loadingJob = viewModelScope.launch {
                     try {
-                        uiState = uiState.copy(uiStateEnum = UIStateEnum.CARGANDO)
+                        _uiState.updateState { copy(uiStateEnum = UIStateEnum.CARGANDO) }
 
                         val result = libroRepository.getLinksServidor(event.enlace)
 
-                        uiState = uiState.copy(
-                            descripcion = result.first,
-                            enlacesServidor = result.second,
-                            uiStateEnum = UIStateEnum.CARGADO
-                        )
+                        _uiState.updateState {
+                            copy(
+                                descripcion = result.first,
+                                enlacesServidor = result.second,
+                                uiStateEnum = UIStateEnum.CARGADO
+                            )
+                        }
                     } catch (_: Exception) {
-                        uiState = uiState.copy(uiStateEnum = UIStateEnum.ERROR)
+                        _uiState.updateState { copy(uiStateEnum = UIStateEnum.ERROR) }
                     }
                 }
             }
 
             is LibroEvent.PrepararDescarga -> {
-                uiState = uiState.copy(uiStateEnum = UIStateEnum.CARGANDO)
-                downloadState = DownloadState()
+                _uiState.updateState { copy(uiStateEnum = UIStateEnum.CARGANDO) }
+                silentDownloader.onTiempoEspera = { tiempo ->
+                    _tiempoEspera.updateState { tiempo }
+                }
+
                 silentDownloader.launchSilentDownload(
                     activity = event.context,
                     url = event.url,
                     onDownloadStart = { dUrl, ua, cd, mime, len, ref ->
-                        downloadState = DownloadState(
-                            url = dUrl,
-                            userAgent = ua,
-                            contentDisposition = cd,
-                            mimeType = if (mime.isBlank() || mime == "application/octet-stream") getMime(
-                                dUrl
-                            ) else mime,
-                            fileName = UriUtils.decode(
-                                UriUtils.getRawFileName(
-                                    dUrl,
-                                    cd,
-                                    mime
-                                )
-                            ),
-                            length = len,
-                            referer = ref
-                        )
+                        _downloadState.updateState {
+                            DownloadState(
+                                url = dUrl,
+                                userAgent = ua,
+                                contentDisposition = cd,
+                                mimeType = if (mime.isBlank() || mime == "application/octet-stream") getMime(
+                                    dUrl
+                                ) else mime,
+                                fileName = UriUtils.decode(
+                                    UriUtils.getRawFileName(
+                                        dUrl,
+                                        cd,
+                                        mime
+                                    )
+                                ),
+                                length = len,
+                                referer = ref
+                            )
+                        }
                     }
                 )
             }
 
             is LibroEvent.DescargarLibro -> {
-                val state = downloadState
-                viewModelScope.launch {
-                    silentDownloader.downloadFileWithNotification(
-                        url = state.url,
-                        ua = state.userAgent,
-                        cd = state.contentDisposition,
-                        mime = state.mimeType,
-                        dest = event.fileUri,
-                        fileName = state.fileName,
-                        helper = notificationHelper,
-                        len = state.length,
-                        ref = state.referer
-                    )
+                if (event.fileUri != null) {
+                    val state = _downloadState.value
+
+                    viewModelScope.launch {
+                        silentDownloader.downloadFileWithNotification(
+                            url = state.url,
+                            ua = state.userAgent,
+                            cd = state.contentDisposition,
+                            mime = state.mimeType,
+                            dest = event.fileUri,
+                            fileName = state.fileName,
+                            helper = notificationHelper,
+                            len = state.length,
+                            ref = state.referer
+                        )
+                    }
                 }
 
-                uiState = uiState.copy(uiStateEnum = UIStateEnum.CARGADO)
+                _tiempoEspera.updateState { 0 }
+                _uiState.updateState { copy(uiStateEnum = UIStateEnum.CARGADO) }
             }
         }
     }

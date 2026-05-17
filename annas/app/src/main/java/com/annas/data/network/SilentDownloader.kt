@@ -6,6 +6,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.webkit.CookieManager
+import android.webkit.JavascriptInterface
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -46,38 +47,54 @@ class SilentDownloader @Inject constructor(
 
     var destroyScheduled = false
 
+    lateinit var destroyRunnable: Runnable
+
+    var onTiempoEspera: ((Int) -> Unit)? = null
+
     @SuppressLint("SetJavaScriptEnabled")
     fun launchSilentDownload(
         activity: Activity,
         url: String,
         onDownloadStart: (String, String, String, String, Long, String?) -> Unit
     ) {
-        val wv = WebView(activity)
-        destroyScheduled = false
+        val wv = WebView(activity).apply {
+            destroyScheduled = false
 
-        cookie.setAcceptThirdPartyCookies(wv, true)
+            cookie.setAcceptThirdPartyCookies(this, true)
 
-        wv.settings.apply {
-            javaScriptEnabled = true
-            domStorageEnabled = true
-            cacheMode = WebSettings.LOAD_DEFAULT
-            userAgentString = DESKTOP_UA
-            javaScriptCanOpenWindowsAutomatically = true
-            setSupportMultipleWindows(true)
-            loadsImagesAutomatically = false
-            blockNetworkImage = true
-            setSupportZoom(false)
-            builtInZoomControls = false
-            displayZoomControls = false
-            mediaPlaybackRequiresUserGesture = true
+            settings.apply {
+                javaScriptEnabled = true
+                domStorageEnabled = true
+                cacheMode = WebSettings.LOAD_DEFAULT
+                userAgentString = DESKTOP_UA
+                javaScriptCanOpenWindowsAutomatically = true
+                setSupportMultipleWindows(true)
+                loadsImagesAutomatically = false
+                blockNetworkImage = true
+                setSupportZoom(false)
+                builtInZoomControls = false
+                displayZoomControls = false
+                mediaPlaybackRequiresUserGesture = true
 
-            allowFileAccess = false
-            allowContentAccess = false
-            mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+                allowFileAccess = false
+                allowContentAccess = false
+                mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+            }
+
+            addJavascriptInterface(object {
+                @Suppress("unused")
+                @JavascriptInterface
+                fun obtenerTiempoEspera(tiempoEspera: Int) {
+                    onTiempoEspera?.invoke(tiempoEspera)
+                }
+            }, "Android")
         }
 
-        fun injectAutoExtractor(view: WebView?) {
-            view?.evaluateJavascript(JsScripts.AUTO_EXTRACT_AND_REDIRECT_SCRIPT, null)
+        destroyRunnable = Runnable {
+            try {
+                safeDestroy(wv, destroyRunnable)
+            } catch (_: Exception) {
+            }
         }
 
         wv.webViewClient = object : WebViewClient() {
@@ -94,31 +111,15 @@ class SilentDownloader @Inject constructor(
                 } else null
             }
 
-            override fun onPageCommitVisible(
-                view: WebView?, url: String?
-            ) {
-                injectAutoExtractor(view)
-            }
-
             override fun onPageFinished(view: WebView?, url: String?) {
                 injectAutoExtractor(view)
-                view?.postDelayed({
-                    injectAutoExtractor(view)
-                }, 300)
 
                 if (!destroyScheduled) {
                     destroyScheduled = true
                     // Destruye el WebView de forma segura tras 35 segundos
-                    wv.postDelayed({
-                        try {
-                            safeDestroy(wv)
-                        } catch (_: Exception) {
-                            // evitar crashes si ya se destruyó
-                        }
-                    }, 35000)
+                    view?.postDelayed(destroyRunnable, 35_000)
                 }
             }
-
 
             override fun shouldOverrideUrlLoading(
                 v: WebView?, r: WebResourceRequest?
@@ -130,7 +131,7 @@ class SilentDownloader @Inject constructor(
                         rUrl, DESKTOP_UA, guessCD(rUrl), getMime(rUrl), 0, v?.url
                     )
 
-                    safeDestroy(v)
+                    v?.postDelayed(destroyRunnable, 1000)
                     return true
                 }
 
@@ -142,7 +143,7 @@ class SilentDownloader @Inject constructor(
                 view: WebView?, request: WebResourceRequest?, error: WebResourceError?
             ) {
                 if (request?.isForMainFrame == true) {
-                    safeDestroy(view)
+                    view?.postDelayed(destroyRunnable, 1000)
                 }
             }
         }
@@ -154,7 +155,7 @@ class SilentDownloader @Inject constructor(
                 dUrl, ua, cd, mime, len, wv.url
             )
 
-            safeDestroy(wv)
+            wv.postDelayed(destroyRunnable, 100)
         }
 
         wv.loadUrl(url)
@@ -203,10 +204,16 @@ class SilentDownloader @Inject constructor(
                     val request = Request.Builder()
                         .url(url)
                         .header("User-Agent", ua)
-                        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
+                        .header(
+                            "Accept",
+                            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
+                        )
                         .header("Accept-Language", "es-ES,es;q=0.9,en;q=0.8")
                         .header("Accept-Encoding", "identity")
-                        .header("Sec-Ch-Ua", "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Google Chrome\";v=\"122\"")
+                        .header(
+                            "Sec-Ch-Ua",
+                            "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Google Chrome\";v=\"122\""
+                        )
                         .header("Sec-Ch-Ua-Mobile", "?0")
                         .header("Sec-Ch-Ua-Platform", "\"Windows\"")
                         .header("Sec-Fetch-Dest", "document")
@@ -272,7 +279,8 @@ class SilentDownloader @Inject constructor(
                                 val timeDiff = currentTime - lastSpeedUpdateTick
 
                                 if (timeDiff >= 1000L) {
-                                    val speedInBytesPerSecond = (bytesInLastInterval * 1000) / timeDiff
+                                    val speedInBytesPerSecond =
+                                        (bytesInLastInterval * 1000) / timeDiff
                                     speedText = formatSpeed(speedInBytesPerSecond)
 
                                     bytesInLastInterval = 0L
@@ -348,9 +356,17 @@ class SilentDownloader @Inject constructor(
     @SuppressLint("DefaultLocale")
     private fun formatSpeed(bytesPerSecond: Long): String {
         return when {
-            bytesPerSecond >= 1024 * 1024 -> String.format("%.1f MB/s", bytesPerSecond / (1024.0 * 1024.0))
+            bytesPerSecond >= 1024 * 1024 -> String.format(
+                "%.1f MB/s",
+                bytesPerSecond / (1024.0 * 1024.0)
+            )
+
             bytesPerSecond >= 1024 -> String.format("%d KB/s", bytesPerSecond / 1024)
             else -> "$bytesPerSecond B/s"
         }
+    }
+
+    private fun injectAutoExtractor(view: WebView?) {
+        view?.evaluateJavascript(JsScripts.AUTO_EXTRACT_AND_REDIRECT_SCRIPT, null)
     }
 }

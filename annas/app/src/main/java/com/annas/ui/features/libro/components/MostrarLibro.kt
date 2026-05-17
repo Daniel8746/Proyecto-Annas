@@ -48,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.annas.ui.features.components.ErrorScreen
 import com.annas.ui.features.components.InfoBadge
 import com.annas.ui.features.components.rememberBookCoverRequest
 import com.webtoonscorp.android.readmore.foundation.ReadMoreTextOverflow
@@ -66,6 +67,7 @@ fun MostrarLibro(
     formato: String,
     tamano: String,
     onDownloadClick: (String) -> Unit,
+    onReintentar: () -> Unit,
     enlaceKey: String,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
@@ -203,11 +205,9 @@ fun MostrarLibro(
                 SectionTitle(icon = Icons.Default.Download, title = "Servidores de descarga")
 
                 if (enlacesServidor.isEmpty()) {
-                    Text(
-                        text = "Buscando enlaces de descarga...",
-                        modifier = Modifier.padding(vertical = 16.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    ErrorScreen(
+                        mensaje = "No se encontraron servidores de descarga.",
+                        onReintentar =  onReintentar
                     )
                 } else {
                     enlacesServidor.forEachIndexed { index, enlaceServer ->

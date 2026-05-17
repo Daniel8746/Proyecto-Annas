@@ -2,7 +2,9 @@ package com.annas.ui.navigation
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.annas.model.Libro
@@ -19,11 +21,13 @@ fun NavGraphBuilder.buscarLibroDestination(
     sharedTransitionScope: SharedTransitionScope
 ) {
     composable<BuscarLibroRoute> {
-        val viewModel: BuscarLibroViewModel = hiltViewModel()
+        val vm: BuscarLibroViewModel = hiltViewModel()
+
+        val uiState by vm.uiState.collectAsStateWithLifecycle()
 
         BuscarLibroScreen(
-            uiState = viewModel.uiState,
-            onBuscarLibroEvent = viewModel::onBuscarLibroEvent,
+            uiState = uiState,
+            onBuscarLibroEvent = vm::onBuscarLibroEvent,
             onLibroClick = onLibroClick,
             sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this

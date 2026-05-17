@@ -60,11 +60,10 @@ class Scraper @Inject constructor(
     private var initializationJob: Job? = null
 
     private companion object {
-        const val SEARCH_SELECTOR =
-            "div.flex.pt-3.pb-3.border-b, div[class*=\"border-b\"][class*=\"pt-3\"], div[class*=\"border-b\"][class*=\"py-3\"]"
+        const val SEARCH_SELECTOR = "div.flex.pt-3.pb-3.border-b"
         const val DETAILS_SELECTOR = "main, .js-md5-top-box-description"
         const val HTTP_TIMEOUT_MS = 5500L
-        const val MIRROR_TIMEOUT_MS = 3500L
+        const val MIRROR_TIMEOUT_MS = 5500L
     }
 
     init {
@@ -109,8 +108,7 @@ class Scraper @Inject constructor(
                 .url(normalized)
                 .withBrowserHeaders()
                 .head()
-                .build(),
-            MIRROR_TIMEOUT_MS
+                .build()
         )
 
         if (isAliveStatus(headCode)) return true
@@ -121,8 +119,7 @@ class Scraper @Inject constructor(
                 .url(normalized)
                 .withBrowserHeaders()
                 .get()
-                .build(),
-            MIRROR_TIMEOUT_MS
+                .build()
         )
 
         return isAliveStatus(getCode)
@@ -331,7 +328,13 @@ class Scraper @Inject constructor(
                     ?.trim()
                     ?: "Sin descripcion"
 
-            doc.select("a[href]").forEach { link ->
+            val slowHeader = doc.select("h3").find {
+                it.text().contains(
+                    "Slow downloads", ignoreCase = true
+                )
+            }
+
+            slowHeader?.parent()?.select("a[href]")?.forEach { link ->
                 val href = link.attr("href").trim()
 
                 if (href.isEmpty() || href.startsWith("#")) return@forEach
@@ -396,10 +399,10 @@ class Scraper @Inject constructor(
         }
     }
 
-    private fun executeForStatus(request: Request, timeoutMs: Long): Int? {
+    private fun executeForStatus(request: Request): Int? {
         return try {
             val call = okHttpClient.newCall(request)
-            call.timeout().timeout(timeoutMs, TimeUnit.MILLISECONDS)
+            call.timeout().timeout(MIRROR_TIMEOUT_MS, TimeUnit.MILLISECONDS)
 
             call.execute().use { response ->
                 response.code

@@ -1,15 +1,15 @@
 package com.annas.ui.features.buscarLibro
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.annas.data.repositorys.BuscarLibroRepository
+import com.annas.data.repositorys.updateState
 import com.annas.model.BuscarLibroUiState
 import com.annas.ui.features.UIStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,8 +18,8 @@ class BuscarLibroViewModel @Inject constructor(
     private val buscarLibroRepository: BuscarLibroRepository
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(BuscarLibroUiState())
-        private set
+    private val _uiState = MutableStateFlow(BuscarLibroUiState())
+    val uiState = _uiState.asStateFlow()
 
     private var searchJob: Job? = null
     private var lastSearchKey: String? = null
@@ -27,53 +27,52 @@ class BuscarLibroViewModel @Inject constructor(
     fun onBuscarLibroEvent(event: BuscarLibroEvent) {
         when (event) {
             is BuscarLibroEvent.OnClickBuscar -> {
-                if (uiState.buscar.isBlank()) return
+                if (_uiState.value.buscar.isBlank()) return
                 buscarLibro()
             }
 
             is BuscarLibroEvent.OnClickLibro -> event.onNavigateLibro()
 
             is BuscarLibroEvent.OnBuscarChange -> {
-                uiState = uiState.copy(buscar = event.nombre)
+                _uiState.updateState { copy(buscar = event.nombre) }
             }
 
             is BuscarLibroEvent.OnToggleExtension -> {
-                val newExtensions = uiState.selectedExtensions.toMutableList()
+                val newExtensions = _uiState.value.selectedExtensions.toMutableList()
                 if (!newExtensions.remove(event.ext)) newExtensions.add(event.ext)
-                uiState = uiState.copy(selectedExtensions = newExtensions)
+                _uiState.updateState { copy(selectedExtensions = newExtensions) }
             }
 
             is BuscarLibroEvent.OnIdiomaChange -> {
-                uiState = uiState.copy(selectedLanguage = event.idioma)
+                _uiState.updateState { copy(selectedLanguage = event.idioma) }
             }
 
             is BuscarLibroEvent.OnPaginaChange -> {
-                if (event.pagina < 1 || event.pagina == uiState.pagina) return
+                if (event.pagina < 1 || event.pagina == _uiState.value.pagina) return
 
-                uiState = uiState.copy(pagina = event.pagina)
+                _uiState.updateState { copy(pagina = event.pagina) }
                 buscarLibro()
             }
         }
     }
 
     private fun buscarLibro() {
-        val query = uiState.buscar.trim()
+        val query = _uiState.value.buscar.trim()
 
         if (query.isBlank()) return
 
         val searchKey = buildString {
             append(query.lowercase())
             append('|')
-            append(uiState.selectedExtensions.sorted().joinToString(","))
+            append(_uiState.value.selectedExtensions.sorted().joinToString(","))
             append('|')
-            append(uiState.selectedLanguage.orEmpty())
+            append(_uiState.value.selectedLanguage.orEmpty())
             append('|')
-            append(uiState.pagina)
+            append(_uiState.value.pagina)
         }
 
         if (
-            searchKey == lastSearchKey &&
-            (uiState.uiStateEnum == UIStateEnum.CARGANDO || uiState.uiStateEnum == UIStateEnum.CARGADO)
+            searchKey == lastSearchKey
         ) {
             return
         }
@@ -83,21 +82,24 @@ class BuscarLibroViewModel @Inject constructor(
 
         searchJob = viewModelScope.launch {
             try {
-                uiState =
-                    uiState.copy(uiStateEnum = UIStateEnum.CARGANDO)
+                _uiState.updateState { copy(uiStateEnum = UIStateEnum.CARGANDO) }
+
                 val libros = buscarLibroRepository.getLibros(
                     query,
-                    uiState.selectedExtensions,
-                    uiState.selectedLanguage,
-                    uiState.pagina
+                    _uiState.value.selectedExtensions,
+                    _uiState.value.selectedLanguage,
+                    _uiState.value.pagina
                 )
-                uiState = uiState.copy(
-                    libros = libros,
-                    uiStateEnum = if (libros.isEmpty()) UIStateEnum.ERROR
-                    else UIStateEnum.CARGADO
-                )
+
+                _uiState.updateState {
+                    copy(
+                        libros = libros,
+                        uiStateEnum = if (libros.isEmpty()) UIStateEnum.ERROR
+                        else UIStateEnum.CARGADO
+                    )
+                }
             } catch (_: Exception) {
-                uiState = uiState.copy(uiStateEnum = UIStateEnum.ERROR)
+                _uiState.updateState { copy(uiStateEnum = UIStateEnum.ERROR) }
             }
         }
     }

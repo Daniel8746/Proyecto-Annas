@@ -47,6 +47,7 @@ fun LibroScreen(
     libro: Libro,
     descripcion: String,
     uiStateEnum: UIStateEnum?,
+    tiempoEspera: Int,
     enlacesServidor: List<String>,
     downloadState: DownloadState,
     onLibroEvent: (LibroEvent) -> Unit,
@@ -71,9 +72,7 @@ fun LibroScreen(
             downloadState.mimeType.ifEmpty { "application/octet-stream" }
         )
     ) { uri ->
-        uri?.let { fileUri ->
-            onLibroEvent(LibroEvent.DescargarLibro(fileUri))
-        }
+        onLibroEvent(LibroEvent.DescargarLibro(uri))
     }
 
     LaunchedEffect(downloadState.url) {
@@ -155,7 +154,7 @@ fun LibroScreen(
     ) {
         when (uiStateEnum) {
             UIStateEnum.CARGANDO ->
-                PantallaCarga(texto = "Preparando tu lectura...")
+                PantallaCarga(texto = "Preparando tu lectura...${if(tiempoEspera > 0) "\nPor favor espere $tiempoEspera para que comience la descarga" else ""}")
 
             UIStateEnum.CARGADO ->
                 MostrarLibro(
@@ -171,6 +170,7 @@ fun LibroScreen(
                         isWaitingForDownload = true
                         onLibroEvent(LibroEvent.PrepararDescarga(context, url))
                     },
+                    onReintentar = { onLibroEvent(LibroEvent.ObtenerLinksServidor(libro.enlace)) },
                     enlaceKey = libro.enlace,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope

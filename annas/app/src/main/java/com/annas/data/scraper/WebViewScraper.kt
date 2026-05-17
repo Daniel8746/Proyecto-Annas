@@ -10,7 +10,6 @@ import android.webkit.WebSettings
 import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.annotation.MainThread
 import com.annas.data.js.JsEngine
 import com.annas.data.js.JsScripts.DOM_HTML_COLLECTOR
 import com.annas.data.js.JsScripts.HTML_CAPTURE_AND_SEND
@@ -46,7 +45,6 @@ class WebViewScraper @Inject constructor(
     private var currentContinuation: CancellableContinuation<String>? = null
 
     @SuppressLint("SetJavaScriptEnabled")
-    @MainThread
     private fun getOrCreateWebView(): WebView {
 
         webView?.let { return it }
@@ -119,14 +117,6 @@ class WebViewScraper @Inject constructor(
                     return null
                 }
 
-
-                override fun onPageCommitVisible(
-                    view: WebView?, url: String?
-                ) {
-
-                    injectCurrentScraperScript(view)
-                }
-
                 override fun onPageFinished(view: WebView?, url: String?) {
                     injectCurrentScraperScript(view)
                 }
@@ -144,8 +134,7 @@ class WebViewScraper @Inject constructor(
                             if (it.isActive) it.resume("")
                         }
 
-                        currentContinuation = null
-                        currentCssSelector = ""
+                        softReset(view)
                     }
                 }
             }
@@ -180,7 +169,6 @@ class WebViewScraper @Inject constructor(
             ), null
         )
     }
-
 
     suspend fun loadUrlAndGetHtml(
         url: String, cssSelector: String, timeoutMs: Long = 9000
@@ -231,11 +219,18 @@ class WebViewScraper @Inject constructor(
                 throw e
 
             } finally {
-
-                currentContinuation = null
-                currentCssSelector = ""
+                softReset(wv)
             }
         }
+    }
+
+    private fun softReset(wv: WebView?) {
+        wv?.apply {
+            stopLoading()
+        }
+
+        currentContinuation = null
+        currentCssSelector = ""
     }
 
     private suspend fun getInstantHtml(
