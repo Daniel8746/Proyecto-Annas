@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "com.annas.core.data-release-27:/color/common_google_signin_btn_text_dark.xml",
+        "source": "com.annas.core.data-play-services-base-18.0.1-23:/color/common_google_signin_btn_text_dark.xml"
+    },
+    {
+        "merged": "com.annas.core.data-release-27:/color/common_google_signin_btn_tint.xml",
+        "source": "com.annas.core.data-play-services-base-18.0.1-23:/color/common_google_signin_btn_tint.xml"
+    },
+    {
+        "merged": "com.annas.core.data-release-27:/color/common_google_signin_btn_text_light.xml",
+        "source": "com.annas.core.data-play-services-base-18.0.1-23:/color/common_google_signin_btn_text_light.xml"
+    }
+]

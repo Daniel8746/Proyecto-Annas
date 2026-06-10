@@ -1,11 +1,9 @@
 package com.annas.ui.features.libro.components
 
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -54,15 +52,15 @@ import com.annas.ui.features.components.rememberBookCoverRequest
 import com.webtoonscorp.android.readmore.foundation.ReadMoreTextOverflow
 import com.webtoonscorp.android.readmore.foundation.ToggleArea
 import com.webtoonscorp.android.readmore.material3.ReadMoreText
+import kotlinx.collections.immutable.PersistentList
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun MostrarLibro(
     portada: String,
     titulo: String,
     autor: String,
     descripcion: String,
-    enlacesServidor: List<String>,
+    enlacesServidor: PersistentList<String>,
     idioma: String,
     formato: String,
     tamano: String,
@@ -207,14 +205,21 @@ fun MostrarLibro(
                 if (enlacesServidor.isEmpty()) {
                     ErrorScreen(
                         mensaje = "No se encontraron servidores de descarga.",
-                        onReintentar =  onReintentar
+                        onReintentar = onReintentar
                     )
                 } else {
                     enlacesServidor.forEachIndexed { index, enlaceServer ->
                         key(enlaceServer) {
                             when (index) {
-                                0 -> SectionTitle(Icons.Default.Speed, "Servidores de Descarga Rápida")
-                                4 -> SectionTitle(Icons.Default.HourglassEmpty, "Servidores de Descarga Lenta")
+                                0 -> SectionTitle(
+                                    Icons.Default.Speed,
+                                    "Servidores de Descarga Rápida"
+                                )
+
+                                4 -> SectionTitle(
+                                    Icons.Default.HourglassEmpty,
+                                    "Servidores de Descarga Lenta"
+                                )
                             }
 
                             ElevatedButton(
@@ -234,7 +239,10 @@ fun MostrarLibro(
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Spacer(Modifier.width(10.dp))
-                                Text(text = "Servidor ${(index % 4) + 1}", fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = "Servidor ${(index % 4) + 1}",
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }

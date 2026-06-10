@@ -2,8 +2,9 @@ package com.annas.ui.features.buscarLibro
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.annas.data.extensions.toggle
+import com.annas.data.extensions.updateState
 import com.annas.data.repositorys.BuscarLibroRepository
-import com.annas.data.repositorys.updateState
 import com.annas.model.BuscarLibroUiState
 import com.annas.ui.features.UIStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,9 +39,7 @@ class BuscarLibroViewModel @Inject constructor(
             }
 
             is BuscarLibroEvent.OnToggleExtension -> {
-                val newExtensions = _uiState.value.selectedExtensions.toMutableList()
-                if (!newExtensions.remove(event.ext)) newExtensions.add(event.ext)
-                _uiState.updateState { copy(selectedExtensions = newExtensions) }
+                _uiState.updateState { copy(selectedExtensions = selectedExtensions.toggle(event.ext)) }
             }
 
             is BuscarLibroEvent.OnIdiomaChange -> {

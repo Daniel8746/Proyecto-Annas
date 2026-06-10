@@ -1,0 +1,9 @@
+com.annas.core.data-pngs-0 C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\build\generated\res\pngs\release
+com.annas.core.data-updated_navigation_xml-1 C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\build\generated\updated_navigation_xml\release
+com.annas.core.data-mergeReleaseResources-2 C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.annas.core.data-mergeReleaseResources-3 C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.annas.core.data-release-4 C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\build\intermediates\merged_res\release\mergeReleaseResources
+com.annas.core.data-release-5 C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\build\intermediates\packaged_res\release\packageReleaseResources
+com.annas.core.data-main-6 C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\res
+com.annas.core.data-release-7 C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\release\res
+gradleHome-0 C:\Users\danie\.gradle

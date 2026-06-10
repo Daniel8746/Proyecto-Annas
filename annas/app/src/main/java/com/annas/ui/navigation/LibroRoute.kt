@@ -1,10 +1,8 @@
 package com.annas.ui.navigation
 
 import android.net.Uri
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -22,7 +20,6 @@ import kotlinx.serialization.json.Json
 @Serializable
 data class LibroRoute(val libroJson: String)
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.libroDestination(
     onNavigateBack: () -> Unit,
     sharedTransitionScope: SharedTransitionScope

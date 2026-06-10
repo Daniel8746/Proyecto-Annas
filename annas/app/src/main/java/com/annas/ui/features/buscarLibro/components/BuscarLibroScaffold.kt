@@ -2,7 +2,6 @@ package com.annas.ui.features.buscarLibro.components
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
@@ -16,7 +15,6 @@ import com.annas.ui.features.components.ErrorScreen
 import com.annas.ui.features.components.PantallaCarga
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BuscarLibroScaffold(
     uiState: BuscarLibroUiState,

@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "com.annas.core.data-release-27:/raw/videoplayback.mp4",
+        "source": "com.annas.core.data-firebase-ai-17.12.1-2:/raw/videoplayback.mp4"
+    },
+    {
+        "merged": "com.annas.core.data-release-27:/raw/hello.wav",
+        "source": "com.annas.core.data-firebase-ai-17.12.1-2:/raw/hello.wav"
+    },
+    {
+        "merged": "com.annas.core.data-release-27:/raw/firebase_common_keep.xml",
+        "source": "com.annas.core.data-firebase-common-22.0.1-4:/raw/firebase_common_keep.xml"
+    }
+]

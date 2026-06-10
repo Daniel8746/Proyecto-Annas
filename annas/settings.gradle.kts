@@ -28,4 +28,12 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "annas"
-include(":app")
+include(
+    ":app",
+    ":baselineprofile",
+    ":core:common",
+    ":core:data",
+    ":core:model"
+)
+
+project(":baselineprofile").projectDir = file("baselineProfile")

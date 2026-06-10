@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -35,6 +34,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,29 +47,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.persistentListOf
 
-private val searchExtensions = listOf("epub", "pdf", "mobi", "cbr", "cbz")
-private val searchLanguages = listOf(
+private val searchExtensions = persistentListOf("epub", "pdf", "mobi", "cbr", "cbz")
+private val searchLanguages = persistentListOf(
     null to "Cualquiera",
     "es" to "Español",
     "en" to "Inglés",
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Buscador(
     buscarNombre: String,
     onValueChange: (String) -> Unit,
     onBuscar: () -> Unit,
-    selectedExtensions: List<String>,
+    selectedExtensions: Set<String>,
     onToggleExtension: (String) -> Unit,
     selectedLanguage: String?,
     onIdiomaChange: (String?) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     var showFilters by remember { mutableStateOf(false) }
-    val selectedExtensionSet = remember(selectedExtensions) {
-        selectedExtensions.toSet()
+    val hasActiveFilters by remember(selectedExtensions, selectedLanguage) {
+        derivedStateOf { selectedExtensions.isNotEmpty() || selectedLanguage != null }
     }
 
     Surface(
@@ -121,7 +121,7 @@ fun Buscador(
                             Icon(
                                 imageVector = Icons.Default.FilterList,
                                 contentDescription = "Filtros",
-                                tint = if (selectedExtensions.isNotEmpty() || selectedLanguage != null) {
+                                tint = if (hasActiveFilters) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     MaterialTheme.colorScheme.onSurfaceVariant
@@ -173,7 +173,7 @@ fun Buscador(
                     ) {
                         searchExtensions.forEach { ext ->
                             FilterChip(
-                                selected = selectedExtensionSet.contains(ext),
+                                selected = selectedExtensions.contains(ext),
                                 onClick = { onToggleExtension(ext) },
                                 label = { Text(ext.uppercase(), fontWeight = FontWeight.Black) },
                                 shape = RoundedCornerShape(14.dp),

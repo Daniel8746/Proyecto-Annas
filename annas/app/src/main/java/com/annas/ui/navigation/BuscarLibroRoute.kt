@@ -1,6 +1,5 @@
 package com.annas.ui.navigation
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -15,7 +14,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 object BuscarLibroRoute
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.buscarLibroDestination(
     onLibroClick: (Libro) -> Unit,
     sharedTransitionScope: SharedTransitionScope

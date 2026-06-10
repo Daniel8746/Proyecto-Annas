@@ -11,6 +11,11 @@ import coil.size.Precision
 import com.annas.R
 import kotlin.math.roundToInt
 
+private data class BookCoverPixelSize(
+    val width: Int,
+    val height: Int
+)
+
 @Composable
 fun rememberBookCoverRequest(
     portada: String,
@@ -20,19 +25,19 @@ fun rememberBookCoverRequest(
 ): ImageRequest {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val widthPx = remember(width, density) {
-        with(density) { width.toPx().roundToInt().coerceAtLeast(1) }
-    }
-    val heightPx = remember(height, density) {
-        with(density) { height.toPx().roundToInt().coerceAtLeast(1) }
+    val pixelSize = remember(width, height, density) {
+        BookCoverPixelSize(
+            width = with(density) { width.toPx().roundToInt().coerceAtLeast(1) },
+            height = with(density) { height.toPx().roundToInt().coerceAtLeast(1) }
+        )
     }
 
-    return remember(context, portada, widthPx, heightPx, cacheKey) {
+    return remember(context, portada, pixelSize, cacheKey) {
         val data: Any = portada.ifBlank { R.drawable.pato_no_funciona }
 
         ImageRequest.Builder(context)
             .data(data)
-            .size(widthPx, heightPx)
+            .size(pixelSize.width, pixelSize.height)
             .precision(Precision.INEXACT)
             .allowHardware(true)
             .crossfade(false)
@@ -44,7 +49,7 @@ fun rememberBookCoverRequest(
             .fallback(R.drawable.pato_no_funciona)
             .apply {
                 if (cacheKey.isNotBlank()) {
-                    memoryCacheKey("cover-$cacheKey-$widthPx-$heightPx")
+                    memoryCacheKey("cover-$cacheKey-${pixelSize.width}-${pixelSize.height}")
                 }
                 if (portada.isNotBlank()) {
                     diskCacheKey(portada)

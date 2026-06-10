@@ -2,11 +2,11 @@ package com.annas.ui.features.libro
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.annas.data.extensions.updateState
 import com.annas.data.network.SilentDownloader
 import com.annas.data.network.getMime
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.repositorys.LibroRepository
-import com.annas.data.repositorys.updateState
 import com.annas.model.DownloadState
 import com.annas.model.LibroUiState
 import com.annas.ui.features.UIStateEnum
@@ -40,7 +40,8 @@ class LibroViewModel @Inject constructor(
             is LibroEvent.ObtenerLinksServidor -> {
                 loadingJob?.cancel()
 
-                loadingJob = viewModelScope.launch {
+                loadingJob =
+                    viewModelScope.launch {
                     try {
                         _uiState.updateState { copy(uiStateEnum = UIStateEnum.CARGANDO) }
 

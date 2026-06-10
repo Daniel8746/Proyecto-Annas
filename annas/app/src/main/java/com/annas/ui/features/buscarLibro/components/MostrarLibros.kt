@@ -3,13 +3,14 @@ package com.annas.ui.features.buscarLibro.components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -17,7 +18,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -32,7 +32,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
@@ -47,28 +47,34 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.annas.model.Libro
 import com.annas.ui.features.components.InfoBadge
 import com.annas.ui.features.components.rememberBookCoverRequest
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+private val PageFadeSpringSpec = spring<Float>(
+    dampingRatio = Spring.DampingRatioLowBouncy,
+    stiffness = Spring.StiffnessLow
+)
+
+private val PageSlideSpringSpec = spring<IntOffset>()
+
 @Composable
 fun MostrarLibros(
     modifier: Modifier = Modifier,
-    libros: List<Libro>,
+    libros: PersistentList<Libro>,
     pagina: Int,
     onPaginaChange: (Int) -> Unit,
     onLibroClick: (Libro) -> Unit,
@@ -85,13 +91,13 @@ fun MostrarLibros(
     ) {
         item { Spacer(modifier = Modifier.height(92.dp)) } // Espacio top
 
-        items(
+        itemsIndexed(
             items = libros,
-            key = { it.enlace },
-            contentType = { "libro" }
-        ) { libro ->
+            key = { _, it -> it.enlace },
+            contentType = { _, _ -> "libro" }) { index, libro ->
             AnimatedLibroItem(
                 libro = libro,
+                index = index,
                 onClick = { onLibroClick(libro) },
                 sharedTransitionScope = sharedTransitionScope,
                 animatedVisibilityScope = animatedVisibilityScope
@@ -104,8 +110,7 @@ fun MostrarLibros(
 
 @Composable
 fun Paginacion(
-    pagina: Int,
-    onPaginaChange: (Int) -> Unit
+    pagina: Int, onPaginaChange: (Int) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -115,11 +120,6 @@ fun Paginacion(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Física de muelles refinada para navegación de páginas (Butter Smooth)
-        val springSpec = spring<Float>(
-            dampingRatio = Spring.DampingRatioLowBouncy,
-            stiffness = Spring.StiffnessLow
-        )
-
         FilledTonalIconButton(
             onClick = { if (pagina > 1) onPaginaChange(pagina - 1) },
             enabled = pagina > 1,
@@ -145,23 +145,21 @@ fun Paginacion(
             tonalElevation = 4.dp
         ) {
             AnimatedContent(
-                targetState = pagina,
-                transitionSpec = {
+                targetState = pagina, transitionSpec = {
                     if (targetState > initialState) {
-                        (slideInVertically(spring()) { height -> height / 2 } + fadeIn(springSpec)).togetherWith(
-                            slideOutVertically(spring()) { height -> -height / 2 } + fadeOut(
-                                springSpec
+                        (slideInVertically(PageSlideSpringSpec) { height -> height / 2 } + fadeIn(PageFadeSpringSpec)).togetherWith(
+                            slideOutVertically(PageSlideSpringSpec) { height -> -height / 2 } + fadeOut(
+                                PageFadeSpringSpec
                             ))
                     } else {
-                        (slideInVertically(spring()) { height -> -height / 2 } + fadeIn(springSpec)).togetherWith(
-                            slideOutVertically(spring()) { height -> height / 2 } + fadeOut(
-                                springSpec
+                        (slideInVertically(PageSlideSpringSpec) { height -> -height / 2 } + fadeIn(PageFadeSpringSpec)).togetherWith(
+                            slideOutVertically(PageSlideSpringSpec) { height -> height / 2 } + fadeOut(
+                                PageFadeSpringSpec
                             ))
                     }.using(
                         SizeTransform(clip = false)
                     )
-                },
-                label = "PageNumberAnimation"
+                }, label = "PageNumberAnimation"
             ) { targetPage ->
                 Text(
                     text = targetPage.toString(),
@@ -193,38 +191,40 @@ fun Paginacion(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AnimatedLibroItem(
     libro: Libro,
+    index: Int,
     onClick: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    var visible by remember { mutableStateOf(false) }
+    val visibleState = remember {
+        MutableTransitionState(false).apply {
+            targetState = true
+        }
+    }
 
     LaunchedEffect(Unit) {
-        visible = true
+        delay(index * 40L)
+        visibleState.targetState = true
     }
 
     // Cascada orgánica para Android 16: Entrada en diagonal con inercia elástica
     AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(
+        visibleState = visibleState, enter = fadeIn(
             animationSpec = spring(stiffness = Spring.StiffnessVeryLow)
+        ) + scaleIn(
+            initialScale = 0.92f, animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow
+            )
         ) + slideInVertically(
             animationSpec = spring(
-                dampingRatio = Spring.DampingRatioLowBouncy,
-                stiffness = Spring.StiffnessLow
-            ),
-            initialOffsetY = { 80 }
-        ) + slideInHorizontally(
+                dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow
+            ), initialOffsetY = { 80 }) + slideInHorizontally(
             animationSpec = spring(
-                dampingRatio = Spring.DampingRatioLowBouncy,
-                stiffness = Spring.StiffnessLow
-            ),
-            initialOffsetX = { 40 }
-        )
+                dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow
+            ), initialOffsetX = { 40 })
     ) {
         LibroItem(
             libro = libro,
@@ -235,7 +235,6 @@ fun AnimatedLibroItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun LibroItem(
     libro: Libro,
@@ -250,9 +249,7 @@ fun LibroItem(
                 .fillMaxWidth()
                 .clickable { onClick() },
             elevation = CardDefaults.elevatedCardElevation(
-                defaultElevation = 0.dp,
-                pressedElevation = 8.dp,
-                hoveredElevation = 4.dp
+                defaultElevation = 0.dp, pressedElevation = 8.dp, hoveredElevation = 4.dp
             ),
             shape = RoundedCornerShape(28.dp), // Redondeado más profundo y moderno
             colors = CardDefaults.cardColors(
@@ -273,9 +270,7 @@ fun LibroItem(
                         .sharedElement(
                             rememberSharedContentState(key = "image-${libro.enlace}"),
                             animatedVisibilityScope = animatedVisibilityScope
-                        ),
-                    tonalElevation = 6.dp,
-                    shadowElevation = 4.dp
+                        ), tonalElevation = 6.dp, shadowElevation = 4.dp
                 ) {
                     val coverRequest = rememberBookCoverRequest(
                         portada = libro.portada,
@@ -339,8 +334,7 @@ fun LibroItem(
                             color = MaterialTheme.colorScheme.tertiaryContainer
                         )
                         InfoBadge(
-                            text = libro.tamano,
-                            color = MaterialTheme.colorScheme.tertiaryContainer
+                            text = libro.tamano, color = MaterialTheme.colorScheme.tertiaryContainer
                         )
                     }
                 }
