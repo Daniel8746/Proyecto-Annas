@@ -32,7 +32,7 @@ import com.annas.data.extensions.findActivity
 import com.annas.data.extensions.vibrateClick
 import com.annas.model.DownloadState
 import com.annas.model.Libro
-import com.annas.ui.features.UIStateEnum
+import com.annas.enums.UIStateEnum
 import com.annas.ui.features.components.ErrorScreen
 import com.annas.ui.features.components.PantallaCarga
 import com.annas.ui.features.libro.components.MostrarLibro

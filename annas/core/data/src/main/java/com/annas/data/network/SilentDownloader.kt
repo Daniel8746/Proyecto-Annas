@@ -35,6 +35,7 @@ import okio.sink
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.milliseconds
 
 const val DESKTOP_UA =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
@@ -345,7 +346,7 @@ class SilentDownloader @Inject constructor(
                 }
 
                 if (attempt < maxAttempts) {
-                    delay(2000L * attempt)
+                    delay((2000L * attempt).milliseconds)
                 } else {
                     helper.showErrorNotification(
                         fileName

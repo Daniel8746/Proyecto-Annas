@@ -2,7 +2,7 @@ package com.annas.di
 
 import android.content.Context
 import com.annas.data.cache.MemoryCache
-import com.annas.data.ia.setupModel
+import com.annas.data.chatbot.setupModel
 import com.annas.data.services.interceptors.ConnectVerifierInterceptor
 import com.annas.data.services.interceptors.NetworkMonitor
 import com.google.firebase.ai.GenerativeModel
@@ -25,9 +25,7 @@ object AppProvidesModule {
 
     @Provides
     @Singleton
-    fun provideMemoryCache(): MemoryCache {
-        return MemoryCache()
-    }
+    fun provideMemoryCache(): MemoryCache = MemoryCache()
 
     @Named("scraperClient")
     @Provides
@@ -77,7 +75,5 @@ object AppProvidesModule {
     @Singleton
     fun provideGenerativeModel(
         @ApplicationContext context: Context
-    ): GenerativeModel {
-        return setupModel(context)
-    }
+    ): GenerativeModel = setupModel(context)
 }

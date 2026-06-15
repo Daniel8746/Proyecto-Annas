@@ -6,4 +6,20 @@
 5-->INJECTED
 5-->INJECTED
 6
-7</manifest>
+7    <uses-permission android:name="android.permission.INTERNET" />
+7-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:4:5-67
+7-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:4:22-64
+8    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+8-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:5:5-79
+8-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:5:22-76
+9    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+9-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:6:5-76
+9-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:6:22-73
+10    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+10-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:7:5-77
+10-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:7:22-74
+11    <uses-permission android:name="android.permission.VIBRATE" />
+11-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:8:5-66
+11-->C:\Users\danie\Desktop\Proyecto Annas\Android\annas\core\data\src\main\AndroidManifest.xml:8:22-63
+12
+13</manifest>

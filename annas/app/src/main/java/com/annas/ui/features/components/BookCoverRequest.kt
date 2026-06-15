@@ -1,6 +1,7 @@
 package com.annas.ui.features.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -11,6 +12,7 @@ import coil.size.Precision
 import com.annas.R
 import kotlin.math.roundToInt
 
+@Immutable
 private data class BookCoverPixelSize(
     val width: Int,
     val height: Int

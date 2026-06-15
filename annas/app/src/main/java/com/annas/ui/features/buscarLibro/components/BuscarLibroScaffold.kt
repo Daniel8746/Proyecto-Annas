@@ -9,7 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.annas.model.BuscarLibroUiState
-import com.annas.ui.features.UIStateEnum
+import com.annas.enums.UIStateEnum
 import com.annas.ui.features.buscarLibro.BuscarLibroEvent
 import com.annas.ui.features.components.ErrorScreen
 import com.annas.ui.features.components.PantallaCarga

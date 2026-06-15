@@ -6,7 +6,7 @@
     mergedManifest="build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
     proguardFiles="build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-9.2.1"
     partialResultsDir="build\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-    desugaredMethodsFiles="C:\Users\danie\.gradle\caches\9.5.1\transforms\52a6d662bd2a2cf2596185487017ee9f\transformed\D8BackportedDesugaredMethods.txt">
+    desugaredMethodsFiles="C:\Users\danie\.gradle\caches\9.5.1\transforms\8a663aef0c2ff333cbcf66c626b6dc84\transformed\D8BackportedDesugaredMethods.txt">
   <buildFeatures/>
   <sourceProviders>
     <sourceProvider
@@ -25,7 +25,7 @@
       classOutputs="build\intermediates\javac\release\compileReleaseJavaWithJavac\classes;build\intermediates\built_in_kotlinc\release\compileReleaseKotlin\classes;build\intermediates\compile_r_class_jar\release\generateReleaseRFile\R.jar"
       type="MAIN"
       applicationId="com.annas.core.data"
-      generatedSourceFolders="build\generated\ap_generated_sources\release\out"
-      desugaredMethodsFiles="C:\Users\danie\.gradle\caches\9.5.1\transforms\52a6d662bd2a2cf2596185487017ee9f\transformed\D8BackportedDesugaredMethods.txt">
+      generatedSourceFolders="build\generated\ksp\release\java;build\generated\ksp\release\kotlin;build\generated\ap_generated_sources\release\out"
+      desugaredMethodsFiles="C:\Users\danie\.gradle\caches\9.5.1\transforms\8a663aef0c2ff333cbcf66c626b6dc84\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

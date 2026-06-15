@@ -20,23 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# Si usas Kotlinx Serialization
--keepattributes *Annotation*,Signature
--keepclassmembers class * {
-    @kotlinx.serialization.Serializable *;
-}
-
 # Mantiene los metodos expuestos a WebView JavaScript aunque R8 minimice release.
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
 }
-
-# Si usas Moshi (muy común con OkHttp puro)
-#-keepattributes *Annotation*,Signature
-#-dontwarn class org.codehaus.mojo.animal_sniffer.*
-
-# Reglas críticas para la infraestructura de red de OkHttp
--dontwarn okhttp3.internal.**
--dontwarn org.conscrypt.**
--dontwarn org.bouncycastle.**
--dontwarn openales.**

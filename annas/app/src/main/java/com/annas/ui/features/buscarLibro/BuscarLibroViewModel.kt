@@ -6,7 +6,7 @@ import com.annas.data.extensions.toggle
 import com.annas.data.extensions.updateState
 import com.annas.data.repositorys.BuscarLibroRepository
 import com.annas.model.BuscarLibroUiState
-import com.annas.ui.features.UIStateEnum
+import com.annas.enums.UIStateEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

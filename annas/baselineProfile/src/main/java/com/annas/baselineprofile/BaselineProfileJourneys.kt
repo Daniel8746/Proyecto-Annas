@@ -10,8 +10,8 @@ private const val STARTUP_TIMEOUT_MS = 5_000L
 private const val INTERACTION_TIMEOUT_MS = 2_000L
 
 internal fun targetPackageName(): String =
-    InstrumentationRegistry.getArguments().getString("targetAppId")
-        ?: throw IllegalStateException("targetAppId not passed as instrumentation runner arg")
+    InstrumentationRegistry.getArguments().getString("androidx.benchmark.targetPackageName")
+        ?: throw IllegalStateException("targetPackageName not passed as instrumentation runner arg")
 
 internal fun MacrobenchmarkScope.startAnnasAndWait(
     targetPackageName: String,

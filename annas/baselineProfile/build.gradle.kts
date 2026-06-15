@@ -17,9 +17,6 @@ configure<TestExtension> {
     }
 
     defaultConfig {
-        minSdk = 31
-        targetSdk = 37
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -29,10 +26,12 @@ configure<TestExtension> {
     // To use GMD please invoke generation through the command line:
     // ./gradlew :app:generateBaselineProfile
     testOptions.managedDevices.allDevices {
-        create<ManagedVirtualDevice>("pixel6Api34") {
-            device = "Pixel 6"
-            apiLevel = 34
-            systemImageSource = "aosp-atd"
+        create<ManagedVirtualDevice>("pixel8Api37Atd") {
+            device = "Pixel 8"
+            sdkVersion = 37
+            systemImageSource = "google"
+            pageAlignment = ManagedVirtualDevice.PageAlignment.FORCE_16KB_PAGES
+            testedAbi = "x86_64"
         }
     }
 }
@@ -40,7 +39,7 @@ configure<TestExtension> {
 // This is the configuration block for the Baseline Profile plugin.
 // You can specify to run the generators on a managed devices or connected devices.
 baselineProfile {
-    managedDevices += "pixel6Api34"
+    managedDevices += "pixel8Api37Atd"
     useConnectedDevices = false
 }
 

@@ -1,4 +1,4 @@
-package com.annas.ui.features
+package com.annas.enums
 
 enum class UIStateEnum {
     CARGANDO,

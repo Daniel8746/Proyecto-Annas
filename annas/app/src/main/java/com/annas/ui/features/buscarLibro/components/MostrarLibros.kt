@@ -63,6 +63,7 @@ import com.annas.ui.features.components.InfoBadge
 import com.annas.ui.features.components.rememberBookCoverRequest
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 private val PageFadeSpringSpec = spring<Float>(
     dampingRatio = Spring.DampingRatioLowBouncy,
@@ -206,7 +207,7 @@ fun AnimatedLibroItem(
     }
 
     LaunchedEffect(Unit) {
-        delay(index * 40L)
+        delay((index * 40L).milliseconds)
         visibleState.targetState = true
     }
 

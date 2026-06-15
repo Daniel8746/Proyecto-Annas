@@ -2,6 +2,8 @@ import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.com.google.dagger)
+    alias(libs.plugins.ksp)
 }
 
 configure<LibraryExtension> {
@@ -19,23 +21,17 @@ configure<LibraryExtension> {
     }
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
 dependencies {
     api(project(":core:model"))
+    
     api(platform(libs.firebase.bom))
     api(libs.firebase.ai)
-    api(libs.kotlinx.collections.immutable)
 
-    implementation(project(":core:common"))
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.dagger.hilt.android)
-    implementation(libs.jsoup)
-    implementation(libs.okhttp)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    ksp(libs.kotlin.metadata)
+
+    implementation(libs.bundles.networkingBundle)
 
     testImplementation(libs.junit)
-    testImplementation(libs.jsoup)
 }

@@ -1,4 +1,4 @@
-package com.annas.data.ia
+package com.annas.data.chatbot
 
 import android.content.Context
 import com.annas.data.extensions.loadPrompt

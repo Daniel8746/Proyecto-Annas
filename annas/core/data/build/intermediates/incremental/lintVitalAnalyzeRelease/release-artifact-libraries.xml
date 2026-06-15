@@ -1,9 +1,9 @@
 <libraries>
   <library
       name=":@@:core:model::release"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\ad6bafdeb925e98248fbdef90c86aa4c\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.5.1\transforms\ad6bafdeb925e98248fbdef90c86aa4c\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\0b8ffad30f3206375cab13d8d0ac7a06\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.5.1\transforms\0b8ffad30f3206375cab13d8d0ac7a06\transformed\out\jars\libs\R.jar"
       resolved="annas.core:model:unspecified"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\ad6bafdeb925e98248fbdef90c86aa4c\transformed\out"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\0b8ffad30f3206375cab13d8d0ac7a06\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -14,22 +14,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="com.google.firebase:firebase-ai:17.12.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\5de16ce8966767da856673442ddef1e5\transformed\firebase-ai-17.12.1\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\982e9fe5cdd3bd8496a35cdfee3debec\transformed\firebase-ai-17.12.1\jars\classes.jar"
       resolved="com.google.firebase:firebase-ai:17.12.1"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\5de16ce8966767da856673442ddef1e5\transformed\firebase-ai-17.12.1"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name=":@@:core:common::release"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\6407ea0d17f4ed53da5e815e8b94b8ff\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.5.1\transforms\6407ea0d17f4ed53da5e815e8b94b8ff\transformed\out\jars\libs\R.jar"
-      resolved="annas.core:common:unspecified"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\6407ea0d17f4ed53da5e815e8b94b8ff\transformed\out"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\982e9fe5cdd3bd8496a35cdfee3debec\transformed\firebase-ai-17.12.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -40,9 +27,22 @@
       proguardRules="proguard.txt"/>
   <library
       name="com.google.dagger:hilt-android:2.59.2@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\19cce82f26731357bb4e14dda4d0af56\transformed\hilt-android-2.59.2\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\1c15b96888e9d9aedbb66b69174195d8\transformed\hilt-android-2.59.2\jars\classes.jar"
       resolved="com.google.dagger:hilt-android:2.59.2"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\19cce82f26731357bb4e14dda4d0af56\transformed\hilt-android-2.59.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\1c15b96888e9d9aedbb66b69174195d8\transformed\hilt-android-2.59.2"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name=":@@:core:common::release"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\cd00196a46e3af0fb11f0eb7d08ec71f\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.5.1\transforms\cd00196a46e3af0fb11f0eb7d08ec71f\transformed\out\jars\libs\R.jar"
+      resolved="annas.core:common:unspecified"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\cd00196a46e3af0fb11f0eb7d08ec71f\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -53,9 +53,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.fragment:fragment:1.5.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d37dcdb95ccac318338d5caf6f6a7b09\transformed\fragment-1.5.1\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\15f0e6dc85c23bdc913be128850c2178\transformed\fragment-1.5.1\jars\classes.jar"
       resolved="androidx.fragment:fragment:1.5.1"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d37dcdb95ccac318338d5caf6f6a7b09\transformed\fragment-1.5.1"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\15f0e6dc85c23bdc913be128850c2178\transformed\fragment-1.5.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -66,9 +66,23 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.activity:activity:1.5.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\b39ef9e058868db7da19f57d3cff5bfb\transformed\activity-1.5.1\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\848798c89ba47566eff0978f86e61803\transformed\activity-1.5.1\jars\classes.jar"
       resolved="androidx.activity:activity:1.5.1"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\b39ef9e058868db7da19f57d3cff5bfb\transformed\activity-1.5.1"
+      provided="true"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\848798c89ba47566eff0978f86e61803\transformed\activity-1.5.1"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="com.squareup.okhttp3:okhttp-android:5.4.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\52989600fcd24d9f4934e022aa7cff25\transformed\okhttp\jars\classes.jar"
+      resolved="com.squareup.okhttp3:okhttp-android:5.4.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\52989600fcd24d9f4934e022aa7cff25\transformed\okhttp"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -79,9 +93,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.loader:loader:1.0.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\9cefe3097121b58046ed2e42ca539cae\transformed\loader-1.0.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\0d606e264892d5487fee49287d903e30\transformed\loader-1.0.0\jars\classes.jar"
       resolved="androidx.loader:loader:1.0.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\9cefe3097121b58046ed2e42ca539cae\transformed\loader-1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\0d606e264892d5487fee49287d903e30\transformed\loader-1.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -92,9 +106,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.viewpager:viewpager:1.0.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\085a6da26634ab13b8f17bf619609155\transformed\viewpager-1.0.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\858cf529631b246f04443d31eb71ce72\transformed\viewpager-1.0.0\jars\classes.jar"
       resolved="androidx.viewpager:viewpager:1.0.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\085a6da26634ab13b8f17bf619609155\transformed\viewpager-1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\858cf529631b246f04443d31eb71ce72\transformed\viewpager-1.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -105,9 +119,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.customview:customview:1.0.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\ee9d713852c4f253ad0bf87172485d76\transformed\customview-1.0.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\ff257d5b62ecc231cc9b08f10fea8ab9\transformed\customview-1.0.0\jars\classes.jar"
       resolved="androidx.customview:customview:1.0.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\ee9d713852c4f253ad0bf87172485d76\transformed\customview-1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\ff257d5b62ecc231cc9b08f10fea8ab9\transformed\customview-1.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -118,35 +132,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.core:core:1.19.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\cd1279ddec980840fa380c9f47440f3a\transformed\core-1.19.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\42813f04ad9737375840f8fe4e6d3f66\transformed\core-1.19.0\jars\classes.jar"
       resolved="androidx.core:core:1.19.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\cd1279ddec980840fa380c9f47440f3a\transformed\core-1.19.0"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name="androidx.lifecycle:lifecycle-livedata-core-ktx:2.10.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d5946f15b5129d8f90d0c1080d83db09\transformed\lifecycle-livedata-core-ktx-2.10.0\jars\classes.jar"
-      resolved="androidx.lifecycle:lifecycle-livedata-core-ktx:2.10.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d5946f15b5129d8f90d0c1080d83db09\transformed\lifecycle-livedata-core-ktx-2.10.0"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name="androidx.lifecycle:lifecycle-livedata:2.10.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\b34ef6c866ddfe23aa505d4e19b2f128\transformed\lifecycle-livedata-2.10.0\jars\classes.jar"
-      resolved="androidx.lifecycle:lifecycle-livedata:2.10.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\b34ef6c866ddfe23aa505d4e19b2f128\transformed\lifecycle-livedata-2.10.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\42813f04ad9737375840f8fe4e6d3f66\transformed\core-1.19.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -157,9 +145,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-viewmodel:2.10.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\87067b7857414862c02e169ebcd44783\transformed\lifecycle-viewmodel-2.10.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\6016e3be8ed478118672f976b807e739\transformed\lifecycle-viewmodel-2.10.0\jars\classes.jar"
       resolved="androidx.lifecycle:lifecycle-viewmodel:2.10.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\87067b7857414862c02e169ebcd44783\transformed\lifecycle-viewmodel-2.10.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\6016e3be8ed478118672f976b807e739\transformed\lifecycle-viewmodel-2.10.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -170,9 +158,22 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-viewmodel-android:2.10.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\750f391a299c7c1ca1e11a7378d9f779\transformed\lifecycle-viewmodel\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\55eb2a5b88c71ac558576caf2423a916\transformed\lifecycle-viewmodel\jars\classes.jar"
       resolved="androidx.lifecycle:lifecycle-viewmodel-android:2.10.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\750f391a299c7c1ca1e11a7378d9f779\transformed\lifecycle-viewmodel"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\55eb2a5b88c71ac558576caf2423a916\transformed\lifecycle-viewmodel"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.lifecycle:lifecycle-livedata-core-ktx:2.10.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\c21a5a55d2c711b9560ecd15452a371a\transformed\lifecycle-livedata-core-ktx-2.10.0\jars\classes.jar"
+      resolved="androidx.lifecycle:lifecycle-livedata-core-ktx:2.10.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\c21a5a55d2c711b9560ecd15452a371a\transformed\lifecycle-livedata-core-ktx-2.10.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -187,9 +188,9 @@
       resolved="androidx.lifecycle:lifecycle-common-jvm:2.10.0"/>
   <library
       name="androidx.lifecycle:lifecycle-runtime-android:2.10.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\9a8fd04ed906bb1aff196e88e5e2a594\transformed\lifecycle-runtime\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\254b69ca10af30762e85947e20aacf6b\transformed\lifecycle-runtime\jars\classes.jar"
       resolved="androidx.lifecycle:lifecycle-runtime-android:2.10.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\9a8fd04ed906bb1aff196e88e5e2a594\transformed\lifecycle-runtime"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\254b69ca10af30762e85947e20aacf6b\transformed\lifecycle-runtime"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -200,9 +201,22 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-livedata-core:2.10.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\49cac0ce457b7db90e905a02b9f73bdb\transformed\lifecycle-livedata-core-2.10.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\32478e0e8b34356d66664e33a1576741\transformed\lifecycle-livedata-core-2.10.0\jars\classes.jar"
       resolved="androidx.lifecycle:lifecycle-livedata-core:2.10.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\49cac0ce457b7db90e905a02b9f73bdb\transformed\lifecycle-livedata-core-2.10.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\32478e0e8b34356d66664e33a1576741\transformed\lifecycle-livedata-core-2.10.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.lifecycle:lifecycle-livedata:2.10.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\69f31c8418214e8092a5eefac86e063f\transformed\lifecycle-livedata-2.10.0\jars\classes.jar"
+      resolved="androidx.lifecycle:lifecycle-livedata:2.10.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\69f31c8418214e8092a5eefac86e063f\transformed\lifecycle-livedata-2.10.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -213,9 +227,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-runtime-ktx-android:2.10.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\7972be5f16dd0f363eaf6253d3fa3886\transformed\lifecycle-runtime-ktx\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\8ceaa08d2114c607ab7f0f2d982fcefb\transformed\lifecycle-runtime-ktx\jars\classes.jar"
       resolved="androidx.lifecycle:lifecycle-runtime-ktx-android:2.10.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\7972be5f16dd0f363eaf6253d3fa3886\transformed\lifecycle-runtime-ktx"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\8ceaa08d2114c607ab7f0f2d982fcefb\transformed\lifecycle-runtime-ktx"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -226,9 +240,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.10.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d58e19a8d107634fff17c6c892e92a08\transformed\lifecycle-viewmodel-savedstate\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d726aa530192cf0c9e10972efff714fc\transformed\lifecycle-viewmodel-savedstate\jars\classes.jar"
       resolved="androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.10.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d58e19a8d107634fff17c6c892e92a08\transformed\lifecycle-viewmodel-savedstate"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d726aa530192cf0c9e10972efff714fc\transformed\lifecycle-viewmodel-savedstate"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -239,9 +253,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.core:core-ktx:1.19.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\f4d95a136f62b70c6ed3b8f83d5a45c4\transformed\core-ktx-1.19.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\9519a5cd9cc0f7011a8996f4c810b01c\transformed\core-ktx-1.19.0\jars\classes.jar"
       resolved="androidx.core:core-ktx:1.19.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\f4d95a136f62b70c6ed3b8f83d5a45c4\transformed\core-ktx-1.19.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\9519a5cd9cc0f7011a8996f4c810b01c\transformed\core-ktx-1.19.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -255,10 +269,10 @@
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-collections-immutable-jvm\0.5.0\18bcda1a35a4e2f626e01421ac8e6cc819707fd0\kotlinx-collections-immutable-jvm-0.5.0.jar"
       resolved="org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.5.0"/>
   <library
-      name="com.squareup.okhttp3:okhttp-android:5.4.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\6eb9c1cb4c428ae0d8900eac0b4f757d\transformed\okhttp\jars\classes.jar"
-      resolved="com.squareup.okhttp3:okhttp-android:5.4.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\6eb9c1cb4c428ae0d8900eac0b4f757d\transformed\okhttp"
+      name="androidx.savedstate:savedstate-android:1.4.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\a1e30665510d41a74e6fefe524df3a4d\transformed\savedstate\jars\classes.jar"
+      resolved="androidx.savedstate:savedstate-android:1.4.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\a1e30665510d41a74e6fefe524df3a4d\transformed\savedstate"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -268,10 +282,47 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
+      name="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.11.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-serialization-core-jvm\1.11.0\c1905c9bf7452b045d5af9248835abe64ddad6bf\kotlinx-serialization-core-jvm-1.11.0.jar"
+      resolved="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.11.0"/>
+  <library
+      name="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.11.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-serialization-json-jvm\1.11.0\e7e045e99e56f07599bb9ccb708c2190e2af0606\kotlinx-serialization-json-jvm-1.11.0.jar"
+      resolved="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.11.0"/>
+  <library
+      name="com.google.firebase:firebase-common:22.0.1@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\982142d30c76fb6aa5a585d9e1213cc2\transformed\firebase-common-22.0.1\jars\classes.jar"
+      resolved="com.google.firebase:firebase-common:22.0.1"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\982142d30c76fb6aa5a585d9e1213cc2\transformed\firebase-common-22.0.1"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-coroutines-android\1.9.0\6cf3b8df5a2ce8c6b0dffe55657a827c405ee2fe\kotlinx-coroutines-android-1.9.0.jar"
+      resolved="org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0"/>
+  <library
+      name="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-coroutines-core-jvm\1.9.0\9beade4c1c1569e4f36cbd2c37e02e3e41502601\kotlinx-coroutines-core-jvm-1.9.0.jar"
+      resolved="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0"/>
+  <library
+      name="org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-coroutines-play-services\1.9.0\9d715295c29dddf8c381565c513fb2d9923f9f41\kotlinx-coroutines-play-services-1.9.0.jar"
+      resolved="org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0"/>
+  <library
+      name="com.squareup.okio:okio-jvm:3.17.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio-jvm\3.17.0\a12d684ec0df9541b3869ae60a4a5257fd3613df\okio-jvm-3.17.0.jar"
+      resolved="com.squareup.okio:okio-jvm:3.17.0"/>
+  <library
       name="androidx.annotation:annotation-experimental:1.4.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\4aaeee3391cff681ca0dcd9137471072\transformed\annotation-experimental-1.4.1\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\e087585128aeb166f6a32e930f5c6c82\transformed\annotation-experimental-1.4.1\jars\classes.jar"
       resolved="androidx.annotation:annotation-experimental:1.4.1"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\4aaeee3391cff681ca0dcd9137471072\transformed\annotation-experimental-1.4.1"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\e087585128aeb166f6a32e930f5c6c82\transformed\annotation-experimental-1.4.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -282,9 +333,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.core:core-viewtree:1.0.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\38b63607b6498e0e7d37a4137ad49bb5\transformed\core-viewtree-1.0.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\5557c7f15076a96e52bbcc6952f28368\transformed\core-viewtree-1.0.0\jars\classes.jar"
       resolved="androidx.core:core-viewtree:1.0.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\38b63607b6498e0e7d37a4137ad49bb5\transformed\core-viewtree-1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\5557c7f15076a96e52bbcc6952f28368\transformed\core-viewtree-1.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -293,49 +344,11 @@
       symbolFile="R.txt"
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
-  <library
-      name="com.google.firebase:firebase-common:22.0.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\6354883fc3d25277d5809e05280292f4\transformed\firebase-common-22.0.1\jars\classes.jar"
-      resolved="com.google.firebase:firebase-common:22.0.1"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\6354883fc3d25277d5809e05280292f4\transformed\firebase-common-22.0.1"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name="org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-coroutines-play-services\1.9.0\9d715295c29dddf8c381565c513fb2d9923f9f41\kotlinx-coroutines-play-services-1.9.0.jar"
-      resolved="org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0"/>
-  <library
-      name="androidx.savedstate:savedstate-android:1.4.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\063de4d07f419529a90a296839a87ab5\transformed\savedstate\jars\classes.jar"
-      resolved="androidx.savedstate:savedstate-android:1.4.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\063de4d07f419529a90a296839a87ab5\transformed\savedstate"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-coroutines-core-jvm\1.9.0\9beade4c1c1569e4f36cbd2c37e02e3e41502601\kotlinx-coroutines-core-jvm-1.9.0.jar"
-      resolved="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0"/>
-  <library
-      name="org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-coroutines-android\1.9.0\6cf3b8df5a2ce8c6b0dffe55657a827c405ee2fe\kotlinx-coroutines-android-1.9.0.jar"
-      resolved="org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0"/>
   <library
       name="androidx.versionedparcelable:versionedparcelable:1.1.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\41a4007485e14f8846bf0faa16d2857f\transformed\versionedparcelable-1.1.1\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\0664c1eb68116ba4f75ff64846f5f6f5\transformed\versionedparcelable-1.1.1\jars\classes.jar"
       resolved="androidx.versionedparcelable:versionedparcelable:1.1.1"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\41a4007485e14f8846bf0faa16d2857f\transformed\versionedparcelable-1.1.1"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\0664c1eb68116ba4f75ff64846f5f6f5\transformed\versionedparcelable-1.1.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -351,9 +364,9 @@
       provided="true"/>
   <library
       name="androidx.arch.core:core-runtime:2.2.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d1562fab7b4ab8747110ab2a6e5efd6b\transformed\core-runtime-2.2.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d863dc8dceae624c3772a0f67576ca09\transformed\core-runtime-2.2.0\jars\classes.jar"
       resolved="androidx.arch.core:core-runtime:2.2.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d1562fab7b4ab8747110ab2a6e5efd6b\transformed\core-runtime-2.2.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d863dc8dceae624c3772a0f67576ca09\transformed\core-runtime-2.2.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -370,15 +383,6 @@
       name="androidx.annotation:annotation-jvm:1.10.0@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.annotation\annotation-jvm\1.10.0\388cfaa79001d0f024d28f6a13d5a3dfc2f0e18f\annotation-jvm-1.10.0.jar"
       resolved="androidx.annotation:annotation-jvm:1.10.0"/>
-  <library
-      name="com.squareup.okio:okio-jvm:3.17.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio-jvm\3.17.0\a12d684ec0df9541b3869ae60a4a5257fd3613df\okio-jvm-3.17.0.jar"
-      resolved="com.squareup.okio:okio-jvm:3.17.0"/>
-  <library
-      name="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-serialization-core-jvm\1.7.3\1f226780b845ff9206474c05159245d861556249\kotlinx-serialization-core-jvm-1.7.3.jar"
-      resolved="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3"
-      provided="true"/>
   <library
       name="org.jetbrains.kotlin:kotlin-stdlib:2.4.0@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-stdlib\2.4.0\4e9f4b531dce5c7dee58ed2de9a8b9a763c8dc6c\kotlin-stdlib-2.4.0.jar"
@@ -401,9 +405,9 @@
       resolved="com.google.dagger:dagger:2.59.2"/>
   <library
       name="com.google.dagger:dagger-lint-aar:2.59.2@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\9d6008ee413e96003554c8dc1e6a48e7\transformed\dagger-lint-aar-2.59.2\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\4d97bc73a116c5a1635785f288e2dad2\transformed\dagger-lint-aar-2.59.2\jars\classes.jar"
       resolved="com.google.dagger:dagger-lint-aar:2.59.2"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\9d6008ee413e96003554c8dc1e6a48e7\transformed\dagger-lint-aar-2.59.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\4d97bc73a116c5a1635785f288e2dad2\transformed\dagger-lint-aar-2.59.2"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -421,22 +425,18 @@
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\javax.inject\javax.inject\1\6975da39a7040257bd51d21a231b76c915872d38\javax.inject-1.jar"
       resolved="javax.inject:javax.inject:1"/>
   <library
-      name="com.google.guava:listenablefuture:1.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\com.google.guava\listenablefuture\1.0\c949a840a6acbc5268d088e47b04177bf90b3cad\listenablefuture-1.0.jar"
-      resolved="com.google.guava:listenablefuture:1.0"/>
+      name="jakarta.inject:jakarta.inject-api:2.0.1@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\jakarta.inject\jakarta.inject-api\2.0.1\4c28afe1991a941d7702fe1362c365f0a8641d1e\jakarta.inject-api-2.0.1.jar"
+      resolved="jakarta.inject:jakarta.inject-api:2.0.1"/>
   <library
       name="org.jspecify:jspecify:1.0.0@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jspecify\jspecify\1.0.0\7425a601c1c7ec76645a78d22b8c6a627edee507\jspecify-1.0.0.jar"
       resolved="org.jspecify:jspecify:1.0.0"/>
   <library
-      name="jakarta.inject:jakarta.inject-api:2.0.1@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\jakarta.inject\jakarta.inject-api\2.0.1\4c28afe1991a941d7702fe1362c365f0a8641d1e\jakarta.inject-api-2.0.1.jar"
-      resolved="jakarta.inject:jakarta.inject-api:2.0.1"/>
-  <library
       name="com.google.firebase:firebase-components:19.0.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\37181da6c64ad6030fb3886ac4258d6e\transformed\firebase-components-19.0.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\f423e962770cf4b8e70043c1324b14d8\transformed\firebase-components-19.0.0\jars\classes.jar"
       resolved="com.google.firebase:firebase-components:19.0.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\37181da6c64ad6030fb3886ac4258d6e\transformed\firebase-components-19.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\f423e962770cf4b8e70043c1324b14d8\transformed\firebase-components-19.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -450,11 +450,15 @@
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\com.google.firebase\firebase-annotations\17.0.0\fd04a6accd970e0fcf9baf2424abe2926e00d0e2\firebase-annotations-17.0.0.jar"
       resolved="com.google.firebase:firebase-annotations:17.0.0"/>
   <library
+      name="com.google.guava:listenablefuture:1.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\com.google.guava\listenablefuture\1.0\c949a840a6acbc5268d088e47b04177bf90b3cad\listenablefuture-1.0.jar"
+      resolved="com.google.guava:listenablefuture:1.0"/>
+  <library
       name="com.google.android.gms:play-services-tasks:16.0.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\859a309383c021022033f76256873fbc\transformed\play-services-tasks-16.0.1\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\3e396ed6c4064e2d9fa1378badc6b72d\transformed\play-services-tasks-16.0.1\jars\classes.jar"
       resolved="com.google.android.gms:play-services-tasks:16.0.1"
       provided="true"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\859a309383c021022033f76256873fbc\transformed\play-services-tasks-16.0.1"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\3e396ed6c4064e2d9fa1378badc6b72d\transformed\play-services-tasks-16.0.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -465,23 +469,10 @@
       proguardRules="proguard.txt"/>
   <library
       name="com.google.android.gms:play-services-basement:16.0.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\75af45d1eb10a0e3854fc5d2c34121a9\transformed\play-services-basement-16.0.1\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\42dbda6346e390e9dbb2854f4e32f913\transformed\play-services-basement-16.0.1\jars\classes.jar"
       resolved="com.google.android.gms:play-services-basement:16.0.1"
       provided="true"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\75af45d1eb10a0e3854fc5d2c34121a9\transformed\play-services-basement-16.0.1"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name="com.google.firebase:firebase-appcheck-interop:17.1.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\520222c3e126ab466e56155778d1a577\transformed\firebase-appcheck-interop-17.1.0\jars\classes.jar"
-      resolved="com.google.firebase:firebase-appcheck-interop:17.1.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\520222c3e126ab466e56155778d1a577\transformed\firebase-appcheck-interop-17.1.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\42dbda6346e390e9dbb2854f4e32f913\transformed\play-services-basement-16.0.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -492,22 +483,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="com.google.firebase:firebase-auth-interop:18.0.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\a8462406ead6c1f606a279a983c381bc\transformed\firebase-auth-interop-18.0.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\cc21e7eb30842ea6e51b49d50847a3d0\transformed\firebase-auth-interop-18.0.0\jars\classes.jar"
       resolved="com.google.firebase:firebase-auth-interop:18.0.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\a8462406ead6c1f606a279a983c381bc\transformed\firebase-auth-interop-18.0.0"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name="com.google.android.gms:play-services-base:18.0.1@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\1b15d6ef8aabed8cd66520503ff6f804\transformed\play-services-base-18.0.1\jars\classes.jar"
-      resolved="com.google.android.gms:play-services-base:18.0.1"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\1b15d6ef8aabed8cd66520503ff6f804\transformed\play-services-base-18.0.1"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\cc21e7eb30842ea6e51b49d50847a3d0\transformed\firebase-auth-interop-18.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -518,9 +496,441 @@
       proguardRules="proguard.txt"/>
   <library
       name="com.google.firebase:firebase-ai-ondevice-interop:16.0.0-beta02@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\3ca1bce4b480721f77033dbace855d20\transformed\firebase-ai-ondevice-interop-16.0.0-beta02\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\48226c20934f10ab6393873af4b586c7\transformed\firebase-ai-ondevice-interop-16.0.0-beta02\jars\classes.jar"
       resolved="com.google.firebase:firebase-ai-ondevice-interop:16.0.0-beta02"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\3ca1bce4b480721f77033dbace855d20\transformed\firebase-ai-ondevice-interop-16.0.0-beta02"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\48226c20934f10ab6393873af4b586c7\transformed\firebase-ai-ondevice-interop-16.0.0-beta02"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.datastore:datastore-preferences-external-protobuf:1.1.7@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.datastore\datastore-preferences-external-protobuf\1.1.7\ddd0a2d64e3c928359c993d1291e535d5d7fc9a3\datastore-preferences-external-protobuf-1.1.7.jar"
+      resolved="androidx.datastore:datastore-preferences-external-protobuf:1.1.7"/>
+  <library
+      name="androidx.datastore:datastore-core-okio-jvm:1.1.7@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.datastore\datastore-core-okio-jvm\1.1.7\ce08f132812044a9778547b299fd812e34dbd602\datastore-core-okio-jvm-1.1.7.jar"
+      resolved="androidx.datastore:datastore-core-okio-jvm:1.1.7"/>
+  <library
+      name="androidx.datastore:datastore-preferences-proto:1.1.7@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.datastore\datastore-preferences-proto\1.1.7\6d7430ed8d2b5f2b8675dad8d196ba5dd710921b\datastore-preferences-proto-1.1.7.jar"
+      resolved="androidx.datastore:datastore-preferences-proto:1.1.7"/>
+  <library
+      name="androidx.datastore:datastore-preferences-core-android:1.1.7@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\966a40f8fa5985b28267f77ab95f22e9\transformed\datastore-preferences-core-release\jars\classes.jar"
+      resolved="androidx.datastore:datastore-preferences-core-android:1.1.7"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\966a40f8fa5985b28267f77ab95f22e9\transformed\datastore-preferences-core-release"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.datastore:datastore-preferences-android:1.1.7@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d95fa8501e47fe7edf73b22bf097b134\transformed\datastore-preferences-release\jars\classes.jar"
+      resolved="androidx.datastore:datastore-preferences-android:1.1.7"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d95fa8501e47fe7edf73b22bf097b134\transformed\datastore-preferences-release"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.datastore:datastore-android:1.1.7@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\6c40f723749161782c6775563c108faf\transformed\datastore-release\jars\classes.jar"
+      resolved="androidx.datastore:datastore-android:1.1.7"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\6c40f723749161782c6775563c108faf\transformed\datastore-release"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.datastore:datastore-core-android:1.1.7@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\8c3b72c2a52154465c0dd8abb3a874aa\transformed\datastore-core-release\jars\classes.jar"
+      resolved="androidx.datastore:datastore-core-android:1.1.7"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\8c3b72c2a52154465c0dd8abb3a874aa\transformed\datastore-core-release"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="org.jetbrains.kotlin:kotlin-parcelize-runtime:2.4.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-parcelize-runtime\2.4.0\e0e2c4d064601ae2512be6388f1ada840a1c8353\kotlin-parcelize-runtime-2.4.0.jar"
+      resolved="org.jetbrains.kotlin:kotlin-parcelize-runtime:2.4.0"/>
+  <library
+      name="com.google.firebase:firebase-appcheck-interop:17.1.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\11cf676d30dddf3ad9bde3b6c1b742e0\transformed\firebase-appcheck-interop-17.1.0\jars\classes.jar"
+      resolved="com.google.firebase:firebase-appcheck-interop:17.1.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\11cf676d30dddf3ad9bde3b6c1b742e0\transformed\firebase-appcheck-interop-17.1.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="com.google.android.gms:play-services-base:18.0.1@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\1baa6ae7c047d121b5a726e3228f6a66\transformed\play-services-base-18.0.1\jars\classes.jar"
+      resolved="com.google.android.gms:play-services-base:18.0.1"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\1baa6ae7c047d121b5a726e3228f6a66\transformed\play-services-base-18.0.1"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.ui:ui-util-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\247504b059ecf926a9945d84353e6835\transformed\ui-util\jars\classes.jar"
+      resolved="androidx.compose.ui:ui-util-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\247504b059ecf926a9945d84353e6835\transformed\ui-util"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.ui:ui-unit-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\746074a83b38817b199231e2ab7970f9\transformed\ui-unit\jars\classes.jar"
+      resolved="androidx.compose.ui:ui-unit-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\746074a83b38817b199231e2ab7970f9\transformed\ui-unit"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.ui:ui-text-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\067f20314c45b97cb6de521293f3ffe7\transformed\ui-text\jars\classes.jar"
+      resolved="androidx.compose.ui:ui-text-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\067f20314c45b97cb6de521293f3ffe7\transformed\ui-text"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.ui:ui-geometry-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\4eb5a45c0f2c10d5682037e939f638f9\transformed\ui-geometry\jars\classes.jar"
+      resolved="androidx.compose.ui:ui-geometry-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\4eb5a45c0f2c10d5682037e939f638f9\transformed\ui-geometry"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.ui:ui-graphics-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\8a62e66a3bd4223f3f941851c3801159\transformed\ui-graphics\jars\classes.jar"
+      resolved="androidx.compose.ui:ui-graphics-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\8a62e66a3bd4223f3f941851c3801159\transformed\ui-graphics"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.ui:ui-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\23bbcba25418b3682e8956bacab0c9f4\transformed\ui\jars\classes.jar"
+      resolved="androidx.compose.ui:ui-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\23bbcba25418b3682e8956bacab0c9f4\transformed\ui"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.transition:transition:1.6.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d42179519441356ff15620302ee0e8ef\transformed\transition-1.6.0\jars\classes.jar"
+      resolved="androidx.transition:transition:1.6.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d42179519441356ff15620302ee0e8ef\transformed\transition-1.6.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.dynamicanimation:dynamicanimation:1.0.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\cb2461e198b3084e712cf68547eb9c5f\transformed\dynamicanimation-1.0.0\jars\classes.jar"
+      resolved="androidx.dynamicanimation:dynamicanimation:1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\cb2461e198b3084e712cf68547eb9c5f\transformed\dynamicanimation-1.0.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.legacy:legacy-support-core-utils:1.0.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\0cbb63fcc51fbdc511ecf10fb63bfada\transformed\legacy-support-core-utils-1.0.0\jars\classes.jar"
+      resolved="androidx.legacy:legacy-support-core-utils:1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\0cbb63fcc51fbdc511ecf10fb63bfada\transformed\legacy-support-core-utils-1.0.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.activity:activity:1.7.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\a07778b12e0f90810405e18625a6aa6a\transformed\activity-1.7.0\jars\classes.jar"
+      resolved="androidx.activity:activity:1.7.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\a07778b12e0f90810405e18625a6aa6a\transformed\activity-1.7.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.activity:activity-ktx:1.7.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\e10e0434327d2d626510337f6888329e\transformed\activity-ktx-1.7.0\jars\classes.jar"
+      resolved="androidx.activity:activity-ktx:1.7.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\e10e0434327d2d626510337f6888329e\transformed\activity-ktx-1.7.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.customview:customview-poolingcontainer:1.0.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\25e6ea5aca8741551ab6db945cebc03a\transformed\customview-poolingcontainer-1.0.0\jars\classes.jar"
+      resolved="androidx.customview:customview-poolingcontainer:1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\25e6ea5aca8741551ab6db945cebc03a\transformed\customview-poolingcontainer-1.0.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.runtime:runtime-annotation-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\624dc82d90e38425d5c89c47eed37e1d\transformed\runtime-annotation\jars\classes.jar"
+      resolved="androidx.compose.runtime:runtime-annotation-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\624dc82d90e38425d5c89c47eed37e1d\transformed\runtime-annotation"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.runtime:runtime-retain-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\1f75c8de505dcd7897cb5f61975adbb8\transformed\runtime-retain\jars\classes.jar"
+      resolved="androidx.compose.runtime:runtime-retain-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\1f75c8de505dcd7897cb5f61975adbb8\transformed\runtime-retain"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.savedstate:savedstate-ktx:1.4.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\ed2d571c63ca9f0311823adb6df934c3\transformed\savedstate-ktx-1.4.0\jars\classes.jar"
+      resolved="androidx.savedstate:savedstate-ktx:1.4.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\ed2d571c63ca9f0311823adb6df934c3\transformed\savedstate-ktx-1.4.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.savedstate:savedstate-compose-android:1.4.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\b53acf8806e37e77fbe96af7af45072c\transformed\savedstate-compose\jars\classes.jar"
+      resolved="androidx.savedstate:savedstate-compose-android:1.4.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\b53acf8806e37e77fbe96af7af45072c\transformed\savedstate-compose"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.runtime:runtime-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\4b46bdcbe63d92eb5e7d0d5fc34c9c0a\transformed\runtime\jars\classes.jar"
+      resolved="androidx.compose.runtime:runtime-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\4b46bdcbe63d92eb5e7d0d5fc34c9c0a\transformed\runtime"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.runtime:runtime-saveable-android:1.11.2@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\bec54aa6124d232ff8ac164b644cded0\transformed\runtime-saveable\jars\classes.jar"
+      resolved="androidx.compose.runtime:runtime-saveable-android:1.11.2"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\bec54aa6124d232ff8ac164b644cded0\transformed\runtime-saveable"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.emoji2:emoji2:1.4.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\6a7fe0a5b39846a835b11791a740a1f6\transformed\emoji2-1.4.0\jars\classes.jar;C:\Users\danie\.gradle\caches\9.5.1\transforms\6a7fe0a5b39846a835b11791a740a1f6\transformed\emoji2-1.4.0\jars\libs\repackaged.jar"
+      resolved="androidx.emoji2:emoji2:1.4.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\6a7fe0a5b39846a835b11791a740a1f6\transformed\emoji2-1.4.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.lifecycle:lifecycle-process:2.10.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\6ae1a5615ce98708409c9502f9b82e43\transformed\lifecycle-process-2.10.0\jars\classes.jar"
+      resolved="androidx.lifecycle:lifecycle-process:2.10.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\6ae1a5615ce98708409c9502f9b82e43\transformed\lifecycle-process-2.10.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.lifecycle:lifecycle-runtime-compose-android:2.10.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\fcd6664cdc3ff7b51d62f0def93d7dec\transformed\lifecycle-runtime-compose\jars\classes.jar"
+      resolved="androidx.lifecycle:lifecycle-runtime-compose-android:2.10.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\fcd6664cdc3ff7b51d62f0def93d7dec\transformed\lifecycle-runtime-compose"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.autofill:autofill:1.0.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\335273b5c4fe355f96d92a503992e6e1\transformed\autofill-1.0.0\jars\classes.jar"
+      resolved="androidx.autofill:autofill:1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\335273b5c4fe355f96d92a503992e6e1\transformed\autofill-1.0.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.window:window-core-android:1.5.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\5866b2456f11eee6d85f0c16c54ccc23\transformed\window-core\jars\classes.jar"
+      resolved="androidx.window:window-core-android:1.5.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\5866b2456f11eee6d85f0c16c54ccc23\transformed\window-core"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.window:window:1.5.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\0df1b2bdc0018513d31c1699dfb425dc\transformed\window-1.5.0\jars\classes.jar"
+      resolved="androidx.window:window:1.5.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\0df1b2bdc0018513d31c1699dfb425dc\transformed\window-1.5.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.graphics:graphics-path:1.0.1@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\98fe364dff0b28e977bb417899a6cb09\transformed\graphics-path-1.0.1\jars\classes.jar"
+      resolved="androidx.graphics:graphics-path:1.0.1"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\98fe364dff0b28e977bb417899a6cb09\transformed\graphics-path-1.0.1"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\4691681d1b49df59bfbc4323a802d181\transformed\lifecycle-viewmodel-ktx-2.10.0\jars\classes.jar"
+      resolved="androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\4691681d1b49df59bfbc4323a802d181\transformed\lifecycle-viewmodel-ktx-2.10.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -533,27 +943,6 @@
       name="org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.9.0@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-coroutines-reactive\1.9.0\fb9a8a6344ed71e1af305da3ad9e94235c03c6fd\kotlinx-coroutines-reactive-1.9.0.jar"
       resolved="org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.9.0"/>
-  <library
-      name="androidx.profileinstaller:profileinstaller:1.4.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\25fc39a9e6b72d2f1522761f9c5596b0\transformed\profileinstaller-1.4.0\jars\classes.jar"
-      resolved="androidx.profileinstaller:profileinstaller:1.4.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\25fc39a9e6b72d2f1522761f9c5596b0\transformed\profileinstaller-1.4.0"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name="androidx.concurrent:concurrent-futures:1.2.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.concurrent\concurrent-futures\1.2.0\6a1dfd69226e148898410721f4b14315343d1429\concurrent-futures-1.2.0.jar"
-      resolved="androidx.concurrent:concurrent-futures:1.2.0"/>
-  <library
-      name="androidx.concurrent:concurrent-futures-ktx:1.2.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.concurrent\concurrent-futures-ktx\1.2.0\13b49fdb58c74bdfb12eb131b5e22d6d09683e30\concurrent-futures-ktx-1.2.0.jar"
-      resolved="androidx.concurrent:concurrent-futures-ktx:1.2.0"/>
   <library
       name="io.ktor:ktor-client-okhttp-jvm:3.0.3@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\io.ktor\ktor-client-okhttp-jvm\3.0.3\1c51fcf0cba906c9ba0446acea850151da414fda\ktor-client-okhttp-jvm-3.0.3.jar"
@@ -575,26 +964,14 @@
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\io.ktor\ktor-client-core-jvm\3.0.3\c6e73737e970a3520f60885d966f97b5ec473257\ktor-client-core-jvm-3.0.3.jar"
       resolved="io.ktor:ktor-client-core-jvm:3.0.3"/>
   <library
-      name="io.ktor:ktor-serialization-kotlinx-json-jvm:3.0.3@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\io.ktor\ktor-serialization-kotlinx-json-jvm\3.0.3\c9fd0410e1dc8a66c93c6ffc06bffc4dee16e434\ktor-serialization-kotlinx-json-jvm-3.0.3.jar"
-      resolved="io.ktor:ktor-serialization-kotlinx-json-jvm:3.0.3"/>
-  <library
       name="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.9.0@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-coroutines-slf4j\1.9.0\17b86b2f6eb84441a53621ca7c593161e1696c4e\kotlinx-coroutines-slf4j-1.9.0.jar"
       resolved="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.9.0"/>
   <library
-      name="androidx.datastore:datastore-preferences-external-protobuf:1.1.7@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.datastore\datastore-preferences-external-protobuf\1.1.7\ddd0a2d64e3c928359c993d1291e535d5d7fc9a3\datastore-preferences-external-protobuf-1.1.7.jar"
-      resolved="androidx.datastore:datastore-preferences-external-protobuf:1.1.7"/>
-  <library
-      name="androidx.datastore:datastore-core-okio-jvm:1.1.7@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.datastore\datastore-core-okio-jvm\1.1.7\ce08f132812044a9778547b299fd812e34dbd602\datastore-core-okio-jvm-1.1.7.jar"
-      resolved="androidx.datastore:datastore-core-okio-jvm:1.1.7"/>
-  <library
-      name="androidx.datastore:datastore-core-android:1.1.7@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\d779560201de6c082af492a690e5bc96\transformed\datastore-core-release\jars\classes.jar"
-      resolved="androidx.datastore:datastore-core-android:1.1.7"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\d779560201de6c082af492a690e5bc96\transformed\datastore-core-release"
+      name="androidx.profileinstaller:profileinstaller:1.4.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\dcf06251963e9c50946d3b61b8453914\transformed\profileinstaller-1.4.0\jars\classes.jar"
+      resolved="androidx.profileinstaller:profileinstaller:1.4.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\dcf06251963e9c50946d3b61b8453914\transformed\profileinstaller-1.4.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -604,48 +981,17 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
-      name="androidx.datastore:datastore-preferences-proto:1.1.7@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.datastore\datastore-preferences-proto\1.1.7\6d7430ed8d2b5f2b8675dad8d196ba5dd710921b\datastore-preferences-proto-1.1.7.jar"
-      resolved="androidx.datastore:datastore-preferences-proto:1.1.7"/>
+      name="androidx.concurrent:concurrent-futures:1.2.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.concurrent\concurrent-futures\1.2.0\6a1dfd69226e148898410721f4b14315343d1429\concurrent-futures-1.2.0.jar"
+      resolved="androidx.concurrent:concurrent-futures:1.2.0"/>
   <library
-      name="androidx.datastore:datastore-preferences-core-android:1.1.7@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\833da9ad000d2d30c09ec1a82117ca3f\transformed\datastore-preferences-core-release\jars\classes.jar"
-      resolved="androidx.datastore:datastore-preferences-core-android:1.1.7"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\833da9ad000d2d30c09ec1a82117ca3f\transformed\datastore-preferences-core-release"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
+      name="androidx.concurrent:concurrent-futures-ktx:1.2.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.concurrent\concurrent-futures-ktx\1.2.0\13b49fdb58c74bdfb12eb131b5e22d6d09683e30\concurrent-futures-ktx-1.2.0.jar"
+      resolved="androidx.concurrent:concurrent-futures-ktx:1.2.0"/>
   <library
-      name="androidx.datastore:datastore-android:1.1.7@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\b9afaa47cb4cc07a0dfa5a4d0c31e394\transformed\datastore-release\jars\classes.jar"
-      resolved="androidx.datastore:datastore-android:1.1.7"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\b9afaa47cb4cc07a0dfa5a4d0c31e394\transformed\datastore-release"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
-      name="androidx.datastore:datastore-preferences-android:1.1.7@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\531a0d8558a26b2b48acbfb1b30f883a\transformed\datastore-preferences-release\jars\classes.jar"
-      resolved="androidx.datastore:datastore-preferences-android:1.1.7"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\531a0d8558a26b2b48acbfb1b30f883a\transformed\datastore-preferences-release"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
+      name="io.ktor:ktor-serialization-kotlinx-json-jvm:3.0.3@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\io.ktor\ktor-serialization-kotlinx-json-jvm\3.0.3\c9fd0410e1dc8a66c93c6ffc06bffc4dee16e434\ktor-serialization-kotlinx-json-jvm-3.0.3.jar"
+      resolved="io.ktor:ktor-serialization-kotlinx-json-jvm:3.0.3"/>
   <library
       name="io.ktor:ktor-events-jvm:3.0.3@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\io.ktor\ktor-events-jvm\3.0.3\160a5976b0ba1a2e2bd62609aa13f2bb472fec88\ktor-events-jvm-3.0.3.jar"
@@ -684,9 +1030,9 @@
       resolved="io.ktor:ktor-io-jvm:3.0.3"/>
   <library
       name="com.google.android.gms:play-services-tasks:18.1.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\4f2986d92ae2f2066fe94a09e0d6c15e\transformed\play-services-tasks-18.1.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\bb1ae9778348692163e4fdf77b42b33f\transformed\play-services-tasks-18.1.0\jars\classes.jar"
       resolved="com.google.android.gms:play-services-tasks:18.1.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\4f2986d92ae2f2066fe94a09e0d6c15e\transformed\play-services-tasks-18.1.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\bb1ae9778348692163e4fdf77b42b33f\transformed\play-services-tasks-18.1.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -697,9 +1043,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="com.google.android.gms:play-services-basement:18.3.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\2e90a71221ab7ab84d615405089712ec\transformed\play-services-basement-18.3.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\af1a02a8faf46cb513881d439821d602\transformed\play-services-basement-18.3.0\jars\classes.jar"
       resolved="com.google.android.gms:play-services-basement:18.3.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\2e90a71221ab7ab84d615405089712ec\transformed\play-services-basement-18.3.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\af1a02a8faf46cb513881d439821d602\transformed\play-services-basement-18.3.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -708,10 +1054,6 @@
       symbolFile="R.txt"
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
-  <library
-      name="org.jetbrains.kotlin:kotlin-parcelize-runtime:2.4.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-parcelize-runtime\2.4.0\e0e2c4d064601ae2512be6388f1ada840a1c8353\kotlin-parcelize-runtime-2.4.0.jar"
-      resolved="org.jetbrains.kotlin:kotlin-parcelize-runtime:2.4.0"/>
   <library
       name="com.squareup.okhttp3:okhttp-sse:4.12.0@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp-sse\4.12.0\eca9c68c54ae7fd18d465beba65d80a44e9667e4\okhttp-sse-4.12.0.jar"
@@ -721,31 +1063,10 @@
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-serialization-json-io-jvm\1.11.0\645ed54ca9128fc217b30b3686a083141ebe635c\kotlinx-serialization-json-io-jvm-1.11.0.jar"
       resolved="org.jetbrains.kotlinx:kotlinx-serialization-json-io-jvm:1.11.0"/>
   <library
-      name="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.11.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-serialization-core-jvm\1.11.0\c1905c9bf7452b045d5af9248835abe64ddad6bf\kotlinx-serialization-core-jvm-1.11.0.jar"
-      resolved="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.11.0"/>
-  <library
-      name="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.11.0@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlinx\kotlinx-serialization-json-jvm\1.11.0\e7e045e99e56f07599bb9ccb708c2190e2af0606\kotlinx-serialization-json-jvm-1.11.0.jar"
-      resolved="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.11.0"/>
-  <library
-      name="androidx.interpolator:interpolator:1.0.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\001b2435810a470553ff9ae94f7b8995\transformed\interpolator-1.0.0\jars\classes.jar"
-      resolved="androidx.interpolator:interpolator:1.0.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\001b2435810a470553ff9ae94f7b8995\transformed\interpolator-1.0.0"
-      manifest="AndroidManifest.xml"
-      resFolder="res"
-      assetsFolder="assets"
-      lintJar="lint.jar"
-      publicResources="public.txt"
-      symbolFile="R.txt"
-      externalAnnotations="annotations.zip"
-      proguardRules="proguard.txt"/>
-  <library
       name="androidx.startup:startup-runtime:1.2.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\518f3f81122af3df32a6e0387a943130\transformed\startup-runtime-1.2.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\8b4e4be9554472db6ced602e6d5684e1\transformed\startup-runtime-1.2.0\jars\classes.jar"
       resolved="androidx.startup:startup-runtime:1.2.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\518f3f81122af3df32a6e0387a943130\transformed\startup-runtime-1.2.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\8b4e4be9554472db6ced602e6d5684e1\transformed\startup-runtime-1.2.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -756,9 +1077,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.tracing:tracing:1.2.0@aar"
-      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\6be38ff534e3000eb9541e57da1f0487\transformed\tracing-1.2.0\jars\classes.jar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\810263f04c9ab8d90b62e6999ff9a5a3\transformed\tracing-1.2.0\jars\classes.jar"
       resolved="androidx.tracing:tracing:1.2.0"
-      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\6be38ff534e3000eb9541e57da1f0487\transformed\tracing-1.2.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\810263f04c9ab8d90b62e6999ff9a5a3\transformed\tracing-1.2.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -768,9 +1089,65 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
-      name="androidx.collection:collection-jvm:1.4.2@jar"
-      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.collection\collection-jvm\1.4.2\bc60b5568a66d765a9fe8e266fd0c6c727e0b50b\collection-jvm-1.4.2.jar"
-      resolved="androidx.collection:collection-jvm:1.4.2"/>
+      name="androidx.interpolator:interpolator:1.0.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\585f257d79493999c66b2bf4d8bda104\transformed\interpolator-1.0.0\jars\classes.jar"
+      resolved="androidx.interpolator:interpolator:1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\585f257d79493999c66b2bf4d8bda104\transformed\interpolator-1.0.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.collection:collection-ktx:1.5.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.collection\collection-ktx\1.5.0\27c78a926a16a1bf792b2285cf2834e8caae4a07\collection-ktx-1.5.0.jar"
+      resolved="androidx.collection:collection-ktx:1.5.0"/>
+  <library
+      name="androidx.collection:collection-jvm:1.5.0@jar"
+      jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\androidx.collection\collection-jvm\1.5.0\7ba2c69414d46ebc2dd76598bdd0a75c54281a57\collection-jvm-1.5.0.jar"
+      resolved="androidx.collection:collection-jvm:1.5.0"/>
+  <library
+      name="androidx.documentfile:documentfile:1.0.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\718982c21672657893b06325faa7e888\transformed\documentfile-1.0.0\jars\classes.jar"
+      resolved="androidx.documentfile:documentfile:1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\718982c21672657893b06325faa7e888\transformed\documentfile-1.0.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.localbroadcastmanager:localbroadcastmanager:1.0.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\968fb0b8117694fea930909837d0efab\transformed\localbroadcastmanager-1.0.0\jars\classes.jar"
+      resolved="androidx.localbroadcastmanager:localbroadcastmanager:1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\968fb0b8117694fea930909837d0efab\transformed\localbroadcastmanager-1.0.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.print:print:1.0.0@aar"
+      jars="C:\Users\danie\.gradle\caches\9.5.1\transforms\710ccc9e305c0acb4c349acc1c9f91ee\transformed\print-1.0.0\jars\classes.jar"
+      resolved="androidx.print:print:1.0.0"
+      folder="C:\Users\danie\.gradle\caches\9.5.1\transforms\710ccc9e305c0acb4c349acc1c9f91ee\transformed\print-1.0.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
   <library
       name="org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21@jar"
       jars="C:\Users\danie\.gradle\caches\modules-2\files-2.1\org.jetbrains.kotlin\kotlin-stdlib-jdk8\1.8.21\67f57e154437cd9e6e9cf368394b95814836ff88\kotlin-stdlib-jdk8-1.8.21.jar"

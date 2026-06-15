@@ -8,8 +8,8 @@ import com.annas.data.network.getMime
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.repositorys.LibroRepository
 import com.annas.model.DownloadState
-import com.annas.model.LibroUiState
-import com.annas.ui.features.UIStateEnum
+import com.annas.model.LibroDescargaUiState
+import com.annas.enums.UIStateEnum
 import com.annas.uri.UriUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -24,7 +24,7 @@ class LibroViewModel @Inject constructor(
     val silentDownloader: SilentDownloader,
     private val notificationHelper: NotificationHelper
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(LibroUiState())
+    private val _uiState = MutableStateFlow(LibroDescargaUiState())
     val uiState = _uiState.asStateFlow()
 
     private var loadingJob: Job? = null

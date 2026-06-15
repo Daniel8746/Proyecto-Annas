@@ -37,7 +37,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.annas.model.QrLinkUi
-import com.annas.model.QrPalette
+import com.annas.model.QrScreenContent
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel
@@ -58,54 +57,8 @@ import io.github.alexzhirkevich.qrose.options.QrFrameShape
 import io.github.alexzhirkevich.qrose.options.roundCorners
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-
-private val ScreenTop = Color(0xFFFFFEFC)
-private val ScreenWarm = Color(0xFFFFF7EA)
-private val Ink = Color(0xFF111827)
-private val MutedInk = Color(0xFF667085)
-private val QrInk = Color(0xFF0B1220)
-
-private val qrPalettes = persistentListOf(
-    QrPalette(
-        accent = Color(0xFF006D77),
-        accentSoft = Color(0xFFDFF7F2),
-        surfaceGlow = Color(0xFFEAF8F4)
-    ),
-    QrPalette(
-        accent = Color(0xFFC2410C),
-        accentSoft = Color(0xFFFFE7D6),
-        surfaceGlow = Color(0xFFFFF7EA)
-    ),
-    QrPalette(
-        accent = Color(0xFF5B5BD6),
-        accentSoft = Color(0xFFECEBFF),
-        surfaceGlow = Color(0xFFF5F0FF)
-    ),
-    QrPalette(
-        accent = Color(0xFF2F6F4E),
-        accentSoft = Color(0xFFE2F5E9),
-        surfaceGlow = Color(0xFFEDF8F0)
-    ),
-    QrPalette(
-        accent = Color(0xFFB4235A),
-        accentSoft = Color(0xFFFFE4EE),
-        surfaceGlow = Color(0xFFFFF0F5)
-    ),
-    QrPalette(
-        accent = Color(0xFF255E7E),
-        accentSoft = Color(0xFFE2F1F8),
-        surfaceGlow = Color(0xFFEEF8FB)
-    )
-)
-
-@Immutable
-private data class QrScreenContent(
-    val links: PersistentList<QrLinkUi>,
-    val backgroundColors: PersistentList<Color>
-)
 
 @Composable
 private fun rememberQrScreenContent(): QrScreenContent = remember {

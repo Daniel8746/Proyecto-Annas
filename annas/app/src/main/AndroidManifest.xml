@@ -4,12 +4,6 @@
     android:versionCode="1"
     android:versionName="bizcocho">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-
     <application
         android:name="com.annas.AnnasApplication"
         android:allowBackup="true"
@@ -21,9 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Annas"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="36"
-        tools:ignore="RtlEnabled">
+        tools:targetApi="37">
         <activity
             android:name="com.annas.ui.view.MainActivity"
             android:exported="true"

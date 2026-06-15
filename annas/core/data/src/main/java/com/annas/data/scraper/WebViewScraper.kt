@@ -30,6 +30,7 @@ import java.util.concurrent.CancellationException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 class WebViewScraper @Inject constructor(
@@ -182,7 +183,7 @@ class WebViewScraper @Inject constructor(
 
             try {
 
-                val html = withTimeout(timeoutMs) {
+                val html = withTimeout(timeoutMs.milliseconds) {
 
                     suspendCancellableCoroutine { cont ->
 

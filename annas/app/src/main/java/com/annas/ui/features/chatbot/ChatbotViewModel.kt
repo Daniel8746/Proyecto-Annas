@@ -45,7 +45,7 @@ class ChatbotViewModel @Inject constructor(
         _uiState.updateState {
             copy(
                 input = "",
-                messages = messages.add(
+                messages = messages.adding(
                     ChatMessageUi(
                         id = nextMessageId++,
                         text = message,
@@ -59,7 +59,7 @@ class ChatbotViewModel @Inject constructor(
 
         _uiState.updateState {
             copy(
-                messages = messages.add(
+                messages = messages.adding(
                     ChatMessageUi(
                         id = nextMessageId++,
                         text = botResponse,

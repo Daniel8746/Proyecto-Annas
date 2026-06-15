@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 class Scraper @Inject constructor(
@@ -143,7 +144,7 @@ class Scraper @Inject constructor(
 
                 webViewScraper.limpiarWebViewStorage()
 
-                delay(if (mirrorUrls.isEmpty()) 500L * (attempt + 1) else 200L)
+                delay((if (mirrorUrls.isEmpty()) 500L * (attempt + 1) else 200L).milliseconds)
             } catch (e: CancellationException) {
                 throw e
             } catch (_: Exception) {
@@ -182,7 +183,7 @@ class Scraper @Inject constructor(
             } catch (_: Exception) {
             }
 
-            delay(if (mirrorUrls.isEmpty()) 1000L * (attempt + 1) else 200L)
+            delay((if (mirrorUrls.isEmpty()) 1000L * (attempt + 1) else 200L).milliseconds)
         }
     }
 

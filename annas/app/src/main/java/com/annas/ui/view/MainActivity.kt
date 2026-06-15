@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                     val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         persistentListOf(Manifest.permission.POST_NOTIFICATIONS)
                     } else {
-                        persistentListOf<String>()
+                        persistentListOf()
                     }
                     val toRequest = permissions.filter {
                         ContextCompat.checkSelfPermission(
