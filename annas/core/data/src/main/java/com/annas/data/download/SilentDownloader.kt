@@ -1,4 +1,4 @@
-package com.annas.data.network
+package com.annas.data.download
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -23,7 +23,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -181,7 +181,6 @@ class SilentDownloader @Inject constructor(
         val cancelJob = launch {
             try {
                 DownloadEvents.cancelFlow.collect {
-
                     job.cancel(
                         CancellationException()
                     )
@@ -195,7 +194,7 @@ class SilentDownloader @Inject constructor(
         val maxAttempts = 3
         var success = false
 
-        while (attempt < maxAttempts && !success && isActive) {
+        while (attempt < maxAttempts && !success) {
             attempt++
 
             try {
@@ -272,7 +271,7 @@ class SilentDownloader @Inject constructor(
                             var speedText = ""
 
                             while (source.read(buffer, readSize) != -1L) {
-                                if (!isActive) throw CancellationException()
+                                ensureActive()
 
                                 val bytesRead = buffer.size
                                 sink.write(buffer, bytesRead)
@@ -332,17 +331,16 @@ class SilentDownloader @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                if (e is CancellationException) {
-                    helper.cancelNotification(fileName)
-                    break
-                }
-
                 try {
                     DocumentsContract.deleteDocument(
                         context.contentResolver, dest
                     )
-
                 } catch (_: Exception) {
+                }
+
+                if (e is CancellationException) {
+                    helper.cancelNotification(fileName)
+                    break
                 }
 
                 if (attempt < maxAttempts) {

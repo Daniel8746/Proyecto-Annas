@@ -77,7 +77,7 @@ private fun rememberQrScreenContent(): QrScreenContent = remember {
             QrLinkUi(
                 title = "Descargar APK",
                 label = "Instalador Android",
-                url = "https://raw.githubusercontent.com/Daniel8746/Proyecto-Annas/master/compiler/app-debug.apk",
+                url = "https://raw.githubusercontent.com/Daniel8746/Proyecto-Annas/master/compiler/app-release.apk",
                 icon = Icons.Default.Download,
                 accent = selectedPalettes[1].accent,
                 accentSoft = selectedPalettes[1].accentSoft

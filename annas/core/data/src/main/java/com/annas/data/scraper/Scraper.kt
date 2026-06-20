@@ -3,7 +3,7 @@ package com.annas.data.scraper
 import android.content.Context
 import androidx.core.content.edit
 import com.annas.data.cache.MemoryCache
-import com.annas.data.network.DESKTOP_UA
+import com.annas.data.download.DESKTOP_UA
 import com.annas.data.repositorys.toLibros
 import com.annas.model.Libro
 import com.annas.uri.UriUtils

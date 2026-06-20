@@ -3,8 +3,8 @@ package com.annas.ui.features.libro
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.annas.data.extensions.updateState
-import com.annas.data.network.SilentDownloader
-import com.annas.data.network.getMime
+import com.annas.data.download.SilentDownloader
+import com.annas.data.download.getMime
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.repositorys.LibroRepository
 import com.annas.model.DownloadState

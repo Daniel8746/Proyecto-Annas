@@ -1,4 +1,4 @@
-package com.annas.data.network
+package com.annas.data.download
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

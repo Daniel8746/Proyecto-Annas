@@ -39,34 +39,48 @@ class ChatbotViewModel @Inject constructor(
     }
 
     private suspend fun sendCurrentMessage() {
-        val message = _uiState.value.input.trim()
-        if (message.isEmpty()) return
+        try {
+            val message = _uiState.value.input.trim()
+            if (message.isEmpty()) return
 
-        _uiState.updateState {
-            copy(
-                input = "",
-                messages = messages.adding(
-                    ChatMessageUi(
-                        id = nextMessageId++,
-                        text = message,
-                        isFromUser = true
+            _uiState.updateState {
+                copy(
+                    input = "",
+                    messages = messages.adding(
+                        ChatMessageUi(
+                            id = nextMessageId++,
+                            text = message,
+                            isFromUser = true
+                        )
                     )
                 )
-            )
-        }
+            }
 
-        val botResponse = repository.sendMessage(message, _uiState.value.messages)
+            val botResponse = repository.sendMessage(message, _uiState.value.messages)
 
-        _uiState.updateState {
-            copy(
-                messages = messages.adding(
-                    ChatMessageUi(
-                        id = nextMessageId++,
-                        text = botResponse,
-                        isFromUser = false
+            _uiState.updateState {
+                copy(
+                    messages = messages.adding(
+                        ChatMessageUi(
+                            id = nextMessageId++,
+                            text = botResponse,
+                            isFromUser = false
+                        )
                     )
                 )
-            )
+            }
+        } catch (_ : Exception) {
+            _uiState.updateState {
+                copy(
+                    messages = messages.adding(
+                        ChatMessageUi(
+                            id = nextMessageId++,
+                            text = "Lo siento, no he podido procesar tu solicitud. Inténtalo de nuevo en unos minutos.",
+                            isFromUser = false
+                        )
+                    )
+                )
+            }
         }
     }
 }

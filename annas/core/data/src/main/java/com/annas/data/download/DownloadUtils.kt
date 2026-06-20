@@ -1,4 +1,4 @@
-package com.annas.data.network
+package com.annas.data.download
 
 import kotlinx.collections.immutable.persistentSetOf
 
