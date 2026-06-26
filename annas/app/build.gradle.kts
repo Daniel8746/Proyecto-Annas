@@ -17,7 +17,7 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.annas"
-        minSdk = 31
+        minSdk = 30
         targetSdk = 37
         versionCode = 1
         versionName = "bizcocho"

@@ -2,7 +2,7 @@
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.annas.core.data" >
 4
-5    <uses-sdk android:minSdkVersion="31" />
+5    <uses-sdk android:minSdkVersion="30" />
 5-->INJECTED
 5-->INJECTED
 6

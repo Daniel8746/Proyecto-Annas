@@ -1,7 +1,7 @@
 <variant
     name="release"
     package="com.annas.core.data"
-    minSdkVersion="31"
+    minSdkVersion="30"
     targetSdkVersion="37.0"
     mergedManifest="build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
     manifestMergeReport="build\outputs\logs\manifest-merger-release-report.txt"
@@ -26,6 +26,6 @@
       type="MAIN"
       applicationId="com.annas.core.data"
       generatedSourceFolders="build\generated\ksp\release\java;build\generated\ksp\release\kotlin;build\generated\ap_generated_sources\release\out"
-      desugaredMethodsFiles="C:\Users\danie\.gradle\caches\9.5.1\transforms\8a663aef0c2ff333cbcf66c626b6dc84\transformed\D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="C:\Users\danie\.gradle\caches\9.6.0\transforms\8566fb3d7ba4ef9e6b512cdd95ffb961\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

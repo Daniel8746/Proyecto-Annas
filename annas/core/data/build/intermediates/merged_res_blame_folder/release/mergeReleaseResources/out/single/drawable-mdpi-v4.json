@@ -1,7 +1,7 @@
 [
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable-mdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable-mdpi-v4/common_google_signin_btn_icon_light_normal_background.9.png"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/notification_bg_low_pressed.9.png",
@@ -9,11 +9,11 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/googleg_standard_color_18.png",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable-mdpi-v4/googleg_standard_color_18.png"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable-mdpi-v4/googleg_standard_color_18.png"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/common_google_signin_btn_text_dark_normal_background.9.png",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable-mdpi-v4/common_google_signin_btn_text_dark_normal_background.9.png"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable-mdpi-v4/common_google_signin_btn_text_dark_normal_background.9.png"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/notification_bg_low_normal.9.png",
@@ -21,7 +21,7 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/googleg_disabled_color_18.png",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable-mdpi-v4/googleg_disabled_color_18.png"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable-mdpi-v4/googleg_disabled_color_18.png"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/notification_bg_normal.9.png",
@@ -37,10 +37,10 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/common_google_signin_btn_text_light_normal_background.9.png",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable-mdpi-v4/common_google_signin_btn_text_light_normal_background.9.png"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable-mdpi-v4/common_google_signin_btn_text_light_normal_background.9.png"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable-mdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable-mdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable-mdpi-v4/common_google_signin_btn_icon_dark_normal_background.9.png"
     }
 ]

@@ -1,11 +1,11 @@
 [
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_text_disabled.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_text_disabled.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_text_disabled.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_icon_dark.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_icon_dark.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_icon_dark.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/ic_call_answer_video.xml",
@@ -13,11 +13,11 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_text_dark_focused.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_text_dark_focused.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_text_dark_focused.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_text_light_normal.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_text_light_normal.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_text_light_normal.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/notification_action_background.xml",
@@ -25,15 +25,15 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_text_light_focused.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_text_light_focused.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_text_light_focused.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_icon_disabled.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_icon_disabled.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_icon_disabled.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_text_dark_normal.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_text_dark_normal.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_text_dark_normal.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/ic_call_decline.xml",
@@ -53,7 +53,7 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_icon_dark_normal.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_icon_dark_normal.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_icon_dark_normal.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/notification_bg_low.xml",
@@ -69,7 +69,7 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_text_light.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_text_light.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_text_light.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/notification_tile_bg.xml",
@@ -77,15 +77,15 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_text_dark.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_text_dark.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_text_dark.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_icon_light.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_icon_light.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_icon_light.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_icon_dark_focused.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_icon_dark_focused.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_icon_dark_focused.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/ic_call_answer_video_low.xml",
@@ -93,10 +93,10 @@
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_icon_light_normal.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_icon_light_normal.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_icon_light_normal.xml"
     },
     {
         "merged": "com.annas.core.data-release-40:/drawable/common_google_signin_btn_icon_light_focused.xml",
-        "source": "com.annas.core.data-play-services-base-18.0.1-3:/drawable/common_google_signin_btn_icon_light_focused.xml"
+        "source": "com.annas.core.data-play-services-base-18.9.0-15:/drawable/common_google_signin_btn_icon_light_focused.xml"
     }
 ]
