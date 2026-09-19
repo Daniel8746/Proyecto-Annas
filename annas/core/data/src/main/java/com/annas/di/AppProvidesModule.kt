@@ -5,6 +5,7 @@ import com.annas.data.cache.MemoryCache
 import com.annas.data.chatbot.setupModel
 import com.annas.data.services.interceptors.ConnectVerifierInterceptor
 import com.annas.data.services.interceptors.NetworkMonitor
+import com.annas.ua.MultiBrandUserAgentProvider
 import com.google.firebase.ai.GenerativeModel
 import dagger.Module
 import dagger.Provides
@@ -30,23 +31,25 @@ object AppProvidesModule {
     @Singleton
     fun provideMemoryCache(): MemoryCache = MemoryCache()
 
-    const val DESKTOP_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-
     val tlsSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-        .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_3)
+        .tlsVersions(TlsVersion.TLS_1_3, TlsVersion.TLS_1_2)
         .build()
 
-    val browserInterceptor = Interceptor { chain ->
-        val request = chain.request().newBuilder()
-            .header("User-Agent", DESKTOP_UA)
-            .header(
-                "Accept",
-                "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
-            )
-            .header("Accept-Language", "es-ES,es;q=0.9,en;q=0.8")
-            .header("Cache-Control", "max-age=0")
-            .build()
-        chain.proceed(request)
+    @Provides
+    @Singleton
+    fun provideBrowserInterceptor(@ApplicationContext context: Context): Interceptor {
+        return Interceptor { chain ->
+            // Obtiene el User-Agent real del dispositivo (sea Xiaomi, Samsung, etc.)
+            val deviceUserAgent = MultiBrandUserAgentProvider.get(context)
+
+            val request = chain.request().newBuilder()
+                .header("User-Agent", deviceUserAgent)
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
+                .header("Accept-Language", "es-ES,es;q=0.9,en;q=0.8")
+                .header("Cache-Control", "max-age=0")
+                .build()
+            chain.proceed(request)
+        }
     }
 
     @Named("scraperClient")
@@ -54,12 +57,13 @@ object AppProvidesModule {
     @Singleton
     fun provideScraperClient(
         @ApplicationContext context: Context,
-        networkMonitor: NetworkMonitor
+        networkMonitor: NetworkMonitor,
+        browserInterceptor: Interceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(ConnectVerifierInterceptor(networkMonitor))
             .addInterceptor(browserInterceptor)
-            .connectionSpecs(listOf(tlsSpec, ConnectionSpec.CLEARTEXT))
+            .connectionSpecs(listOf(tlsSpec))
             .cache(Cache(File(context.cacheDir, "scraper_http"), 12L * 1024L * 1024L))
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -82,13 +86,14 @@ object AppProvidesModule {
     @Singleton
     fun provideDownloadClient(
         networkMonitor: NetworkMonitor,
-        dispatcher: Dispatcher
+        dispatcher: Dispatcher,
+        browserInterceptor: Interceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(ConnectVerifierInterceptor(networkMonitor))
             .addInterceptor(browserInterceptor)
             .dispatcher(dispatcher)
-            .connectionSpecs(listOf(tlsSpec, ConnectionSpec.CLEARTEXT))
+            .connectionSpecs(listOf(tlsSpec))
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(300, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)

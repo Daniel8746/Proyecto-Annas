@@ -18,7 +18,7 @@ import com.annas.data.js.JsScripts
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.utils.isUnnecessaryResource
 import com.annas.data.utils.safeDestroy
-import com.annas.di.AppProvidesModule.DESKTOP_UA
+import com.annas.ua.MultiBrandUserAgentProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -68,7 +68,7 @@ class SilentDownloader @Inject constructor(
                 javaScriptEnabled = true
                 domStorageEnabled = true
                 cacheMode = WebSettings.LOAD_DEFAULT
-                userAgentString = DESKTOP_UA
+                userAgentString = MultiBrandUserAgentProvider.get(context)
                 javaScriptCanOpenWindowsAutomatically = true
                 setSupportMultipleWindows(true)
                 loadsImagesAutomatically = false
@@ -130,7 +130,7 @@ class SilentDownloader @Inject constructor(
 
                 if (isDirect(rUrl)) {
                     onDownloadStart(
-                        rUrl, DESKTOP_UA, guessCD(rUrl), getMime(rUrl), 0, v?.url
+                        rUrl, MultiBrandUserAgentProvider.get(context), guessCD(rUrl), getMime(rUrl), 0, v?.url
                     )
 
                     v?.postDelayed(destroyRunnable, 1000)
@@ -213,10 +213,10 @@ class SilentDownloader @Inject constructor(
                         .header("Accept-Encoding", "identity")
                         .header(
                             "Sec-Ch-Ua",
-                            "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Google Chrome\";v=\"122\""
+                            MultiBrandUserAgentProvider.getSecChUa(context)
                         )
-                        .header("Sec-Ch-Ua-Mobile", "?0")
-                        .header("Sec-Ch-Ua-Platform", "\"Windows\"")
+                        .header("Sec-Ch-Ua-Mobile", "?1")
+                        .header("Sec-Ch-Ua-Platform", "\"Android\"")
                         .header("Sec-Fetch-Dest", "document")
                         .header("Sec-Fetch-Mode", "navigate")
                         .header("Sec-Fetch-Site", "none")

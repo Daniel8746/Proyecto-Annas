@@ -14,6 +14,7 @@ import com.annas.data.js.JsEngine
 import com.annas.data.js.JsScripts.DOM_HTML_COLLECTOR
 import com.annas.data.js.JsScripts.HTML_CAPTURE_AND_SEND
 import com.annas.data.utils.isUnnecessaryResource
+import com.annas.ua.MultiBrandUserAgentProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
@@ -78,8 +79,7 @@ class WebViewScraper @Inject constructor(
                 textZoom = 100
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
 
-                userAgentString =
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+                userAgentString = MultiBrandUserAgentProvider.get(context)
             }
 
             CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)

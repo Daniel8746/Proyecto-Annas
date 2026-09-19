@@ -40,9 +40,9 @@
       proguardRules="proguard.txt"/>
   <library
       name=":@@:core:common::release"
-      jars="C:\Users\danie\.gradle\caches\9.7.1\transforms\04c6e28eda4a0d3af145adae64181b6f\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.7.1\transforms\04c6e28eda4a0d3af145adae64181b6f\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\danie\.gradle\caches\9.7.1\transforms\853f60889e6770da70e196510922d44f\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.7.1\transforms\853f60889e6770da70e196510922d44f\transformed\out\jars\libs\R.jar"
       resolved="annas.core:common:unspecified"
-      folder="C:\Users\danie\.gradle\caches\9.7.1\transforms\04c6e28eda4a0d3af145adae64181b6f\transformed\out"
+      folder="C:\Users\danie\.gradle\caches\9.7.1\transforms\853f60889e6770da70e196510922d44f\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
