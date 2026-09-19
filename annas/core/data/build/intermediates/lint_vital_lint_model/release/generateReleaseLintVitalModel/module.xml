@@ -4,7 +4,7 @@
     name=":core:data"
     type="LIBRARY"
     maven="annas.core:data:unspecified"
-    agpVersion="9.2.1"
+    agpVersion="9.4.1"
     buildFolder="build"
     bootClassPath="C:\Users\danie\AppData\Local\Android\Sdk\platforms\android-37.0\android.jar;C:\Users\danie\AppData\Local\Android\Sdk\build-tools\36.0.0\core-lambda-stubs.jar"
     javaSourceLevel="21"

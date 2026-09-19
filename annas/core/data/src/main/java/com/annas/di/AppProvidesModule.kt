@@ -12,8 +12,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
+import okhttp3.ConnectionSpec
 import okhttp3.Dispatcher
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.TlsVersion
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -27,6 +30,25 @@ object AppProvidesModule {
     @Singleton
     fun provideMemoryCache(): MemoryCache = MemoryCache()
 
+    const val DESKTOP_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+
+    val tlsSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+        .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_3)
+        .build()
+
+    val browserInterceptor = Interceptor { chain ->
+        val request = chain.request().newBuilder()
+            .header("User-Agent", DESKTOP_UA)
+            .header(
+                "Accept",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
+            )
+            .header("Accept-Language", "es-ES,es;q=0.9,en;q=0.8")
+            .header("Cache-Control", "max-age=0")
+            .build()
+        chain.proceed(request)
+    }
+
     @Named("scraperClient")
     @Provides
     @Singleton
@@ -36,6 +58,8 @@ object AppProvidesModule {
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(ConnectVerifierInterceptor(networkMonitor))
+            .addInterceptor(browserInterceptor)
+            .connectionSpecs(listOf(tlsSpec, ConnectionSpec.CLEARTEXT))
             .cache(Cache(File(context.cacheDir, "scraper_http"), 12L * 1024L * 1024L))
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -62,7 +86,9 @@ object AppProvidesModule {
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(ConnectVerifierInterceptor(networkMonitor))
+            .addInterceptor(browserInterceptor)
             .dispatcher(dispatcher)
+            .connectionSpecs(listOf(tlsSpec, ConnectionSpec.CLEARTEXT))
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(300, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)

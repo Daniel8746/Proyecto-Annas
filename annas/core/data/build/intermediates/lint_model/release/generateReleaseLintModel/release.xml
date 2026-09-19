@@ -5,7 +5,7 @@
     targetSdkVersion="37.0"
     mergedManifest="build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
     manifestMergeReport="build\outputs\logs\manifest-merger-release-report.txt"
-    proguardFiles="build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-9.2.1"
+    proguardFiles="build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-9.4.1"
     partialResultsDir="build\intermediates\lint_partial_results\release\lintAnalyzeRelease\out">
   <buildFeatures/>
   <sourceProviders>
@@ -26,6 +26,6 @@
       type="MAIN"
       applicationId="com.annas.core.data"
       generatedSourceFolders="build\generated\ksp\release\java;build\generated\ksp\release\kotlin;build\generated\ap_generated_sources\release\out"
-      desugaredMethodsFiles="C:\Users\danie\.gradle\caches\9.6.0\transforms\8566fb3d7ba4ef9e6b512cdd95ffb961\transformed\D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="C:\Users\danie\.gradle\caches\9.7.1\transforms\1b4c2728aae8f5de8d6237dd99d37e01\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

@@ -18,6 +18,7 @@ import com.annas.data.js.JsScripts
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.utils.isUnnecessaryResource
 import com.annas.data.utils.safeDestroy
+import com.annas.di.AppProvidesModule.DESKTOP_UA
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -36,9 +37,6 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.milliseconds
-
-const val DESKTOP_UA =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 
 @Singleton
 class SilentDownloader @Inject constructor(

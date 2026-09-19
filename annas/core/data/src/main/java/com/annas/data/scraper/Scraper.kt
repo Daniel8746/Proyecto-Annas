@@ -3,7 +3,6 @@ package com.annas.data.scraper
 import android.content.Context
 import androidx.core.content.edit
 import com.annas.data.cache.MemoryCache
-import com.annas.data.download.DESKTOP_UA
 import com.annas.data.repositorys.toLibros
 import com.annas.model.Libro
 import com.annas.uri.UriUtils
@@ -112,7 +111,6 @@ class Scraper @Inject constructor(
         val headCode = executeForStatus(
             Request.Builder()
                 .url(normalized)
-                .withBrowserHeaders()
                 .head()
                 .build()
         )
@@ -123,7 +121,6 @@ class Scraper @Inject constructor(
         val getCode = executeForStatus(
             Request.Builder()
                 .url(normalized)
-                .withBrowserHeaders()
                 .get()
                 .build()
         )
@@ -386,7 +383,6 @@ class Scraper @Inject constructor(
         return try {
             val request = Request.Builder()
                 .url(url)
-                .withBrowserHeaders()
                 .get()
                 .build()
 
@@ -421,15 +417,6 @@ class Scraper @Inject constructor(
 
     private fun isAliveStatus(code: Int?): Boolean {
         return code != null && (code in 200..399 || code == 403 || code == 429)
-    }
-
-    private fun Request.Builder.withBrowserHeaders(): Request.Builder = apply {
-        header("User-Agent", DESKTOP_UA)
-        header(
-            "Accept",
-            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-        )
-        header("Accept-Language", "es-ES,es;q=0.9,en;q=0.8")
     }
 
     private fun normalizeMirrorUrl(url: String): String {
