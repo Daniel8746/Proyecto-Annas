@@ -16,6 +16,8 @@ object MultiBrandUserAgentProvider {
         return try {
             // El sistema genera el User-Agent perfecto de forma nativa
             WebSettings.getDefaultUserAgent(context)
+                .replace("; wv", "")
+                .replace("Version/4.0 ", "")
         } catch (_: Exception) {
             // Respaldo simple en caso de llamarse fuera del hilo principal
             "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}; ${Build.MANUFACTURER} ${Build.MODEL}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Mobile Safari/537.36"

@@ -56,33 +56,25 @@ class WebViewScraper @Inject constructor(
         val wv = WebView(context).apply {
 
             settings.apply {
-
                 javaScriptEnabled = true
                 domStorageEnabled = true
 
                 cacheMode = WebSettings.LOAD_DEFAULT
 
-                loadsImagesAutomatically = false
-                blockNetworkImage = true
+                loadsImagesAutomatically = true
+                blockNetworkImage = false
 
-                setSupportZoom(false)
-
-                displayZoomControls = false
-
-                useWideViewPort = false
-
-                loadWithOverviewMode = false
+                mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
 
                 mediaPlaybackRequiresUserGesture = true
-                javaScriptCanOpenWindowsAutomatically = false
-                setSupportMultipleWindows(false)
-                textZoom = 100
-                mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
 
                 userAgentString = MultiBrandUserAgentProvider.get(context)
             }
 
-            CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+            CookieManager.getInstance().apply {
+                setAcceptCookie(true)
+                setAcceptThirdPartyCookies(webView, true)
+            }
 
             addJavascriptInterface(object {
 
@@ -109,6 +101,10 @@ class WebViewScraper @Inject constructor(
                 ): WebResourceResponse? {
 
                     val requestUrl = request?.url?.toString()?.lowercase() ?: ""
+
+                    if (requestUrl.contains("cloudflare") || requestUrl.contains("captcha") || requestUrl.contains("turnstile")) {
+                        return null
+                    }
 
                     if (isUnnecessaryResource(requestUrl)) {
 
