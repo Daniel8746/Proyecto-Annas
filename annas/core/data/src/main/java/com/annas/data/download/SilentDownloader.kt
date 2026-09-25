@@ -12,13 +12,13 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import com.annas.data.extensions.vibrateClick
 import com.annas.data.js.JsScripts
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.utils.isUnnecessaryResource
 import com.annas.data.utils.safeDestroy
 import com.annas.ua.MultiBrandUserAgentProvider
+import com.ead.lib.cloudflare_bypass.BypassClient
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -99,7 +99,7 @@ class SilentDownloader @Inject constructor(
             }
         }
 
-        wv.webViewClient = object : WebViewClient() {
+        wv.webViewClient = object : BypassClient() {
             override fun shouldInterceptRequest(
                 view: WebView?, request: WebResourceRequest?
             ): WebResourceResponse? {
@@ -113,7 +113,9 @@ class SilentDownloader @Inject constructor(
                 } else null
             }
 
-            override fun onPageFinished(view: WebView?, url: String?) {
+            override fun onPageFinishedByPassed(view: WebView?, url: String?) {
+                super.onPageFinishedByPassed(view, url)
+
                 injectAutoExtractor(view)
 
                 if (!destroyScheduled) {
@@ -144,6 +146,8 @@ class SilentDownloader @Inject constructor(
             override fun onReceivedError(
                 view: WebView?, request: WebResourceRequest?, error: WebResourceError?
             ) {
+                super.onReceivedError(view, request, error)
+
                 if (request?.isForMainFrame == true) {
                     view?.postDelayed(destroyRunnable, 1000)
                 }

@@ -9,12 +9,12 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebStorage
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import com.annas.data.js.JsEngine
 import com.annas.data.js.JsScripts.DOM_HTML_COLLECTOR
 import com.annas.data.js.JsScripts.HTML_CAPTURE_AND_SEND
 import com.annas.data.utils.isUnnecessaryResource
 import com.annas.ua.MultiBrandUserAgentProvider
+import com.ead.lib.cloudflare_bypass.BypassClient
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +94,7 @@ class WebViewScraper @Inject constructor(
 
             }, "Android")
 
-            webViewClient = object : WebViewClient() {
+            webViewClient = object : BypassClient() {
 
                 override fun shouldInterceptRequest(
                     view: WebView?, request: WebResourceRequest?
@@ -116,7 +116,8 @@ class WebViewScraper @Inject constructor(
                     return null
                 }
 
-                override fun onPageFinished(view: WebView?, url: String?) {
+                override fun onPageFinishedByPassed(view: WebView?, url: String?) {
+                    super.onPageFinishedByPassed(view, url)
                     injectCurrentScraperScript(view)
                 }
 
@@ -125,6 +126,7 @@ class WebViewScraper @Inject constructor(
                     request: WebResourceRequest?,
                     error: android.webkit.WebResourceError?
                 ) {
+                    super.onReceivedError(view, request, error)
 
                     if (request?.isForMainFrame == true) {
 

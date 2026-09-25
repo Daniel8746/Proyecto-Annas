@@ -1,27 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.annas.core.data-mergeReleaseResources-37:/values-km/values-km.xml",
+            "outputFile": "com.annas.core.data-mergeReleaseResources-38:/values-km/values-km.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\22f6a468ef823bccf7f1cac24eccfbc1\\transformed\\play-services-base-18.9.0\\res\\values-km\\values.xml",
-                    "from": {
-                        "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
-                        "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
-                        "startOffsets": "216,314,465,582,683,841,961,1078,1183,1337,1450,1617,1738,1879,2033,2093,2147",
-                        "endColumns": "97,150,116,100,157,119,116,104,153,112,166,120,140,153,59,53,72",
-                        "endOffsets": "313,464,581,682,840,960,1077,1182,1336,1449,1616,1737,1878,2032,2092,2146,2219"
-                    },
-                    "to": {
-                        "startLines": "12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "1099,1201,1356,1477,1582,1744,1868,1989,2247,2405,2522,2693,2818,2963,3121,3185,3243",
-                        "endColumns": "101,154,120,104,161,123,120,108,157,116,170,124,144,157,63,57,76",
-                        "endOffsets": "1196,1351,1472,1577,1739,1863,1984,2093,2400,2517,2688,2813,2958,3116,3180,3238,3315"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\c8abc6bf9d8f50e19a93a398da21a8b2\\transformed\\play-services-basement-18.9.0\\res\\values-km\\values.xml",
+                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\3c5850797003923c2d2ba5a6f3d9f69c\\transformed\\play-services-basement-18.9.0\\res\\values-km\\values.xml",
                     "from": {
                         "startLines": "4",
                         "startColumns": "0",
@@ -38,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\4c11f23e920726b86a58c1063073e54a\\transformed\\ui\\res\\values-km\\values-km.xml",
+                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\5d6aeec00c1d1d1991ec9a39177343ee\\transformed\\ui\\res\\values-km\\values-km.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -55,7 +38,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\14cb3db435c9a7bc415adab199aaabee\\transformed\\core-1.19.0\\res\\values-km\\values-km.xml",
+                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\744af4583fc13d6cede7a6361a4b4ff3\\transformed\\play-services-base-18.9.0\\res\\values-km\\values.xml",
+                    "from": {
+                        "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                        "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+                        "startOffsets": "216,314,465,582,683,841,961,1078,1183,1337,1450,1617,1738,1879,2033,2093,2147",
+                        "endColumns": "97,150,116,100,157,119,116,104,153,112,166,120,140,153,59,53,72",
+                        "endOffsets": "313,464,581,682,840,960,1077,1182,1336,1449,1616,1737,1878,2032,2092,2146,2219"
+                    },
+                    "to": {
+                        "startLines": "12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "1099,1201,1356,1477,1582,1744,1868,1989,2247,2405,2522,2693,2818,2963,3121,3185,3243",
+                        "endColumns": "101,154,120,104,161,123,120,108,157,116,170,124,144,157,63,57,76",
+                        "endOffsets": "1196,1351,1472,1577,1739,1863,1984,2093,2400,2517,2688,2813,2958,3116,3180,3238,3315"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\59eed062089fa50477817a2098c3f787\\transformed\\core-1.19.1\\res\\values-km\\values-km.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -74,27 +74,10 @@
             ]
         },
         {
-            "outputFile": "com.annas.core.data-release-39:/values-km/values-km.xml",
+            "outputFile": "com.annas.core.data-release-40:/values-km/values-km.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\22f6a468ef823bccf7f1cac24eccfbc1\\transformed\\play-services-base-18.9.0\\res\\values-km\\values.xml",
-                    "from": {
-                        "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
-                        "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
-                        "startOffsets": "216,314,465,582,683,841,961,1078,1183,1337,1450,1617,1738,1879,2033,2093,2147",
-                        "endColumns": "97,150,116,100,157,119,116,104,153,112,166,120,140,153,59,53,72",
-                        "endOffsets": "313,464,581,682,840,960,1077,1182,1336,1449,1616,1737,1878,2032,2092,2146,2219"
-                    },
-                    "to": {
-                        "startLines": "12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "1099,1201,1356,1477,1582,1744,1868,1989,2247,2405,2522,2693,2818,2963,3121,3185,3243",
-                        "endColumns": "101,154,120,104,161,123,120,108,157,116,170,124,144,157,63,57,76",
-                        "endOffsets": "1196,1351,1472,1577,1739,1863,1984,2093,2400,2517,2688,2813,2958,3116,3180,3238,3315"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\c8abc6bf9d8f50e19a93a398da21a8b2\\transformed\\play-services-basement-18.9.0\\res\\values-km\\values.xml",
+                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\3c5850797003923c2d2ba5a6f3d9f69c\\transformed\\play-services-basement-18.9.0\\res\\values-km\\values.xml",
                     "from": {
                         "startLines": "4",
                         "startColumns": "0",
@@ -111,7 +94,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\4c11f23e920726b86a58c1063073e54a\\transformed\\ui\\res\\values-km\\values-km.xml",
+                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\5d6aeec00c1d1d1991ec9a39177343ee\\transformed\\ui\\res\\values-km\\values-km.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -128,7 +111,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\14cb3db435c9a7bc415adab199aaabee\\transformed\\core-1.19.0\\res\\values-km\\values-km.xml",
+                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\744af4583fc13d6cede7a6361a4b4ff3\\transformed\\play-services-base-18.9.0\\res\\values-km\\values.xml",
+                    "from": {
+                        "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                        "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+                        "startOffsets": "216,314,465,582,683,841,961,1078,1183,1337,1450,1617,1738,1879,2033,2093,2147",
+                        "endColumns": "97,150,116,100,157,119,116,104,153,112,166,120,140,153,59,53,72",
+                        "endOffsets": "313,464,581,682,840,960,1077,1182,1336,1449,1616,1737,1878,2032,2092,2146,2219"
+                    },
+                    "to": {
+                        "startLines": "12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "1099,1201,1356,1477,1582,1744,1868,1989,2247,2405,2522,2693,2818,2963,3121,3185,3243",
+                        "endColumns": "101,154,120,104,161,123,120,108,157,116,170,124,144,157,63,57,76",
+                        "endOffsets": "1196,1351,1472,1577,1739,1863,1984,2093,2400,2517,2688,2813,2958,3116,3180,3238,3315"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\danie\\.gradle\\caches\\9.7.1\\transforms\\59eed062089fa50477817a2098c3f787\\transformed\\core-1.19.1\\res\\values-km\\values-km.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",

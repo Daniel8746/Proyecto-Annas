@@ -1,14 +1,14 @@
 [
     {
-        "merged": "com.annas.core.data-release-39:/raw/firebase_common_keep.xml",
-        "source": "com.annas.core.data-firebase-common-22.2.1-6:/raw/firebase_common_keep.xml"
+        "merged": "com.annas.core.data-release-40:/raw/hello.wav",
+        "source": "com.annas.core.data-firebase-ai-17.17.0-17:/raw/hello.wav"
     },
     {
-        "merged": "com.annas.core.data-release-39:/raw/hello.wav",
-        "source": "com.annas.core.data-firebase-ai-17.17.0-22:/raw/hello.wav"
+        "merged": "com.annas.core.data-release-40:/raw/firebase_common_keep.xml",
+        "source": "com.annas.core.data-firebase-common-22.2.1-31:/raw/firebase_common_keep.xml"
     },
     {
-        "merged": "com.annas.core.data-release-39:/raw/videoplayback.mp4",
-        "source": "com.annas.core.data-firebase-ai-17.17.0-22:/raw/videoplayback.mp4"
+        "merged": "com.annas.core.data-release-40:/raw/videoplayback.mp4",
+        "source": "com.annas.core.data-firebase-ai-17.17.0-17:/raw/videoplayback.mp4"
     }
 ]

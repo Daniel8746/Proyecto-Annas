@@ -28,6 +28,7 @@ dependencies {
     api(libs.firebase.ai)
 
     implementation(libs.hilt.android)
+    implementation(libs.cloudflare.bypass)
     ksp(libs.hilt.compiler)
     ksp(libs.kotlin.metadata)
 

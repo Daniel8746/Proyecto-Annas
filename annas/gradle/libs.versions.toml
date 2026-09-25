@@ -1,11 +1,12 @@
 [versions]
 agp = "9.4.1"
+cloudflareBypass = "0.0.5"
 kotlin = "2.4.20"
-coreKtx = "1.19.0"
+coreKtx = "1.19.1"
 lifecycle = "2.11.0"
 activityCompose = "1.13.0"
 composeBom = "2026.09.00"
-composeNavigation = "2.10.1"
+composeNavigation = "2.10.2"
 hilt = "2.60.1"
 hiltNavigationCompose = "1.4.0"
 ksp = "2.3.9"
@@ -46,6 +47,7 @@ androidx-animation = { group = "androidx.compose.animation", name = "animation" 
 # Navigation & Hilt
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+cloudflare-bypass = { module = "com.github.darkryh:Cloudflare-Bypass", version.ref = "cloudflareBypass" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 

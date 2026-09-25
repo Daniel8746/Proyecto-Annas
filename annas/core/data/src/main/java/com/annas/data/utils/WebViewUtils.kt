@@ -2,7 +2,7 @@ package com.annas.data.utils
 
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import android.webkit.WebViewClient
+import com.ead.lib.cloudflare_bypass.BypassClient
 
 private var destroyed = false
 
@@ -15,7 +15,7 @@ fun safeDestroy(v: WebView?, r: Runnable) {
         v?.apply {
             removeCallbacks(r)
             stopLoading()
-            webViewClient = WebViewClient()
+            webViewClient = BypassClient()
             webChromeClient = WebChromeClient()
             setDownloadListener(null)
             clearHistory()
