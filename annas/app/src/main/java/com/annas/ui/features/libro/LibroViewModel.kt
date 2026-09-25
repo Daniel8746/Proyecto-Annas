@@ -69,11 +69,10 @@ class LibroViewModel @Inject constructor(
                 silentDownloader.launchSilentDownload(
                     activity = event.context,
                     url = event.url,
-                    onDownloadStart = { dUrl, ua, cd, mime, len, ref ->
+                    onDownloadStart = { dUrl, cd, mime, len, ref ->
                         _downloadState.updateState {
                             DownloadState(
                                 url = dUrl,
-                                userAgent = ua,
                                 contentDisposition = cd,
                                 mimeType = if (mime.isBlank() || mime == "application/octet-stream") getMime(
                                     dUrl
@@ -100,7 +99,6 @@ class LibroViewModel @Inject constructor(
                     viewModelScope.launch {
                         silentDownloader.downloadFileWithNotification(
                             url = state.url,
-                            ua = state.userAgent,
                             cd = state.contentDisposition,
                             mime = state.mimeType,
                             dest = event.fileUri,

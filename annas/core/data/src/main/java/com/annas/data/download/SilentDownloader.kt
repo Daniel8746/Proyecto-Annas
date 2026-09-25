@@ -17,7 +17,6 @@ import com.annas.data.js.JsScripts
 import com.annas.data.notifications.NotificationHelper
 import com.annas.data.utils.isUnnecessaryResource
 import com.annas.data.utils.safeDestroy
-import com.annas.ua.MultiBrandUserAgentProvider
 import com.ead.lib.cloudflare_bypass.BypassClient
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
@@ -57,7 +56,7 @@ class SilentDownloader @Inject constructor(
     fun launchSilentDownload(
         activity: Activity,
         url: String,
-        onDownloadStart: (String, String, String, String, Long, String?) -> Unit
+        onDownloadStart: (String, String, String, Long, String?) -> Unit
     ) {
         val wv = WebView(activity).apply {
             destroyScheduled = false
@@ -67,20 +66,20 @@ class SilentDownloader @Inject constructor(
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
+
                 cacheMode = WebSettings.LOAD_DEFAULT
-                userAgentString = MultiBrandUserAgentProvider.get(context)
+
                 javaScriptCanOpenWindowsAutomatically = true
                 setSupportMultipleWindows(true)
+
                 loadsImagesAutomatically = false
                 blockNetworkImage = true
-                setSupportZoom(false)
-                builtInZoomControls = false
-                displayZoomControls = false
+
                 mediaPlaybackRequiresUserGesture = true
 
-                allowFileAccess = false
-                allowContentAccess = false
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+
+                userAgentString = userAgentString.replace("; wv", "").replace("Version/4.0 ", "")
             }
 
             addJavascriptInterface(object {
@@ -132,7 +131,7 @@ class SilentDownloader @Inject constructor(
 
                 if (isDirect(rUrl)) {
                     onDownloadStart(
-                        rUrl, MultiBrandUserAgentProvider.get(context), guessCD(rUrl), getMime(rUrl), 0, v?.url
+                        rUrl, guessCD(rUrl), getMime(rUrl), 0, v?.url
                     )
 
                     v?.postDelayed(destroyRunnable, 1000)
@@ -154,11 +153,11 @@ class SilentDownloader @Inject constructor(
             }
         }
 
-        wv.setDownloadListener { dUrl, ua, cd, mime, len ->
+        wv.setDownloadListener { dUrl, _, cd, mime, len ->
             cookie.flush()
 
             onDownloadStart(
-                dUrl, ua, cd, mime, len, wv.url
+                dUrl, cd, mime, len, wv.url
             )
 
             wv.postDelayed(destroyRunnable, 100)
@@ -169,7 +168,6 @@ class SilentDownloader @Inject constructor(
 
     suspend fun downloadFileWithNotification(
         url: String,
-        ua: String,
         cd: String?,
         mime: String?,
         dest: Uri,
@@ -208,19 +206,12 @@ class SilentDownloader @Inject constructor(
 
                     val request = Request.Builder()
                         .url(url)
-                        .header("User-Agent", ua)
                         .header(
                             "Accept",
                             "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
                         )
                         .header("Accept-Language", "es-ES,es;q=0.9,en;q=0.8")
                         .header("Accept-Encoding", "identity")
-                        .header(
-                            "Sec-Ch-Ua",
-                            MultiBrandUserAgentProvider.getSecChUa(context)
-                        )
-                        .header("Sec-Ch-Ua-Mobile", "?1")
-                        .header("Sec-Ch-Ua-Platform", "\"Android\"")
                         .header("Sec-Fetch-Dest", "document")
                         .header("Sec-Fetch-Mode", "navigate")
                         .header("Sec-Fetch-Site", "none")

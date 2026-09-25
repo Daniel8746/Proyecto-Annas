@@ -1,9 +1,9 @@
 <libraries>
   <library
       name=":@@:core:model::release"
-      jars="C:\Users\danie\.gradle\caches\9.7.1\transforms\64139152b1decda84da34641ed96333d\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.7.1\transforms\64139152b1decda84da34641ed96333d\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\danie\.gradle\caches\9.7.1\transforms\0d7ba870dafbe4439772bab3ee0030eb\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.7.1\transforms\0d7ba870dafbe4439772bab3ee0030eb\transformed\out\jars\libs\R.jar"
       resolved="annas.core:model:unspecified"
-      folder="C:\Users\danie\.gradle\caches\9.7.1\transforms\64139152b1decda84da34641ed96333d\transformed\out"
+      folder="C:\Users\danie\.gradle\caches\9.7.1\transforms\0d7ba870dafbe4439772bab3ee0030eb\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -53,9 +53,9 @@
       proguardRules="proguard.txt"/>
   <library
       name=":@@:core:common::release"
-      jars="C:\Users\danie\.gradle\caches\9.7.1\transforms\da1b1fc84e8a54c829ee1d046f555eea\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.7.1\transforms\da1b1fc84e8a54c829ee1d046f555eea\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\danie\.gradle\caches\9.7.1\transforms\37648b5e5057e27015b8d7981fe9b0b8\transformed\out\jars\classes.jar;C:\Users\danie\.gradle\caches\9.7.1\transforms\37648b5e5057e27015b8d7981fe9b0b8\transformed\out\jars\libs\R.jar"
       resolved="annas.core:common:unspecified"
-      folder="C:\Users\danie\.gradle\caches\9.7.1\transforms\da1b1fc84e8a54c829ee1d046f555eea\transformed\out"
+      folder="C:\Users\danie\.gradle\caches\9.7.1\transforms\37648b5e5057e27015b8d7981fe9b0b8\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"

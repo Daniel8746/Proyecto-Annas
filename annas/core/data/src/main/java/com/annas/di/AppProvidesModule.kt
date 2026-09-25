@@ -5,7 +5,6 @@ import com.annas.data.cache.MemoryCache
 import com.annas.data.chatbot.setupModel
 import com.annas.data.services.interceptors.ConnectVerifierInterceptor
 import com.annas.data.services.interceptors.NetworkMonitor
-import com.annas.ua.MultiBrandUserAgentProvider
 import com.google.firebase.ai.GenerativeModel
 import dagger.Module
 import dagger.Provides
@@ -37,13 +36,9 @@ object AppProvidesModule {
 
     @Provides
     @Singleton
-    fun provideBrowserInterceptor(@ApplicationContext context: Context): Interceptor {
+    fun provideBrowserInterceptor(): Interceptor {
         return Interceptor { chain ->
-            // Obtiene el User-Agent real del dispositivo (sea Xiaomi, Samsung, etc.)
-            val deviceUserAgent = MultiBrandUserAgentProvider.get(context)
-
             val request = chain.request().newBuilder()
-                .header("User-Agent", deviceUserAgent)
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
                 .header("Accept-Language", "es-ES,es;q=0.9,en;q=0.8")
                 .header("Cache-Control", "max-age=0")

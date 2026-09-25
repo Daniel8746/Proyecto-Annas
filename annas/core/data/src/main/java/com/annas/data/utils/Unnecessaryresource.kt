@@ -13,7 +13,6 @@ private val blockedExtensions = persistentSetOf(
     ".avif",
     ".ico",
     ".bmp",
-    ".css",
     ".woff",
     ".woff2",
     ".ttf",

@@ -13,7 +13,6 @@ import com.annas.data.js.JsEngine
 import com.annas.data.js.JsScripts.DOM_HTML_COLLECTOR
 import com.annas.data.js.JsScripts.HTML_CAPTURE_AND_SEND
 import com.annas.data.utils.isUnnecessaryResource
-import com.annas.ua.MultiBrandUserAgentProvider
 import com.ead.lib.cloudflare_bypass.BypassClient
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellableContinuation
@@ -68,12 +67,12 @@ class WebViewScraper @Inject constructor(
 
                 mediaPlaybackRequiresUserGesture = true
 
-                userAgentString = MultiBrandUserAgentProvider.get(context)
+                userAgentString = userAgentString.replace("; wv", "").replace("Version/4.0 ", "")
             }
 
-            CookieManager.getInstance().apply {
+            CookieManager.getInstance().run {
                 setAcceptCookie(true)
-                setAcceptThirdPartyCookies(webView, true)
+                setAcceptThirdPartyCookies(this@apply, true)
             }
 
             addJavascriptInterface(object {
@@ -102,7 +101,11 @@ class WebViewScraper @Inject constructor(
 
                     val requestUrl = request?.url?.toString()?.lowercase() ?: ""
 
-                    if (requestUrl.contains("cloudflare") || requestUrl.contains("captcha") || requestUrl.contains("turnstile")) {
+                    if (requestUrl.contains("cloudflare") ||
+                        requestUrl.contains("captcha") ||
+                        requestUrl.contains("turnstile") ||
+                        requestUrl.contains("challenges")
+                    ) {
                         return null
                     }
 
@@ -129,13 +132,18 @@ class WebViewScraper @Inject constructor(
                     super.onReceivedError(view, request, error)
 
                     if (request?.isForMainFrame == true) {
+                        val errorCode = error?.errorCode
+                        val isFatalNetworkError = errorCode == ERROR_HOST_LOOKUP ||
+                                errorCode == ERROR_CONNECT ||
+                                errorCode == ERROR_TIMEOUT ||
+                                errorCode == ERROR_FAILED_SSL_HANDSHAKE
 
-                        currentContinuation?.let {
-
-                            if (it.isActive) it.resume("")
+                        if (isFatalNetworkError) {
+                            currentContinuation?.let {
+                                if (it.isActive) it.resume("")
+                            }
+                            softReset(view)
                         }
-
-                        softReset(view)
                     }
                 }
             }
@@ -172,7 +180,7 @@ class WebViewScraper @Inject constructor(
     }
 
     suspend fun loadUrlAndGetHtml(
-        url: String, cssSelector: String, timeoutMs: Long = 9000
+        url: String, cssSelector: String, timeoutMs: Long = 30_000
     ): String = mutex.withLock {
 
         withContext(Dispatchers.Main) {
@@ -211,6 +219,7 @@ class WebViewScraper @Inject constructor(
                 }
 
             } catch (_: TimeoutCancellationException) {
+
                 getInstantHtml(
                     wv, cssSelector
                 )

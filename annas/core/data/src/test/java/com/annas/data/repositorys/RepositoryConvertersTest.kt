@@ -15,7 +15,7 @@ class RepositoryConvertersTest {
                     <a class="text-sm" href="/search?q=Robert">Robert C. Martin</a>
                     <img data-src="/covers/clean-code.jpg">
                     <div class="text-gray-800 font-semibold text-sm">
-                        English [en] \u00B7 PDF \u00B7 5.2MB
+                        English [en] · PDF · 5.2MB
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@ class RepositoryConvertersTest {
             <div class="border-b pt-3">
                 <a href="/md5/def">Domain Driven Design</a>
                 <div class="font-semibold text-sm">
-                    Spanish [es] \u00B7 EPUB \u00B7 1.8 MB
+                    Spanish [es] · EPUB · 1.8 MB
                 </div>
             </div>
         """.trimIndent()
@@ -60,11 +60,11 @@ class RepositoryConvertersTest {
         val html = """
             <div class="border-b pt-3">
                 <a href="/md5/abc">Clean Code</a>
-                <div class="font-semibold text-sm">English [en] \u00B7 PDF \u00B7 5MB</div>
+                <div class="font-semibold text-sm">English [en] · PDF · 5MB</div>
             </div>
             <div class="border-b py-3">
                 <a href="/md5/abc">Clean Code duplicate</a>
-                <div class="font-semibold text-sm">English [en] \u00B7 PDF \u00B7 5MB</div>
+                <div class="font-semibold text-sm">English [en] · PDF · 5MB</div>
             </div>
         """.trimIndent()
 

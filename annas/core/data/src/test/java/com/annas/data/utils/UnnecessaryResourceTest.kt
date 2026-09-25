@@ -9,7 +9,6 @@ class UnnecessaryResourceTest {
     @Test
     fun blocksStaticAssetsEvenWhenTheyUseQueryParams() {
         assertTrue(isUnnecessaryResource("https://example.org/cover.webp?v=123"))
-        assertTrue(isUnnecessaryResource("https://example.org/style.css?hash=abc"))
         assertTrue(isUnnecessaryResource("https://example.org/font.woff2#iefix"))
     }
 

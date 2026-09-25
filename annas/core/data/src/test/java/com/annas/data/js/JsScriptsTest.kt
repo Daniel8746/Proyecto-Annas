@@ -17,7 +17,7 @@ class JsScriptsTest {
         )
 
         assertTrue(script.contains("const selector = \"main\";"))
-        assertTrue(script.contains("}, 1234);"))
+        assertTrue(script.contains("const timeoutMs = 1234;"))
         assertFalse(script.contains("__SELECTOR__"))
         assertFalse(script.contains("__TIMEOUT__"))
     }
@@ -29,6 +29,6 @@ class JsScriptsTest {
         assertTrue(script.contains("span.break-all"))
         assertTrue(script.contains("data-clipboard-text"))
         assertTrue(script.contains("js-download-link"))
-        assertTrue(script.contains("window.location.href"))
+        assertTrue(script.contains("location.replace"))
     }
 }

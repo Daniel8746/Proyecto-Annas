@@ -15,6 +15,8 @@ private val infoSeparatorRegex = Regex("\\s*(?:\\u00C2?\\u00B7|[|])\\s*")
 
 fun Element.toLibro(): Libro {
     val tituloTag = selectFirst("a.text-lg")
+        ?: selectFirst("a[href*=\"/md5/\"]")
+        ?: selectFirst("a[href]")
     val enlace = tituloTag?.attr("href").orEmpty()
 
     if (tituloTag == null || enlace.isBlank()) {
